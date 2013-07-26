@@ -1,1 +1,11 @@
+# Ignore temporary gzips
 *.gz
+
+# Ignore image folder
+/public/images/
+
+# Ignore distrib
+/public/jsmini/
+
+# Ignore log files
+/log/*
