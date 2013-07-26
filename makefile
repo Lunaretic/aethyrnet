@@ -4,20 +4,28 @@ LOGFILE = $(LOGPATH)aethyrnet_`date +'%y-%m-%d_%H.%M'`.log
 PROXYLOG = $(LOGPATH)proxy.log
 
 prod:
-	-@NODE_ENV=production forever stop aethyrnet.js
-	@NODE_ENV=production forever start -l $(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
+	
+	-NODE_ENV=production forever stop aethyrnet.js
+	cd ../ffxiv/; NODE_ENV=production forever start -l $(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
 
 proxy:
-	-@NODE_ENV=production forever stop proxy.js
-	@NODE_ENV=production forever start -l $(PROXYLOG) -a --minUptime 5000 --spinSleepTime 60000 proxy.js
+	-NODE_ENV=production forever stop proxy.js
+	cd ../ffxiv/; NODE_ENV=production forever start -l $(PROXYLOG) -a --minUptime 5000 --spinSleepTime 60000 proxy.js
+	
+commit:
+	
+	cd ../ffxiv-dev/; git commit; git push;
+	cd ../ffxiv/; git pull;
+	-NODE_ENV=production forever stop aethyrnet.js
+	cd ../ffxiv/; NODE_ENV=production forever start -l $(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
   
 dev:
-	@NODE_ENV=development nodemon
+	cd ../ffxiv-dev/; NODE_ENV=development nodemon
 
 test:
-	@NODE_ENV=test mocha --reporter $(REPORTER) --recursive
+	cd ../ffxiv-dev/; NODE_ENV=test mocha --reporter $(REPORTER) --recursive
 
 test-w:
-	@NODE_ENV=test mocha --reporter $(REPORTER) --recursive --watch --growl
+	cd ../ffxiv-dev/; NODE_ENV=test mocha --reporter $(REPORTER) --recursive --watch --growl
   
 .PHONY: test
