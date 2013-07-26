@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8" />
+  
+  
+  <title>Aethyrnet - A Cactuar Server LS/FC</title>
+ 
+  <link rel="shortcut icon" href="/public/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+  
+  <link rel="stylesheet" href="/public/css/base.css"></link>
+  
+  <!-- Assistant Libraries -->
+  <script type="text/javascript" src="/public/js/lib/jquery.js"></script>
+  <script type="text/javascript" src="/public/js/lib/jquery.easing.1.3.min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/underscore-min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/backbone-min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/async.js"></script>
+  
+  <script id="startupScript" type="text/javascript">
+    //Basic Aethyrnet Setup.
+    var aethyrnet = new (function Aethyrnet(){
+      this.backbone = {};
+      this.template = {};
+      this.css = {};
+      this.user = {};
+      this.util = {};
+      this.viewMap = {};
+      this.router = false;
+      this.viewport = false;
+      this.pageQueue = false;
+    })();
+    
+    //User Data integration.
+    aethyrnet.userData = <%= userData %>;
+    
+    $().ready(function()
+    {
+      //Setup user
+      aethyrnet.util.setupUser(aethyrnet.userData);
+    
+      //Render the main veiwport
+      aethyrnet.viewport = new aethyrnet.backbone['viewport'].ViewportView({
+        el : document.body,
+      });
+      
+      //Wipe out the startup script
+      $('#startupScript').remove();
+    });
+  </script>
+  
+  <!-- Aethyrnet Scripts -->
+  <script type="text/javascript" src="/public/js/debugMode.js"></script>
+  <script type="text/javascript" src="/public/js/viewport.js"></script>
+  <script type="text/javascript" src="/public/js/user.js"></script>
+</head>
+<body>
+  <div id="background" style="background-image: url('/public/images/<%= ( bgImage ? bgImage : "coerthas" ) %>.jpg')"></div>
+  <div id="header">
+    <div id="logo"></div>
+    <!--Variable Width Centering CSS trick -->
+    <div id="menu-container" class="container-center">
+      <div class="outer-center">
+        <div id="menu" class="inner-center">
+        </div>
+      </div>
+    </div>
+    <div id="masthead">A Cactuar Server LS/FC<br/>Aethyrnet.TeamSpeak3.com</div>
+    <div class="clear"></div>
+  </div>
+  
+  <div id="header-bg"></div>
+  <div id="header-spacer"></div>
+  <div id="bottom-fade" class="gradient-down"></div>
+  <div id="top-fade" class="gradient-up"></div>
+  <img id="loading" src="/public/images/loading.gif" width="150" height="30"></img>
+  <div id="main" class="fade-in"></div>
+  <div id="statusPanel"></div>
+  
+  <div id="copyright"><%= (environment != "production" ? "Environment: " + environment + "<br/>" : "") %>Aethyrnet Logo &copy; 50DKP, LLC.<br/>Background Images &amp; Meteor Logo &copy; SQUARE-ENIX CO. LTD.</div>
+</body>

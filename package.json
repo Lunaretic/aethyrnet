@@ -1,0 +1,41 @@
+{
+  "name": "aethyrnet",
+  "description": "A Node.JS & Backbone FFXIV Website",
+  "homepage": "http://www.aethyrnet.com",
+  "author": "Greg Scott <gmscott27@gmail.com>",
+  "contributors": [],
+  "dependencies": {
+    "express": "~3.3.1",
+    "mongoose": "~3.6.15",
+    "passport-local": "~0.1.6",
+    "passport": "~0.1.17",
+    "bcrypt": "~0.7.6",
+    "bcrypt-nodejs": "0.0.3",
+    "connect-gzip": "~0.1.6",
+    "connect-mongo": "~0.3.3",
+    "underscore": "~1.5.1",
+    "emailjs": "~0.3.4",
+    "cli-color": "~0.2.2",
+    "http-proxy": "~0.10.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lunaretic/aethyrnet.git"
+  },
+  "main": "aethyrnet.js",
+  "version": "0.2.0",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.2",
+    "mocha": "~1.12.0",
+    "expect.js": "~0.2.0",
+    "gently": "~0.9.2",
+    "lorem-ipsum": "~0.1.1",
+    "http-proxy": "~0.10.3"
+  },
+  "scripts": {
+    "test": "make test"
+  }
+}

@@ -1,0 +1,40 @@
+<table cellspacing="0" cellpadding="0" class="profileTable">
+  <tr>
+    <td>
+      <% if(avatar) { %>
+        <img class="avatar" width="24" height="24" src="/public/images/avatars/<%= avatar %>" />
+        <img class="avatarGloss" width="24" height="24" src="/public/images/iconFrame.png"/>
+      <% } %>
+      <span class="username">Profile &amp; Settings - <%= username %></span>
+      </td>
+    <td><span id="logoutButton" class="button">Log Out</span></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <div class="sprawl">
+        <span id="saveButton" class="button">Save Settings</span>
+        
+        <div class="sectionHeader">Additional User Info</div>
+        <form><table cellspacing="0" cellpadding="0">
+          
+          <tr>
+            <td width="120">Email:</td>
+            <td><input type="text" size="40" maxlength="40" title="Email Address" id="emailField" value="<%= email %>"/></td>
+          </tr>
+          <tr>
+            <td width="120">Lodestone URL:</td>
+            <td><input type="text" size="70" maxlength="70" title="http://na.beta.finalfantasyxiv.com/lodestone/character/######/" id="charUrlField" value="<%= charUrl %>"/></td>
+          </tr>
+        </table></form>
+        
+        <div class="sectionHeader">Aethyrnet.com Background</div>
+        <form>
+          <input type="radio" name="background" value="coerthas" <% if(background == "coerthas"){ %>checked="checked"<% } %>>Coerthas</input><br/>
+          <input type="radio" name="background" value="uldah" <% if(background == "uldah"){ %>checked="checked"<% } %>>Ul'Dah</input><br/>
+          <input type="radio" name="background" value="gridania" <% if(background == "gridania"){ %>checked="checked"<% } %>>Gridania</input><br/>
+          <input type="radio" name="background" value="limsa" <% if(background == "limsa"){ %>checked="checked"<% } %>>Limsa Lominsa</input><br/>
+        </form>
+      </div>
+    </td>
+  </tr>
+</table>
