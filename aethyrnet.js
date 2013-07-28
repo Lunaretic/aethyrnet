@@ -12,6 +12,8 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var gzip = require('connect-gzip');
 
+var aethyrForum = require('aethyr-forum');
+
 var conf = require('./src/conf.js');
 
 if(process.env.NODE_ENV != 'production')
@@ -28,6 +30,7 @@ function(database, callback)
 {
   //Run Passport config
   conf.configurePassport();
+  conf.configureForum();
   conf.configureMail();
 
   //Set up middleware / static routing
@@ -74,6 +77,8 @@ function(database, callback)
   //Start up Passport
   server.use(passport.initialize());
   server.use(passport.session());
+  
+  server.use(/\/forum/,aethyrForum.middleware);
 
   
   
