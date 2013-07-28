@@ -63,6 +63,7 @@ function(database, callback)
     {
       //One year expiration
       maxAge: 365 * 24 * 60 * 60 * 1000,
+      domain:'.aethyrnet.com'
     },
     store : new MongoStore({
       mongoose_connection : database,

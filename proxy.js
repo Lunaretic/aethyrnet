@@ -4,7 +4,6 @@ console.log("Proxy Server Activated");
 
 httpProxy.createServer({
   hostnameOnly : true,
-  changeOrigin : true,
   router: {
     
     //Aethyrnet
