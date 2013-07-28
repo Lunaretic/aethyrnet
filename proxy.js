@@ -3,7 +3,8 @@ var httpProxy = require('http-proxy');
 console.log("Proxy Server Activated");
 
 httpProxy.createServer({
-  hostnameOnly: true,
+  hostnameOnly : true,
+  changeOrigin : true,
   router: {
     
     //Aethyrnet
