@@ -50,7 +50,7 @@
   </script>
   
   <!-- Aethyrnet Scripts -->
-  <script type="text/javascript" src="/public/js/debugMode.js"></script>
+  <% if (environment != "production") { %><script type="text/javascript" src="/public/js/debugMode.js"></script><% } %>
   <script type="text/javascript" src="/public/js/viewport.js"></script>
   <script type="text/javascript" src="/public/js/user.js"></script>
 </head>

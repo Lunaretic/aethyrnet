@@ -3,6 +3,7 @@ var bcrypt = require('bcrypt-nodejs');
 var database = (require('./database.js'))();
 var util = require('./util.js');
 var _ = require('underscore');
+var path = require('path');
 var fs = require('fs');
 
 module.exports = function(server)
@@ -61,14 +62,36 @@ module.exports = function(server)
 
   //Set up routing for the main frame.
   util.log("Setting up main index routing.");
-  server.get('/', function(req, res){
-    res.setHeader('Content-Type', 'text/html');
-    res.setHeader('Cache-Control', 'public, max-age=' + 1 * 24 * 60 * 60 * 1000);
-    res.end(indexTemplate({
-      environment : process.env.NODE_ENV,
-      userData : getUserInfo(req.user),
-      bgImage : ( req.user ? req.user.bgImage : false ),
-    }));
+  var indexFile = path.join(__dirname,'/index.html');
+  var indexMTime = fs.statSync(indexFile).mtime;
+  var template = _.template(fs.readFileSync(__dirname + '/index.html').toString());
+  server.get('/', function(req, res)
+  {
+    fs.stat(indexFile, function(err, stat){
+      if(err)
+        throw err;
+      
+      if(stat.mtime.toString() != indexMTime.toString())
+      {
+        util.log("Updating Cache for Index.");
+        return fs.readFile(indexFile, function(err, data){
+          if(err)
+            throw err;
+          indexMTime = stat.mtime;
+          template = _.template(data.toString());
+          res.end(template({
+            environment : process.env.NODE_ENV,
+            userData : getUserInfo(req.user),
+            bgImage : ( req.user ? req.user.bgImage : false ),
+          }));
+        });
+      }
+      return res.end(template({
+        environment : process.env.NODE_ENV,
+        userData : getUserInfo(req.user),
+        bgImage : ( req.user ? req.user.bgImage : false ),
+      }));
+    });
   });
 
   //Main frame reloading.
