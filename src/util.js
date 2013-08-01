@@ -32,7 +32,7 @@ module.exports.notify = function logNotify(msg)
   console.log("[ " + dt.getHours() + ":" + padLeft(dt.getMinutes(), '00') + ":" + padLeft(dt.getSeconds(), '00') + " ] [ "+ clc.cyan('NOTIFY') +" ] " + msg.toString());
 }
 
-module.exports.error = function logError(msg, kill)
+module.exports.error = module.exports.err = function logError(msg, kill)
 {
   var dt = new Date()
   console.log("[ " + dt.getHours() + ":" + padLeft(dt.getMinutes(), '00') + ":" + padLeft(dt.getSeconds(), '00') + " ] [ "+ clc.redBright('ERROR') +" ] " + msg.toString());
