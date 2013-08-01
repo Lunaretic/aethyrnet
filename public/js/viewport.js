@@ -26,7 +26,7 @@ aethyrnet.backbone['viewport'] = new (function(){
     
     initialize : function(options)
     {
-      //Will handle its own rendering
+      //Login Status Panel.
       this.subviews.loginStatusPanel = new aethyrnet.backbone['user'].LoginStatusView();
       this.subviews.loginStatusPanel.$el.appendTo($('#header'));
         
@@ -38,7 +38,15 @@ aethyrnet.backbone['viewport'] = new (function(){
       
       //Create Main Menu.
       this.subviews.mainMenu = new aethyrnet.backbone['viewport'].MainMenuView({ el : $('#menu') });
-      this.subviews.statusPanel = new aethyrnet.backbone['viewport'].StatusView({ el : $('#statusPanel') });
+      
+      //Status Notification Panel
+      this.subviews.statusPanel = new aethyrnet.backbone['viewport'].StatusView();
+      this.subviews.statusPanel.$el.appendTo(document.body);
+      
+      //Create post button.
+      this.subviews.postButton = new aethyrnet.backbone['viewport'].PostButtonView();
+      this.subviews.postButton.$el.appendTo(document.body);
+      
     },
     
     // Ease of access function for reloading current page.
@@ -187,9 +195,9 @@ aethyrnet.backbone['viewport'] = new (function(){
     }
   });
   
-//==============================================//
-//              Main Menu View
-//==============================================//
+  //==============================================//
+  //              Main Menu View
+  //==============================================//
   // Main navigation menu view
   this.MainMenuView = Backbone.View.extend({
     
@@ -250,8 +258,12 @@ aethyrnet.backbone['viewport'] = new (function(){
     
   });
   
-  // Status notification view.
+  //==============================================//
+  //           Status Notification View
+  //==============================================//
   this.StatusView = Backbone.View.extend({
+    
+    id : 'statusPanel',
     
     initialize : function()
     {
@@ -292,6 +304,25 @@ aethyrnet.backbone['viewport'] = new (function(){
   });
   
     
+  //==============================================//
+  //            News Post Button View
+  //==============================================//
+  this.PostButtonView = Backbone.View.extend({
+    id : "postButton",
+    
+    initialize : function(options)
+    {
+    
+      this.render();
+    },
+    
+    render : function()
+    {
+      this.$el.text("Submit Post");
+    },
+  });
+
+
   //===========================================//
   //        Base Boilerplate Page View
   //===========================================//
