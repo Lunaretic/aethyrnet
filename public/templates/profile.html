@@ -41,14 +41,14 @@
         <form><table cellspacing="0" cellpadding="0">
           <tr><td width="180"><label for="sidebarOrientation">Sidebar Orientation:</label></td>
           <td><select id="sidebarOrientation" style="width: 200px">
-            <option value="left" <% if(orientation="left"){ %>selected="selected"<% } %>>Left</option>
-            <option value="right" <% if(orientation="right"){ %>selected="selected"<% } %>>Right</option>
+            <option value="left" <% if(orientation=="left"){ %>selected="selected"<% } %>>Left</option>
+            <option value="right" <% if(orientation=="right"){ %>selected="selected"<% } %>>Right</option>
           </select></td></tr>
           
           <tr><td><label for="onScreen">Sticky Sidebar:</label></td>
-          <td><select id="onScreen" style="width: 200px">
-            <option value="left" <% if(onScreen){ %>selected="selected"<% } %>>Keep On Screen</option>
-            <option value="right" <% if(!onScreen){ %>selected="selected"<% } %>>Allow Scrolling</option>
+          <td><select id="sidebarSticky" style="width: 200px">
+            <option value="true" <% if(onScreen){ %>selected="selected"<% } %>>Keep On Screen</option>
+            <option value="false" <% if(!onScreen){ %>selected="selected"<% } %>>Allow Scrolling</option>
           </select></td></tr>
         </table></form>
         

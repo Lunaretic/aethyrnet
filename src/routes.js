@@ -31,7 +31,6 @@ module.exports = function(server)
   });
   
   server.put('/api/profile', function(req, res){
-    
     if(!req.user)
       return util.clientErr(res, "Not Logged In.");
     
@@ -46,6 +45,9 @@ module.exports = function(server)
     req.user.bgImage = req.body.bgImage;
     req.user.email = req.body.email;
     req.user.charUrl = req.body.charUrl;
+    
+    req.user.sidebarOrientation = req.body.sidebarOrientation;
+    req.user.sidebarSticky = (req.body.sidebarSticky ? true : false);
     
     req.user.save(function(err) {
       if(err)

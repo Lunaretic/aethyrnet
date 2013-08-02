@@ -38,7 +38,6 @@ module.exports.user.path('username').validate(function (username)
 
 module.exports.user.path('email').validate(function (email) 
 {
-  console.log(email);
   return ( regexValidator.email.test(email) )
 }, 'Invalid Email.');
 

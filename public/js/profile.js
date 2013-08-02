@@ -56,18 +56,22 @@ aethyrnet.backbone['profile'] = new (function(){
     {
       var email = ($('#emailField',this.$el).val() != $('#emailField',this.$el).attr('title') ? $('#emailField',this.$el).val() : '');
       var charUrl = ($('#charUrlField',this.$el).val() != $('#charUrlField',this.$el).attr('title') ? $('#charUrlField',this.$el).val() : '');
+      var sidebarOrientation = $('#sidebarOrientation').val();
+      var sidebarSticky = ($('#sidebarSticky').val() == "true" ? true : false);
+      
+      //Background attribute set previously.
       aethyrnet.user.set({
         email : email,
         charUrl : charUrl,
+        sidebarOrientation : sidebarOrientation,
+        sidebarSticky : sidebarSticky,
       });
+      
+      //Backbone smart save.
       aethyrnet.user.save().done(function()
       {
         aethyrnet.notify('Profile updated successfully.');
-        
-        //Pointless since new user data isn't retreived from server yet.
-        //TODO: Set up a refreshUser() function?
-        //aethyrnet.viewport.reload();
-        
+                
       }).fail(function(jqXHR, arg2, arg3) 
       {
         //Hard fail. Bad news bears.
