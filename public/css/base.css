@@ -397,37 +397,42 @@ div.feedEntry div.content
 /* ================================================
                 PostButton
 ================================================ */
-#postButton
+#sidebar
 {
   position: absolute;
-  z-index: 1010;
-  top: 170px;
-  left: -20px;
+  z-index: 200;
+  top: 140px;
+  right: 50%;
+  margin-right: 440px;
+}
+
+#sidebar.right
+{
+  right: auto;
+  left: 50%;
+  margin-left: 440px;
+}
+
+#sidebar .sidebutton
+{
+  width: 100px;
   
-  min-width: 120px;
-  min-height: 20px;
+  padding: 2px 8px 4px 8px;
   
-  padding: 2px 34px 2px 14px;
-  
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  
+  border-radius: 10px;
   
   /*border: 2px solid black;
   border-right: none;*/
   
   color: #fff;
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
-  /*text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.6), 1px -1px 0px rgba(0, 0, 0, 0.6), -1px 1px 0px rgba(0, 0, 0, 0.6), -1px -1px 0px rgba(0, 0, 0, 0.6);*/
+  text-align: center;
   
-  text-align: left;
-  
-  font-family: "Helvetica", sans-serif;
-  font-style: italic;
-  
+  font-family: 'Lucida Sans Unicode', sans-serif;
+  font-size: 16px;
+  line-height: 16px;
   
   box-shadow: 0px 0px 15px #222 inset;
-  
   
   cursor: pointer;
   
@@ -436,6 +441,13 @@ div.feedEntry div.content
   border: 1px solid #000;
   
   white-space:nowrap;
+  
+  background: rgba(0,0,0,0.2);
+}
+#sidebar .sidebutton:hover
+{
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  background: rgba(0,0,0,0.4);
 }
 
 

@@ -5,7 +5,6 @@ LOGFILE = aethyrnet_`date +'%y-%m-%d_%H.%M'`.log
 PROXYLOG = $(PRODPATH)proxy.log
 
 prod:
-	
 	-NODE_ENV=production forever stop aethyrnet.js
 	cd $(PRODPATH); NODE_ENV=production forever start -l $(PRODPATH)/log/$(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
 

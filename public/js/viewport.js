@@ -44,8 +44,12 @@ aethyrnet.backbone['viewport'] = new (function(){
       this.subviews.statusPanel.$el.appendTo(document.body);
       
       //Create post button.
-      this.subviews.postButton = new aethyrnet.backbone['viewport'].PostButtonView();
-      this.subviews.postButton.$el.appendTo(document.body);
+      this.subviews.sidebar = new aethyrnet.backbone['viewport'].SidebarView({
+        "Post News" : {
+          class : "postNews",
+        },
+      });
+      this.subviews.sidebar.$el.appendTo(document.body);
       
     },
     
@@ -305,20 +309,58 @@ aethyrnet.backbone['viewport'] = new (function(){
   
     
   //==============================================//
-  //            News Post Button View
+  //              Sidebar View
   //==============================================//
-  this.PostButtonView = Backbone.View.extend({
-    id : "postButton",
+  this.SidebarView = Backbone.View.extend({
+    id : "sidebar",
+    className : "right",
     
-    initialize : function(options)
+    setMenu : function(menu)
     {
-    
+      this.menu = menu || {};
+      
+      this.$el.attr("class", aethyrnet.user.get("sidebarOrientation"));
+      this.$el.css('position', ( aethyrnet.user.get('sidebarSticky') ? 'fixed' : 'absolute'));
+      
       this.render();
+    },
+    
+    initialize : function(menu)
+    {
+      this.setMenu(menu);
     },
     
     render : function()
     {
-      this.$el.text("Submit Post");
+      //Kill events hash.
+      this.events = {};
+      
+      //Wipe out content.
+      this.$el.html("");
+    
+      for(var idx in this.menu)
+      {
+        var item = this.menu[idx];
+        
+        //Skip logged in only items when not logged in.
+        if(item.loggedIn && !aethyrnet.user.loggedIn())
+          continue;
+        
+        //Defaults.
+        item.class = item.class || idx;
+        item.text = item.text || idx;
+        item.callback = item.callback || function(){};
+        
+        var elem = $(document.createElement('div'));
+        elem.appendTo(this.$el);
+        
+        //Assign values to element.
+        elem.text(item.text);
+        elem.addClass("sidebutton " + item.class)
+        this.events['click .'+item.class] = item.callback;        
+      }
+      
+      this.delegateEvents();
     },
   });
 

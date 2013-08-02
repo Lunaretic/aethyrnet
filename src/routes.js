@@ -111,7 +111,9 @@ module.exports = function(server)
   {
     if(!user)
       return JSON.stringify({
-        username : "anonymous",
+        username : 'anonymous',
+        sidebarSticky : 'false',
+        sidebarOrientation: 'right',
       });
       
     else
@@ -121,6 +123,8 @@ module.exports = function(server)
         email : user.email,
         charUrl : user.charUrl,
         avatar : user.avatar,
+        sidebarSticky : user.sidebarSticky,
+        sidebarOrientation: user.sidebarOrientation,
       });
   };
   

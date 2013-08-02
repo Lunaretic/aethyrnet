@@ -21,7 +21,7 @@ aethyrnet.backbone['profile'] = new (function(){
       
       //Boilerplate
       aethyrnet.PageView.prototype.initialize(options)
-        
+      
       getTemplate('profile', { css : true, view : this, mainCss : true }, this.render.bind(this));
     },
     
@@ -35,6 +35,8 @@ aethyrnet.backbone['profile'] = new (function(){
         email : aethyrnet.user.get('email'),
         charUrl : aethyrnet.user.get('charUrl'),
         avatar : aethyrnet.user.get('avatar'),
+        orientation : aethyrnet.user.get('sidebarOrientation'),
+        onScreen : aethyrnet.user.get('sidebarSticky'),
       }));
       
       $('input[type="text"]', this.$el).blur();

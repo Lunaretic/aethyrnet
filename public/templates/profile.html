@@ -18,15 +18,16 @@
         <form><table cellspacing="0" cellpadding="0">
           
           <tr>
-            <td width="120">Email:</td>
+            <td width="120"><label for="emailField">Email:</label></td>
             <td><input type="text" size="40" maxlength="40" title="Email Address" id="emailField" value="<%= email %>"/></td>
           </tr>
           <tr>
-            <td width="120">Lodestone URL:</td>
+            <td width="120"><label for="charUrlField">Lodestone URL:</label></td>
             <td><input type="text" size="70" maxlength="70" title="http://na.beta.finalfantasyxiv.com/lodestone/character/######/" id="charUrlField" value="<%= charUrl %>"/></td>
           </tr>
         </table></form>
         
+        <br/>
         <div class="sectionHeader">Aethyrnet.com Background</div>
         <form>
           <input type="radio" name="background" value="coerthas" <% if(background == "coerthas"){ %>checked="checked"<% } %>>Coerthas</input><br/>
@@ -34,6 +35,24 @@
           <input type="radio" name="background" value="gridania" <% if(background == "gridania"){ %>checked="checked"<% } %>>Gridania</input><br/>
           <input type="radio" name="background" value="limsa" <% if(background == "limsa"){ %>checked="checked"<% } %>>Limsa Lominsa</input><br/>
         </form>
+      
+        <br/>
+        <div class="sectionHeader">Sidebar Options</div>
+        <form><table cellspacing="0" cellpadding="0">
+          <tr><td width="180"><label for="sidebarOrientation">Sidebar Orientation:</label></td>
+          <td><select id="sidebarOrientation" style="width: 200px">
+            <option value="left" <% if(orientation="left"){ %>selected="selected"<% } %>>Left</option>
+            <option value="right" <% if(orientation="right"){ %>selected="selected"<% } %>>Right</option>
+          </select></td></tr>
+          
+          <tr><td><label for="onScreen">Sticky Sidebar:</label></td>
+          <td><select id="onScreen" style="width: 200px">
+            <option value="left" <% if(onScreen){ %>selected="selected"<% } %>>Keep On Screen</option>
+            <option value="right" <% if(!onScreen){ %>selected="selected"<% } %>>Allow Scrolling</option>
+          </select></td></tr>
+        </table></form>
+        
+        
       </div>
     </td>
   </tr>

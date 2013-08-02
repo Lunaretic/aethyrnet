@@ -18,6 +18,10 @@ module.exports.user = new mongoose.Schema({
   
   avatar : { type : String, trim : true, default : '_default.jpg' },
   
+  sidebarSticky : { type : Boolean, default : false },
+  
+  sidebarOrientation : { type : String, trim : true, default : 'right' },
+  
   
 });
 
