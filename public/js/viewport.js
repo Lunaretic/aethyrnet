@@ -46,7 +46,8 @@ aethyrnet.backbone['viewport'] = new (function(){
       //Create post button.
       this.subviews.sidebar = new aethyrnet.backbone['viewport'].SidebarView({
         "Post News" : {
-          class : "postNews",
+          className : "postNews",
+          loggedIn : true,
         },
       });
       this.subviews.sidebar.$el.appendTo(document.body);
@@ -347,7 +348,7 @@ aethyrnet.backbone['viewport'] = new (function(){
           continue;
         
         //Defaults.
-        item.class = item.class || idx;
+        item.className = item.className || idx;
         item.text = item.text || idx;
         item.callback = item.callback || function(){};
         
@@ -356,8 +357,8 @@ aethyrnet.backbone['viewport'] = new (function(){
         
         //Assign values to element.
         elem.text(item.text);
-        elem.addClass("sidebutton " + item.class)
-        this.events['click .'+item.class] = item.callback;        
+        elem.addClass("sidebutton " + item.className)
+        this.events['click .'+item.className] = item.callback;        
       }
       
       this.delegateEvents();
