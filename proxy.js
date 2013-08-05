@@ -21,7 +21,10 @@ httpProxy.createServer({
     'www.mafiaplus.net'       : '127.0.0.1:8002',
     'test.mafiaplus.net'      : '127.0.0.1:8082',
     
+    //Resume
+    'resume.aethyrnet.com'    : '127.0.0.1:8083',
+    
     //English
-    'english.aethyrnet.com'   : '127.0.0.1:8003',
+    'english.aethyrnet.com'   : '127.0.0.1:8004',
   }
 }).listen(80);
