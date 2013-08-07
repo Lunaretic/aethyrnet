@@ -13,7 +13,7 @@ proxy:
 	cd $(PRODPATH); NODE_ENV=production forever start -l $(PRODPATH)/log/$(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 proxy.js
 	
 commit:
-	cd $(DEVPATH); git add .; git commit; git push;
+	cd $(DEVPATH); git commit -a; git push;
 
 commit-r:
 	cd $(DEVPATH); git add .; git commit; git push;
