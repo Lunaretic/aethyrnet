@@ -67,12 +67,16 @@ module.exports = function(server)
   var indexFile = path.join(__dirname,'/index.html');
   var indexMTime = fs.statSync(indexFile).mtime;
   var template = _.template(fs.readFileSync(__dirname + '/index.html').toString());
+  
+  //Get root?
   server.get('/', function(req, res)
   {
+    //Check index file's Mtime.
     fs.stat(indexFile, function(err, stat){
       if(err)
         throw err;
-      
+        
+      //New version? Gotta update cache.
       if(stat.mtime.toString() != indexMTime.toString())
       {
         util.log("Updating Cache for Index.");
@@ -83,14 +87,16 @@ module.exports = function(server)
           template = _.template(data.toString());
           res.end(template({
             environment : process.env.NODE_ENV,
-            userData : getUserInfo(req.user),
+            userData : getUserInfo(req.user, true),
             bgImage : ( req.user ? req.user.bgImage : false ),
           }));
         });
       }
+      
+      //Old version?  Throw the cache at the request.
       return res.end(template({
         environment : process.env.NODE_ENV,
-        userData : getUserInfo(req.user),
+        userData : getUserInfo(req.user, true),
         bgImage : ( req.user ? req.user.bgImage : false ),
       }));
     });
@@ -109,17 +115,16 @@ module.exports = function(server)
   //==========================================
   
   //Get a JSON client-safe representation of a user.
-  function getUserInfo(user)
+  function getUserInfo(user, objectify)
   {
     if(!user)
-      return JSON.stringify({
+      var uData = {
         username : 'anonymous',
         sidebarSticky : 'false',
         sidebarOrientation: 'right',
-      });
-      
+      };
     else
-      return JSON.stringify({
+      var uData = {
         username : user.username,
         bgImage : user.bgImage,
         email : user.email,
@@ -127,7 +132,12 @@ module.exports = function(server)
         avatar : user.avatar,
         sidebarSticky : user.sidebarSticky,
         sidebarOrientation: user.sidebarOrientation,
-      });
+      };
+      
+    if(objectify)
+      return uData;
+    else
+      return JSON.stringify(uData);
   };
   
   //Cookie User-Info retreival

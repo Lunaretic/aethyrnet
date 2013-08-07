@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
   
   
   <title>Aethyrnet - A Cactuar Server LS/FC</title>
@@ -39,7 +42,7 @@
     })();
     
     //User Data integration.
-    aethyrnet.userData = <%= userData %>;
+    aethyrnet.userData = <%= JSON.stringify(userData) %>;
     /*
     $().ready(function()
     {
@@ -62,28 +65,43 @@
   <script type="text/javascript" src="/public/js/user.js"></script>
 </head>
 <body>
-  <div id="background" style="background-image: url('/public/images/<%= ( bgImage ? bgImage : "coerthas" ) %>.jpg')"></div>
-  <div id="header">
-    <div id="logo"></div>
-    <!--Variable Width Centering CSS trick -->
-    <div id="menu-container" class="container-center">
-      <div class="outer-center">
-        <div id="menu" class="inner-center">
-        </div>
+  
+  <!-- Bootstrap navbar -->
+  <div id="header" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Aethyrnet</a>
+      
+      <div class="nav-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">News</a></li>
+          <li><a href="#profile">Profile</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Free Company Board</a></li>
+        </ul>
       </div>
+      
+      <p class="navbar-text pull-right">
+        <% if(userData.username != "anonymous") { %>
+          Welcome back, <a href="#profile" class="navbar-link"><% print(userData.username) %></a>
+        <% } else { %>
+          <a href="#login" class="navbar-link">Log In / Register</a>
+        <% } %>
+      </p>  
+      
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
     </div>
-    <div id="masthead">A Cactuar Server LS/FC<br/>Aethyrnet.TeamSpeak3.com</div>
-    <div class="clear"></div>
   </div>
   
-  <div id="header-bg"></div>
-  <div id="header-spacer"></div>
   
-  <div id="bottom-fade" class="gradient-down"></div>
-  <div id="top-fade" class="gradient-up"></div>
-  <img id="loading" src="/public/images/loading.gif" width="150" height="30"></img>
-  <div id="page-frame">
-  <div id="main" class="fade-in"></div>
+  <!-- Main page frame -->
+  <div id="main" class="container">
+  </div>
   
+  <div id="background" style="background-image: url('/public/images/<%= ( bgImage ? bgImage : "coerthas" ) %>.jpg')"></div>
   <div id="copyright"><%= (environment != "production" ? "Environment: " + environment + "<br/>" : "") %>Aethyrnet Logo &copy; 50DKP, LLC.<br/>Background Images &amp; Meteor Logo &copy; SQUARE-ENIX CO. LTD.</div>
 </body>
