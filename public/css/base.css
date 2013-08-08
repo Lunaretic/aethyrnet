@@ -72,6 +72,10 @@
   opacity: 0.4;
 }
 
+.navbar-inverse
+{
+  background-color: rgba(50,50,50, 0.8);
+}
 
 #header .navbar-brand
 {
@@ -93,4 +97,14 @@
         height: 32px;
     }
 }
+
+#main
+{
+  padding-top: 70px;
+
+  position: relative;
+  z-index: 100;
+}
+
+
 

@@ -30,6 +30,7 @@ aethyrnet.backbone['user'] = new (function(){
   this.LoginStatusView = Backbone.View.extend({
     
     id : "loginStatus",
+    className : "navbar-text pull-right",
     mode : 'anonymous',
     
     modeEvents :
@@ -89,7 +90,7 @@ aethyrnet.backbone['user'] = new (function(){
       if(mode)
         this.mode = mode;
       
-      this.$el.attr("class",this.mode);
+      this.$el.attr("class",this.className + " " + this.mode);
       
       //Render variables
       this.$el.html(this.template({
@@ -98,9 +99,9 @@ aethyrnet.backbone['user'] = new (function(){
       }));
       
         
-      this.$el.animateAuto("both",100,function(){
+      /*this.$el.animateAuto("both",100,function(){
         //Focus username box.
-      }.bind(this));
+      }.bind(this));*/
       
       this.events = this.modeEvents[this.mode];
       this.delegateEvents();

@@ -126,7 +126,7 @@ aethyrnet.backbone['feed'] = new (function(){
       //Retreive our FeedEntry template before calling render.
       function(callback)
       {
-        return getTemplate('feedEntry', { view : v }, callback);
+        return getTemplate('feedEntry', { css : true,  view : v }, callback);
       }],
       //Ok, now render.
       function(err, result)

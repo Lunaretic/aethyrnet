@@ -14,22 +14,23 @@
 //====================================================//
 aethyrnet.backbone['viewport'] = new (function(){
   this.ViewportView = Backbone.View.extend({
-  
-    subviews : {},
-    mainView : false,
-    
-    renderOK : false,
     
     events : {
-      'click #logo' : 'goHome',
+      'click #header .navbar-brand' : 'goHome',
     },
     
     initialize : function(options)
     {
-      //Login Status Panel.
-      this.subviews.loginStatusPanel = new aethyrnet.backbone['user'].LoginStatusView();
-      this.subviews.loginStatusPanel.$el.appendTo($('#header'));
-        
+      this.subviews = {};
+      this.mainView = false;
+      this.renderOK = false;
+
+      //Attach the login status panel.
+      this.subviews.loginStatusPanel = new aethyrnet.backbone['user'].LoginStatusView(
+      {
+          el : $('#login-status')
+      });
+
       //OK to render now.
       this.renderOK = true;
     
@@ -37,13 +38,19 @@ aethyrnet.backbone['viewport'] = new (function(){
       this.render();
       
       //Create Main Menu.
-      this.subviews.mainMenu = new aethyrnet.backbone['viewport'].MainMenuView({ el : $('#menu') });
+      //TEMP: Omit while we determine how this should interact (if at all) with
+      //Bootstrap (maybe just menu slot management?)
+      //this.subviews.mainMenu = new aethyrnet.backbone['viewport'].MainMenuView({ el : $('#menu') });
       
+
+      //TODO: Convert to use Bootstrap elements.
       //Status Notification Panel
       this.subviews.statusPanel = new aethyrnet.backbone['viewport'].StatusView();
       this.subviews.statusPanel.$el.appendTo(document.body);
       
+      //TODO: Come back to this later.
       //Create post button.
+      /*
       this.subviews.sidebar = new aethyrnet.backbone['viewport'].SidebarView({
         "Post News" : {
           className : "postNews",
@@ -51,6 +58,7 @@ aethyrnet.backbone['viewport'] = new (function(){
         },
       });
       this.subviews.sidebar.$el.appendTo(document.body);
+      */
       
     },
     
@@ -91,6 +99,8 @@ aethyrnet.backbone['viewport'] = new (function(){
         aethyrnet.pageQueue = false;  
       }
       
+
+      console.log("Starting render cycle: " + page)
       this.rendering = true;
       this.currentPage = page;
       

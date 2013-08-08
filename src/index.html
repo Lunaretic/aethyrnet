@@ -43,7 +43,7 @@
     
     //User Data integration.
     aethyrnet.userData = <%= JSON.stringify(userData) %>;
-    /*
+    
     $().ready(function()
     {
       //Setup user
@@ -56,7 +56,7 @@
       
       //Wipe out the startup script
       $('#startupScript').remove();
-    });*/
+    });
   </script>
   
   <!-- Aethyrnet Scripts -->
@@ -80,7 +80,7 @@
         </ul>
       </div>
       
-      <p class="navbar-text pull-right">
+      <p id="login-status" class="navbar-text pull-right">
         <% if(userData.username != "anonymous") { %>
           Welcome back, <a href="#profile" class="navbar-link"><% print(userData.username) %></a>
         <% } else { %>
@@ -102,6 +102,11 @@
   <div id="main" class="container">
   </div>
   
+
+
   <div id="background" style="background-image: url('/public/images/<%= ( bgImage ? bgImage : "coerthas" ) %>.jpg')"></div>
+  
+
+  <div id="bottom-fade" class="gradient-down"></div>
   <div id="copyright"><%= (environment != "production" ? "Environment: " + environment + "<br/>" : "") %>Aethyrnet Logo &copy; 50DKP, LLC.<br/>Background Images &amp; Meteor Logo &copy; SQUARE-ENIX CO. LTD.</div>
 </body>

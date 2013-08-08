@@ -1,20 +1,22 @@
 <% if(mode == "loggedIn") { %>
-<span id="welcomeMessage">Welcome back, <span class="fancyName"><%= username %></span></span>
+  Welcome back, <a href="#profile" class="navbar-link"><%= username %></a>
+
 <% } else if (mode == "anonymous") { %>
-<span id="welcomeMessage">Log In / Register</span>
+ <a href="#login" class="navbar-link">Log In / Register</a>
+
 <% } else if (mode == "login") { %>
-<form id="loginForm">
-  <table cellspacing="0" cellpadding="0">
-  <tr>
-    <td><input id="loginUsername" class="inactive" type="text" size="20" title="username" maxlength="20" value="username"></input></td>
-    <td><span class="submit button">Log In</span></td>
-  </tr>
-  <tr>
-    <td><input id="loginPassword" class="inactive" title="password" type="text" size="20" maxlength="20" value="password"></input></td>
-    <td><span class="register button">Register</span></td>
-  </tr>
-  <tr>
-    <td colspan="2"><div class="errorText"></div></td>
-  </tr>
-</form>
+  <form id="loginForm">
+    <table cellspacing="0" cellpadding="0">
+    <tr>
+      <td><input id="loginUsername" class="inactive" type="text" size="20" title="username" maxlength="20" value="username"></input></td>
+      <td><span class="submit button">Log In</span></td>
+    </tr>
+    <tr>
+      <td><input id="loginPassword" class="inactive" title="password" type="text" size="20" maxlength="20" value="password"></input></td>
+      <td><span class="register button">Register</span></td>
+    </tr>
+    <tr>
+      <td colspan="2"><div class="errorText"></div></td>
+    </tr>
+  </form>
 <% } else {} %>
