@@ -9,6 +9,3 @@
 
 # Ignore log files
 /log/*
-
-# Ignore security stuff
-.netrc
