@@ -41,31 +41,20 @@ aethyrnet.backbone['viewport'] = new (function(){
       this.subviews.mainMenu = new aethyrnet.backbone['viewport'].MainMenuView(
       { 
         el : $('#main-menu') 
-      });
-
+      });      
+      
       //OK to render now.
       this.renderOK = true;
-    
+      
       //Call render.
       this.render();
       
       
-
-      //TODO: Convert to use Bootstrap elements.
-      //Status Notification Panel
-      
-      //TODO: Come back to this later.
-      //Create post button.
-      /*
-      this.subviews.sidebar = new aethyrnet.backbone['viewport'].SidebarView({
-        "Post News" : {
-          className : "postNews",
-          loggedIn : true,
-        },
-      });
-      this.subviews.sidebar.$el.appendTo(document.body);
-      */
-      
+      //Hook our other events we want.
+      aethyrnet.events.on('user:logInOut', function()
+      {
+        this.reload();
+      }.bind(this));
     },
     
     // Ease of access function for reloading current page.
@@ -73,6 +62,7 @@ aethyrnet.backbone['viewport'] = new (function(){
     {
       this.render(this.currentPage, true);
     },
+    
     
     
     /* ===============================================
@@ -145,8 +135,6 @@ aethyrnet.backbone['viewport'] = new (function(){
         });
       }
       
-      
-            
       aethyrnet.router.navigate(page, {
         replace : noHistory
       });
@@ -158,54 +146,24 @@ aethyrnet.backbone['viewport'] = new (function(){
         width : "30%",
       });
       
-      //Ensure our feed backbone is loaded and display main feed.
+      //Load the view we want.
       getBackbone(view[0], (function renderMainView(err, context)
       {      
         statusBar.css({
           width : "70%",
         });
       
-        //Setup render callback.
-        var renderCallback = function(){
-          
-          statusBar.css({
-            width : "100%",
-          });
-          
-          //Fade out status bar.
-          statusBar.delay(300, 'fx').animate({
-            opacity : 0,
-          },{
-            duration : 200,
-            easing : 'linear'
-          }).queue('fx', function(next)
-          {
-            statusBar.css({
-              visibility : 'hidden',
-              width : "0%",
-            });
-            return next();
-          });
-          
-          //Display main page view.
-          $('#main').queue('fx', function(next)
-          {
-            $(this).css({
-              opacity: 1
-            });
-            return next();
-          });
-        };
-          
-          
+        //Bind the render callback to the main event listener.
+        aethyrnet.events.once('page-frame:render', this.renderCallback);
+        
         //Attempt to instantiate view.
         try 
         {
-          this.mainView = new context[view[1]]({
-            renderCallback : renderCallback 
-          });
+          this.mainView = new context[view[1]]();
+          
           this.mainView.$el.appendTo('#main');
         }
+        
         //Because Chrome is too retarded to support if e instanceof aethyrnet.SecurityError
         catch(e)
         {
@@ -215,7 +173,7 @@ aethyrnet.backbone['viewport'] = new (function(){
             
           this.mainView = false;
           aethyrnet.notify(e);
-          renderCallback();
+          aethyrnet.events.trigger('viewport:renderComplete');
         }
         
         this.rendering = false;
@@ -226,7 +184,40 @@ aethyrnet.backbone['viewport'] = new (function(){
     goHome : function(event)
     {
       this.render('news');
-    }
+    },
+      
+    renderCallback : function()
+    {
+      var statusBar = $('#page-status-bar .progress-bar');
+      statusBar.css({
+        width : "100%",
+      });
+      
+      //Fade out status bar.
+      statusBar.delay(300, 'fx').animate({
+        opacity : 0,
+      },{
+        duration : 200,
+        easing : 'linear'
+      }).queue('fx', function(next)
+      {
+        statusBar.css({
+          visibility : 'hidden',
+          width : "0%",
+        });
+        return next();
+      });
+      
+      //Display main page view.
+      $('#main').queue('fx', function(next)
+      {
+        $(this).css({
+          opacity: 1
+        });
+        return next();
+      });
+    },
+  
   });
   
   //==============================================//
@@ -249,26 +240,26 @@ aethyrnet.backbone['viewport'] = new (function(){
       
       'About' : 'about',
       
-      'Lodestone' : 'url:http://na.beta.finalfantasyxiv.com/lodestone/',
+      'Free Company Board' : 'url:http://na.beta.finalfantasyxiv.com/lodestone/',
     },
     
     initialize : function()
     {
-        var loc = String(document.location);
-        var idx = loc.indexOf('#');
-        var activePage = (-1 == idx ? "" : loc.substring(idx + 1));
-    
-      //getTemplate('menu', { view : this }, this.render.bind(this));
+
+      aethyrnet.events.on('user:logInOut', this.render.bind(this));
+      
       this.template = _.template("\
       <% for(var idx in items) { %>\
         <li <%= ( activePage === items[idx] ? 'class=\"active\"' : '') %>><a href=\"<%= items[idx] %>\"><%= idx %></a></li>\
       <% } %>");
-      this.render(activePage);
+      this.render();
     },
     
-    render : function(activePage)
+    render : function()
     {
-      activePage = activePage || "";
+      var loc = String(document.location);
+      var idx = loc.indexOf('#');
+      var activePage = (-1 == idx ? "" : loc.substring(idx + 1));
       activePage = "/#" + activePage.trim();
       
       //Fix for default page.
@@ -307,15 +298,19 @@ aethyrnet.backbone['viewport'] = new (function(){
     
     menuClick : function(event)
     {
-      if($(event.target).parent().hasClass('active'))
+      var $target = $(event.target);
+      if($target.parent().hasClass('active'))
         return aethyrnet.viewport.reload();
       
       this.$el.find('.active').removeClass('active');
-      $(event.target).parent().delay(100).queue(function(next)
-      {
-        $(this).addClass('active');
-        return next();
-      });
+      
+      //Only highlight for local links.
+      if($target.attr('href').substring(0,2) == "/#")
+        $target.parent().delay(100).queue(function(next)
+        {
+          $(this).addClass('active');
+          return next();
+        });
     }
     
   });
@@ -428,29 +423,29 @@ aethyrnet.backbone['viewport'] = new (function(){
   //        Base Boilerplate Page View
   //===========================================//
   this.PageView = Backbone.View.extend({
-    initialize : function(options)
+    id : "page-frame",
+    
+    initialize : function()
     {
-      var options = options || {};
-      var security  = this.security || options.security || {};
+      this.security = this.security || {};
       
       //Client-side security checking.
-      if(security.loggedIn && !aethyrnet.user.loggedIn())
+      if(this.security.loggedIn && !aethyrnet.user.loggedIn())
       {
         //If we failed security, throw us out of here.
         throw new aethyrnet.SecurityError("You must be logged in to access this page.");
       }
-        
-     
-      this.renderCallback = options.renderCallback;
-      return true;
+      
+      this.neverRendered = true;
+      
+      if(this.initializePage)
+        return this.initializePage.apply(this, arguments);
     },
     render : function()
     {
-      if(this.renderCallback)
-      {
-        this.renderCallback();
-        delete this.renderCallback;
-      }
+      aethyrnet.events.trigger('page-frame:render');
+      if(this.renderPage)
+        return this.renderPage.apply(this, arguments);
     }
   });
 })();
@@ -725,3 +720,9 @@ aethyrnet.SecurityError = function SecurityError(msg){
     return this.msg;
   };
 };
+
+//=============================================//
+//                Event Handler
+//=============================================//
+aethyrnet.events = _.clone(Backbone.Events);
+

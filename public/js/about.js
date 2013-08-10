@@ -5,11 +5,8 @@ aethyrnet.backbone['about'] = new (function(){
   //----------------------------------------
   this.AboutView = aethyrnet.PageView.extend({
   
-    initialize : function(options)
-    {
-      //Always call base initialize for page views.
-      aethyrnet.PageView.prototype.initialize(options);
-      
+    initializePage : function(options)
+    {      
       //Retrieve template files.
       getTemplate('about', { view : this }, function(err, context)
       {
@@ -17,7 +14,7 @@ aethyrnet.backbone['about'] = new (function(){
       }.bind(this));
     },
     
-    render : function()
+    renderPage : function()
     {    
       //Always call base render for main page views.
       aethyrnet.PageView.prototype.render();

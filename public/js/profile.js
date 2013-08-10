@@ -11,23 +11,23 @@ aethyrnet.backbone['profile'] = new (function(){
       'blur input[type="text"]' : 'blurField',
       'change input[type="text"]' : 'changeField',
     },
+    
+    security : {
+      loggedIn : true,
+    },
         
-    initialize : function(options)
+    initializePage : function()
     {
       //Set up Security options
-      options.security = {
+      security = {
         loggedIn : true,
       };
-      
-      //Boilerplate
-      aethyrnet.PageView.prototype.initialize(options)
       
       getTemplate('profile', { css : true, view : this, mainCss : true }, this.render.bind(this));
     },
     
-    render : function()
+    renderPage : function()
     {
-      aethyrnet.PageView.prototype.render();
       this.$el.html(this.template({
         //Template vars
         username : aethyrnet.util.prettyName(aethyrnet.user.get('username')),

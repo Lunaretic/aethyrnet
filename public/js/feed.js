@@ -77,11 +77,8 @@ aethyrnet.backbone['feed'] = new (function(){
       Backbone.View.prototype.remove.call(this);
     },
     
-    initialize : function(options)
-    {
-      //Always call base initialize for page views.
-      aethyrnet.PageView.prototype.initialize(options);
-      
+    initializePage : function(options)
+    {      
       this.subviews = [];
       this.collection = new Feed();
       
@@ -137,11 +134,8 @@ aethyrnet.backbone['feed'] = new (function(){
       
     },
     
-    render : function()
-    {
-      //Always call base render for main page views.
-      aethyrnet.PageView.prototype.render();
-      
+    renderPage : function()
+    {      
       for(var idx in this.subviews)
       {
         this.$el.append(this.subviews[idx].el);

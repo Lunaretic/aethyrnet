@@ -57,28 +57,30 @@ aethyrnet.backbone['user'] = new (function(){
     {
       if(aethyrnet.user.loggedIn())
         this.mode = 'loggedIn';
-      
+        
       this.events = this.modeEvents[this.mode];
       this.delegateEvents();
-      var v = this;
       
+      //Bind global events.
+      aethyrnet.events.on('user:logInOut', function(loggedIn)
+      {
+        this.render(loggedIn ? 'loggedIn' : 'anonymous');
+      }.bind(this));
       
-      delete aethyrnet.userData;
       
       //Log the user in and get the template for rendering simultaneously.
       async.parallel([
-      
         //Retreive template
         function(callback)
         {
-          getTemplate('loginStatus', { css : true, view : v }, callback);
-        },
+          getTemplate('loginStatus', { css : true, view : this }, callback);
+        }.bind(this),
       ],
       function(err, result)
       {
-        v.renderOK = true;
-        v.render()
-      });
+        this.renderOK = true;
+        this.render()
+      }.bind(this));
       
     },
     
@@ -293,29 +295,19 @@ aethyrnet.util.changeBG = function(bgImage)
 aethyrnet.util.setupUser = function(user)
 {
   if(!user)
-    return aethyrnet.util.logOut();
-  
-  //Bind our data
-  aethyrnet.user = new aethyrnet.backbone['user'].UserModel(user);
-
-  //That's it if we don't have a viewport.
-  if(!aethyrnet.viewport)
-    return;
-  //Reload the current page.
-  aethyrnet.viewport.reload();  
-
-  if(aethyrnet.user.loggedIn())
-    aethyrnet.viewport.subviews.loginStatusPanel.mode = 'loggedIn';
+  {
+    aethyrnet.util.logOut();
+    return aethyrnet.events.trigger('user:logInOut', false);
+  }
   else
-    aethyrnet.viewport.subviews.loginStatusPanel.mode = 'anonymous';
-
-    
-  //Re-render login status panel and main menu.
-  aethyrnet.viewport.subviews.loginStatusPanel.render();
-  aethyrnet.viewport.subviews.mainMenu.render();
+  {
+    //Bind our data
+    aethyrnet.user = new aethyrnet.backbone['user'].UserModel(user);
+    return aethyrnet.events.trigger('user:logInOut', true);
+  }
   
   //If we already have the viewport, this isn't the first log in.
-  aethyrnet.util.showUserBg();
+  //aethyrnet.util.showUserBg();
 };
 
 aethyrnet.util.logOut = function(user)
