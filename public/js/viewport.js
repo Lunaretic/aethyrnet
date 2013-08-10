@@ -28,7 +28,13 @@ aethyrnet.backbone['viewport'] = new (function(){
       //Attach the login status panel.
       this.subviews.loginStatusPanel = new aethyrnet.backbone['user'].LoginStatusView(
       {
-          el : $('#login-status')
+        el : $('#login-status')
+      });
+      
+      //Attach alert panel.
+      this.subviews.alertPanel = new aethyrnet.backbone['viewport'].AlertView(
+      {
+        el : $('#alert-panel')
       });
 
       //OK to render now.
@@ -45,8 +51,6 @@ aethyrnet.backbone['viewport'] = new (function(){
 
       //TODO: Convert to use Bootstrap elements.
       //Status Notification Panel
-      this.subviews.statusPanel = new aethyrnet.backbone['viewport'].StatusView();
-      this.subviews.statusPanel.$el.appendTo(document.body);
       
       //TODO: Come back to this later.
       //Create post button.
@@ -104,6 +108,15 @@ aethyrnet.backbone['viewport'] = new (function(){
       this.rendering = true;
       this.currentPage = page;
       
+      //Display the loading bar.
+      var statusBar = $('#page-status-bar .progress-bar');
+      statusBar.stop(true, true);
+      statusBar.css({
+        width : "10%",
+        visibility : "visible",
+        opacity: 0.8,
+      });
+      
       //Slice up our view string.
       var view = viewString.split('.');
       
@@ -131,41 +144,45 @@ aethyrnet.backbone['viewport'] = new (function(){
       }
       
       
-      
-      //Show loading icon.
-      $('#loading').css({
-        visibility : 'visible',
-      }).animate({
-        opacity : 1.0,
-      },{
-        duration : 100,
-        easing : 'easeInQuad',
-      });
-      
+            
       aethyrnet.router.navigate(page, {
         replace : noHistory
       });
       
       window.document.title = "Aethyrnet - " + aethyrnet.util.prettyName(page);
       
+      //Update status bar.
+      statusBar.css({
+        width : "30%",
+      });
+      
       //Ensure our feed backbone is loaded and display main feed.
       getBackbone(view[0], (function renderMainView(err, context)
-      {
+      {      
+        statusBar.css({
+          width : "70%",
+        });
+      
         //Setup render callback.
         var renderCallback = function(){
-        
-          //Hide loading icon.
-          $('#loading').clearQueue('fx').animate({
+          
+          statusBar.css({
+            width : "100%",
+          });
+          
+          //Fade out status bar.
+          statusBar.delay(300, 'fx').animate({
             opacity : 0,
           },{
-            duration : 100,
-            easing : 'easeInQuad',
+            duration : 200,
+            easing : 'linear'
           }).queue('fx', function(next)
           {
-            $('#loading').css({
+            statusBar.css({
               visibility : 'hidden',
+              width : "0%",
             });
-            next();
+            return next();
           });
           
           //Display main page view.
@@ -181,7 +198,10 @@ aethyrnet.backbone['viewport'] = new (function(){
         //Attempt to instantiate view.
         try 
         {
-          this.mainView = new context[view[1]]({ renderCallback : renderCallback });
+          this.mainView = new context[view[1]]({
+            renderCallback : renderCallback 
+          });
+          this.mainView.$el.appendTo('#main');
         }
         //Because Chrome is too retarded to support if e instanceof aethyrnet.SecurityError
         catch(e)
@@ -190,14 +210,10 @@ aethyrnet.backbone['viewport'] = new (function(){
           if(!(e instanceof aethyrnet.SecurityError))
             throw e;
             
-          this.mainView = new aethyrnet.backbone['viewport'].securityErrorView({
-            renderCallback : renderCallback,
-            error : e
-          });
+          this.mainView = false;
+          aethyrnet.notify(e);
+          renderCallback();
         }
-        
-        
-        this.mainView.$el.appendTo($("#main"));
         
         this.rendering = false;
       }).bind(this));
@@ -276,9 +292,9 @@ aethyrnet.backbone['viewport'] = new (function(){
   //==============================================//
   //           Status Notification View
   //==============================================//
-  this.StatusView = Backbone.View.extend({
+  this.AlertView = Backbone.View.extend({
     
-    id : 'statusPanel',
+    id : 'alertPanel',
     
     initialize : function()
     {
@@ -291,18 +307,19 @@ aethyrnet.backbone['viewport'] = new (function(){
     
     post : function(message, type)
     {
+      type = type || "WARNING";
+      type.toUpperCase();
       //First, change our displayed text.
       this.$el.queue('fx',function(next){
-        this.$el.text(message);
-        this.$el.addClass(type);
+        this.$el.text(message).html("<strong>" + type + ":</strong> " + this.$el.html());
         next();
       }.bind(this)).animate({
         //Then animate us visible
-        top : 0,
+        top : "10%",
         
       }, 300).delay(2000).animate({
         //Then delay, then animate us back out.
-        top : -50,
+        top : -60,
         
       }, 300).queue('fx', function(next){
         //Now remove error text and class.
@@ -404,29 +421,6 @@ aethyrnet.backbone['viewport'] = new (function(){
         delete this.renderCallback;
       }
     }
-  });
-  
-  //===========================================//
-  //           Security Error View
-  //===========================================//
-  this.SecurityErrorView = this.PageView.extend({
-    //Created by viewport.render()
-    initialize : function(options)
-    {
-      //Boilerplate
-      aethyrnet.PageView.prototype.initialize(options);
-      this.error = options.error;
-      
-      this.render();
-    },
-    
-    render : function()
-    {
-      this.$el.text(this.error);
-    
-      //Boilerplate
-      aethyrnet.PageView.prototype.render();
-    },
   });
 })();
 

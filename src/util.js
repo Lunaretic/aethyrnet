@@ -4,14 +4,24 @@ var clc = require('cli-color');
 //Hijack the main error out to email in production.
 if(process.env.NODE_ENV == 'production')
 {
-  console.error = function(msg) {
-    // Log to output.
-    process.stderr.write(msg);
-    
-    // Log to Email.
+  process.on('uncaughtException', function(err)
+  {
+    if(module.exports.error)
+      module.exports.error("Unhandled exception intercepted, sending error email and shutting down.");
     if(module.exports.sendMail)
-      module.exports.sendMail('luna@aethyrnet.com', "Aethyrnet Error", msg + '\n' + new Date());
-  };
+      module.exports.sendMail('luna@aethyrnet.com', "Aethyrnet Error", err + '\n' + new Date(), function(emailErr, message)
+      {
+        //Remove the listener, *then* throw.
+        process.removeAllListeners('uncaughtException');
+        throw(err);
+      });
+    else
+    {
+      //Remove the listener, *then* throw.
+      process.removeAllListeners('uncaughtException');
+      throw(err);
+    }
+  });
 }
 
 module.exports.log = function log(msg)
@@ -39,7 +49,7 @@ module.exports.error = module.exports.err = function logError(msg, kill)
   if(kill)
   {
     console.log("[ " + dt.getHours() + ":" + padLeft(dt.getMinutes(), '00') + ":" + padLeft(dt.getSeconds(), '00') + " ] [ "+ clc.redBright('ERROR') +" ] Aethyrnet Shutting Down at Error Request.");
-    process.exit();
+    process.exit(1);
   }
 }
 
@@ -119,7 +129,7 @@ module.exports.bindMailServer = function(mailServer)
   delete module.exports.bindMailServer;
 }
 
-module.exports.sendMail = function sendMail(address, subject, text)
+module.exports.sendMail = function sendMail(address, subject, text, callback)
 {
   //Send all the Emails!
   module.exports.mailServer.send({
@@ -133,6 +143,9 @@ module.exports.sendMail = function sendMail(address, subject, text)
     
     if(err)
       module.exports.err("SendMail Failure: " + err); 
+    
+    if(callback)
+      callback(err, message);
   });
 }
 
