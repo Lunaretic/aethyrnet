@@ -296,8 +296,7 @@ aethyrnet.util.setupUser = function(user)
 {
   if(!user)
   {
-    aethyrnet.util.logOut();
-    return aethyrnet.events.trigger('user:logInOut', false);
+    return aethyrnet.util.logOut();
   }
   else
   {
@@ -305,9 +304,6 @@ aethyrnet.util.setupUser = function(user)
     aethyrnet.user = new aethyrnet.backbone['user'].UserModel(user);
     return aethyrnet.events.trigger('user:logInOut', true);
   }
-  
-  //If we already have the viewport, this isn't the first log in.
-  //aethyrnet.util.showUserBg();
 };
 
 aethyrnet.util.logOut = function(user)
@@ -322,16 +318,5 @@ aethyrnet.util.logOut = function(user)
     username : 'anonymous',
   });
   
-  if(!aethyrnet.viewport)
-    return;
-  
-  //Redirect back to home.
-  aethyrnet.viewport.render('news');
-  
-  //Re-render login status panel and main menu.
-  aethyrnet.viewport.subviews.loginStatusPanel.render('anonymous');
-  aethyrnet.viewport.subviews.mainMenu.render();
-  
-  //Restore default BgImage
-  aethyrnet.util.showUserBg();
+  return aethyrnet.events.trigger('user:logInOut', false);
 };

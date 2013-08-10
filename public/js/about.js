@@ -14,16 +14,6 @@ aethyrnet.backbone['about'] = new (function(){
       }.bind(this));
     },
     
-    renderPage : function()
-    {    
-      //Always call base render for main page views.
-      aethyrnet.PageView.prototype.render();
-      
-      //Render template file.
-      this.$el.html(this.template({
-      }));
-    },
-    
   });
   
   

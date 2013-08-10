@@ -40,6 +40,7 @@
       this.router = false;
       this.viewport = false;
       this.pageQueue = false;
+      <%= (environment != "production" ? "this.debug = true" : "") %>
     })();
     
     //User Data integration.

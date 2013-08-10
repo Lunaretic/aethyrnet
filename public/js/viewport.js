@@ -54,6 +54,7 @@ aethyrnet.backbone['viewport'] = new (function(){
       aethyrnet.events.on('user:logInOut', function()
       {
         this.reload();
+        aethyrnet.util.showUserBg();
       }.bind(this));
     },
     
@@ -95,10 +96,9 @@ aethyrnet.backbone['viewport'] = new (function(){
         aethyrnet.pageQueue = false;  
       }
       
-
-      console.log("Starting render cycle: " + page)
       this.rendering = true;
       this.currentPage = page;
+      aethyrnet.events.trigger('page-frame:unload');
       
       //Display the loading bar.
       var statusBar = $('#page-status-bar .progress-bar');
@@ -441,12 +441,21 @@ aethyrnet.backbone['viewport'] = new (function(){
       if(this.initializePage)
         return this.initializePage.apply(this, arguments);
     },
+    
     render : function()
     {
       aethyrnet.events.trigger('page-frame:render');
       if(this.renderPage)
         return this.renderPage.apply(this, arguments);
+    },
+    
+    //Default page render
+    renderPage : function()
+    {
+      //Render template file.
+      this.$el.html(this.template());
     }
+    
   });
 })();
 
@@ -725,4 +734,10 @@ aethyrnet.SecurityError = function SecurityError(msg){
 //                Event Handler
 //=============================================//
 aethyrnet.events = _.clone(Backbone.Events);
-
+if(aethyrnet.debug)
+{
+  aethyrnet.events.on('all', function(event)
+  {
+    console.log("Aethyrnet Event: " + event);
+  });
+}
