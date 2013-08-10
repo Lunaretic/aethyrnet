@@ -4,7 +4,8 @@
 //
 //   - Viewport view
 //   - Main Menu view
-//   - Router Singleton.
+//   - Router Singleton
+//   - Base PageView class
 //   - Accessory/utility functions
 //
 
@@ -253,6 +254,8 @@ aethyrnet.backbone['viewport'] = new (function(){
         <li <%= ( activePage === items[idx] ? 'class=\"active\"' : '') %>><a href=\"<%= items[idx] %>\"><%= idx %></a></li>\
       <% } %>");
       this.render();
+      
+      this.listenTo(aethyrnet.router, 'route', this.checkRoute.bind(this));
     },
     
     render : function()
@@ -296,21 +299,21 @@ aethyrnet.backbone['viewport'] = new (function(){
       }));
     },
     
+    // CheckRoute is fired each time aethyrnet.router routes us anywhere.
+    checkRoute : function(router, route, params)
+    {
+      route = '/#' + route;
+      this.$el.find('.active').removeClass('active');
+      
+      //Activate the button if it matches our route.
+      this.$el.find("a[href='"+route+"']").parent().addClass('active');
+    },
+    
     menuClick : function(event)
     {
       var $target = $(event.target);
       if($target.parent().hasClass('active'))
         return aethyrnet.viewport.reload();
-      
-      this.$el.find('.active').removeClass('active');
-      
-      //Only highlight for local links.
-      if($target.attr('href').substring(0,2) == "/#")
-        $target.parent().delay(100).queue(function(next)
-        {
-          $(this).addClass('active');
-          return next();
-        });
     }
     
   });
@@ -739,5 +742,10 @@ if(aethyrnet.debug)
   aethyrnet.events.on('all', function(event)
   {
     console.log("Aethyrnet Event: " + event);
+  });
+  
+  aethyrnet.router.on('route', function(router, route, params)
+  {
+    console.log("Aethyrnet Route: " + route);
   });
 }

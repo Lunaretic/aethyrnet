@@ -125,5 +125,10 @@ body
   right: 20%;
 }
 
+#page-frame
+{
+  position: relative;
+}
+
 
 

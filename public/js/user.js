@@ -73,7 +73,7 @@ aethyrnet.backbone['user'] = new (function(){
         //Retreive template
         function(callback)
         {
-          getTemplate('loginStatus', { css : true, view : this }, callback);
+          getTemplate('loginStatus', { css : false, view : this }, callback);
         }.bind(this),
       ],
       function(err, result)
@@ -221,7 +221,7 @@ aethyrnet.backbone['user'] = new (function(){
     
     profilePage : function(event)
     {
-      aethyrnet.viewport.render('profile');
+      window.location = "/#profile";
     },
     
     logOut : function(event)

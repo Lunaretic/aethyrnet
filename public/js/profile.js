@@ -1,8 +1,6 @@
 aethyrnet.backbone['profile'] = new (function(){
   this.ProfileView = aethyrnet.PageView.extend({
-    
-    id : 'profile',
-    
+        
     events : {
       'click #logoutButton' : 'logOut',
       'click #saveButton' : 'saveUser',

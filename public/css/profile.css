@@ -1,10 +1,10 @@
-#profile
+#page-frame
 {
   font-family: Helvetica, sans-serif;
 }
 
-#profile .avatar,
-#profile .avatarGloss
+#page-frame .avatar,
+#page-frame .avatarGloss
 {
   display: block;
   position: absolute;
@@ -15,7 +15,7 @@
   border-radius: 6px;
 }
 
-#profile .username
+#page-frame .username
 {
   font-size: 20px;
   
@@ -27,39 +27,39 @@
   padding-left: 30px;
 }
 
-#profile table.profileTable
+#page-frame table.profileTable
 {
   width: 800px;
 }
 
-#profile form
+#page-frame form
 {
   margin: 0px 16px;
 }
 
-#profile input[type="text"]
+#page-frame input[type="text"]
 {
   display: block;
 }
 
-#profile #logoutButton,
-#profile #saveButton
+#page-frame #logoutButton,
+#page-frame #saveButton
 {
   float: right;
 }
-#profile #saveButton
+#page-frame #saveButton
 {
   margin-top: -2px;
 }
 
-#profile .sprawl
+#page-frame .sprawl
 {
   border-top: 1px solid #fff;
   margin-top: 2px;
   padding-top: 12px; 
 }
 
-#profile .sprawl .sectionHeader
+#page-frame .sprawl .sectionHeader
 {
   font-size: 16px;
   
@@ -75,7 +75,7 @@
   padding: 0px 8px;
 }
 
-#profile .sprawl input
+#page-frame .sprawl input
 {
   
 }
