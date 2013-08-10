@@ -36,6 +36,12 @@ aethyrnet.backbone['viewport'] = new (function(){
       {
         el : $('#alert-panel')
       });
+      
+      //Create Main Menu.
+      this.subviews.mainMenu = new aethyrnet.backbone['viewport'].MainMenuView(
+      { 
+        el : $('#main-menu') 
+      });
 
       //OK to render now.
       this.renderOK = true;
@@ -43,10 +49,6 @@ aethyrnet.backbone['viewport'] = new (function(){
       //Call render.
       this.render();
       
-      //Create Main Menu.
-      //TEMP: Omit while we determine how this should interact (if at all) with
-      //Bootstrap (maybe just menu slot management?)
-      //this.subviews.mainMenu = new aethyrnet.backbone['viewport'].MainMenuView({ el : $('#menu') });
       
 
       //TODO: Convert to use Bootstrap elements.
@@ -186,11 +188,12 @@ aethyrnet.backbone['viewport'] = new (function(){
           });
           
           //Display main page view.
-          $("#main").animate({
-            opacity : 1.0,
-          },{
-            duration : 100,
-            easing : 'easeInQuad',
+          $('#main').queue('fx', function(next)
+          {
+            $(this).css({
+              opacity: 1
+            });
+            return next();
           });
         };
           
@@ -233,7 +236,7 @@ aethyrnet.backbone['viewport'] = new (function(){
   this.MainMenuView = Backbone.View.extend({
     
     events : {
-      'click span' : 'menuClick',
+      'click a' : 'menuClick',
     },
     
     items : {
@@ -251,46 +254,74 @@ aethyrnet.backbone['viewport'] = new (function(){
     
     initialize : function()
     {
-      getTemplate('menu', { view : this }, this.render.bind(this));
+        var loc = String(document.location);
+        var idx = loc.indexOf('#');
+        var activePage = (-1 == idx ? "" : loc.substring(idx + 1));
+    
+      //getTemplate('menu', { view : this }, this.render.bind(this));
+      this.template = _.template("\
+      <% for(var idx in items) { %>\
+        <li <%= ( activePage === items[idx] ? 'class=\"active\"' : '') %>><a href=\"<%= items[idx] %>\"><%= idx %></a></li>\
+      <% } %>");
+      this.render(activePage);
     },
     
-    render : function()
+    render : function(activePage)
     {
+      activePage = activePage || "";
+      activePage = "/#" + activePage.trim();
+      
+      //Fix for default page.
+      if(activePage === '/#')
+        activePage = "/#news";
+    
       var items = {};
       for(var idx in this.items)
       {
-        //Always show basic links.
+        //Convert basic strings to proper link objects.
         if(typeof(this.items[idx]) == 'string')
-          items[idx] = this.items[idx];
+          this.items[idx] = {
+            page : this.items[idx],
+          }
+        
+        
+        var page = this.items[idx].page;
+        
+        //Shave URL strings and prefix hashbangs
+        if(page.substring(0,4) == 'url:')
+          page = page.substring(4);
         else
-        {
-          //Ensure login requirement for log-in required items.
-          if(this.items[idx].loggedIn && aethyrnet.user.loggedIn())
-            items[idx] = this.items[idx];
-        }
+          page = "/#" + page;
+        
+        //Ensure login requirement for log-in required items.
+        if((!this.items[idx].loggedIn) || (this.items[idx].loggedIn && aethyrnet.user.loggedIn()))
+          items[idx] = page;
       }
       
       this.$el.html(this.template({
         //Template vars
-        items : items
+        items : items,
+        activePage : activePage
       }));
     },
     
     menuClick : function(event)
     {
-      var page = this.items[$(event.target).text()];
-      if(typeof(page) != 'string')
-        page = page.page;
-    
-      if(page.substring(0,4) == 'url:')
-        return window.location = page.substring(4);
-      return aethyrnet.viewport.render(page)
+      if($(event.target).parent().hasClass('active'))
+        return aethyrnet.viewport.reload();
+      
+      this.$el.find('.active').removeClass('active');
+      $(event.target).parent().delay(100).queue(function(next)
+      {
+        $(this).addClass('active');
+        return next();
+      });
     }
     
   });
   
   //==============================================//
-  //           Status Notification View
+  //           Alert Notification View
   //==============================================//
   this.AlertView = Backbone.View.extend({
     

@@ -1,3 +1,8 @@
+body
+{
+    overflow-y: scroll;
+}
+
 .gradient-down
 {
   background: -moz-linear-gradient(top,  rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%); /* FF3.6+ */
@@ -86,17 +91,6 @@
 }
 
 
-@media (min-width: 980px) {
-    .pull-center {
-        text-align: center;
-    }
-    .pull-center > .nav {
-        float:none;
-        display:inline-block;
-        *display: inline; *zoom: 1;
-        height: 32px;
-    }
-}
 
 #main
 {

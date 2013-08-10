@@ -30,13 +30,14 @@ aethyrnet.backbone['feed'] = new (function(){
   //----------------------------------------
   var FeedEntryView = this.FeedEntryView = Backbone.View.extend({
     
-    className : 'feedEntry',
+    className : 'feedEntry media',
     
     initialize : function()
     {
       this.$el.css({
         opacity : 0,
-        'margin-left'  : '10px',
+        right  : '20px',
+        bottom : '2px',
      });
     },
     
@@ -141,16 +142,18 @@ aethyrnet.backbone['feed'] = new (function(){
       //Always call base render for main page views.
       aethyrnet.PageView.prototype.render();
       
-      this.$el.html('<div class="header">Syndicated News</div>');
-      
       for(var idx in this.subviews)
       {
         this.$el.append(this.subviews[idx].el);
         this.subviews[idx].render(this.template);
-        this.subviews[idx].$el.delay(idx * 100).animate({
-          opacity : 1,
-          'margin-left' : 0,
-        }, 200);
+        this.subviews[idx].$el.delay(idx * 100).queue('fx', function(next){
+          this.css({
+            opacity : 1,
+            right : 0,
+            bottom : 0,
+          });
+          next();
+        }.bind(this.subviews[idx].$el));
       }
       
       return this;
