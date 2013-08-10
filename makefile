@@ -18,7 +18,7 @@ commit-r:
 	cd $(PRODPATH); NODE_ENV=production forever start -l $(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
   
 dev:
-	cd $(DEVPATH); NODE_ENV=development nodemon
+	cd $(DEVPATH); NODE_ENV=development nodemon aethyrnet.js
 
 test:
 	cd $(DEVPATH); NODE_ENV=test mocha --reporter $(REPORTER) --recursive
@@ -26,4 +26,4 @@ test:
 test-w:
 	cd $(DEVPATH); NODE_ENV=test mocha --reporter $(REPORTER) --recursive --watch --growl
   
-.PHONY: test
+.PHONY: test test-w dev commit commit-r prod

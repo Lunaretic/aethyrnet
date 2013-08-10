@@ -1,7 +1,20 @@
+if(process.env.NODE_ENV != 'production')
+  process.env.NODE_ENV = 'development';
+
 var util = require ('./src/util.js');
 var clc = require('cli-color');
 
 util.log('==== ' + clc.cyan('Beginning Aethyrnet server startup') + ' ====');
+
+//NodeTime Analytics
+if(process.env.NODE_ENV == 'production')
+{
+  util.notify("Enabling NodeTime Analytics services.");
+  require('nodetime').profile({
+      accountKey: 'b8f45e651d051cbb442cab574e7a613f6866bdd6',
+      appName: 'Aethyrnet.com' + ( process.env.NODE_ENV == 'production' ? '' : ' - development' )
+    });
+}
 
 //Packaged Libraries
 var url = require('url');
@@ -16,8 +29,6 @@ var aethyrForum = require('aethyr-forum');
 
 var conf = require('./src/conf.js');
 
-if(process.env.NODE_ENV != 'production')
-  process.env.NODE_ENV = 'development';
 
 async.waterfall([
 function(callback)
