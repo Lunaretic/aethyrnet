@@ -8,10 +8,6 @@ prod:
 	-NODE_ENV=production forever stop aethyrnet.js
 	cd $(PRODPATH); NODE_ENV=production forever start -l $(PRODPATH)/log/$(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
 
-proxy:
-	-NODE_ENV=production forever stop proxy.js
-	cd $(PRODPATH); NODE_ENV=production forever start -l $(PRODPATH)/log/$(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 proxy.js
-	
 commit:
 	cd $(DEVPATH); git add .; git commit -a; git push;
 
