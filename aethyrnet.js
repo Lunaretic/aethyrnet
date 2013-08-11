@@ -28,6 +28,7 @@ var gzip = require('connect-gzip');
 var aethyrForum = require('aethyr-forum');
 
 var conf = require('./src/conf.js');
+var secrets = require('./src/secrets.js');
 
 
 async.waterfall([
@@ -69,7 +70,7 @@ function(database, callback)
   //Session settings.
   server.use(express.cookieParser());
   server.use(express.session({
-    secret : 'mirelezen',
+    secret : secrets.cookieSecret,
     cookie : 
     {
       //One year expiration
