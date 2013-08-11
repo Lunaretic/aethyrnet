@@ -22,6 +22,8 @@ module.exports.user = new mongoose.Schema({
   
   sidebarOrientation : { type : String, trim : true, default : 'right' },
   
+  //0 Gues, 1 User, 2 Guildie, 3 Officer, 4 Leader, 5 SuperAdmin
+  adminLevel : { type : Number, min : 1, max : 5, default : 1 },
   
 });
 
