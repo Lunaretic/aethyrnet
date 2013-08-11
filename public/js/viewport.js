@@ -151,12 +151,12 @@ aethyrnet.backbone['viewport'] = new (function(){
       
       window.document.title = "Aethyrnet - " + aethyrnet.util.prettyName(page);
       
-      this.updateStatusBar(10);
+      this.updateStatusBar(30);
       
       //Load the view we want.
       getBackbone(view[0], (function renderMainView(err, context)
       {
-        this.updateStatusBar(40);
+        this.updateStatusBar(70);
       
         //Bind the render callback to the main event listener.
         aethyrnet.events.once('page-frame:render', this.renderCallback);
