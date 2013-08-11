@@ -8,6 +8,7 @@
 /public/jsmini/
 
 # Ignore log files
+*.log
 /log/*
 
 # Ignore secrets file
