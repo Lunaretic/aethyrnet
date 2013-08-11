@@ -176,7 +176,7 @@ aethyrnet.backbone['viewport'] = new (function(){
           
           //Kill the main view.
           this.mainView = false;
-          aethyrnet.notify(e);
+          aethyrnet.error(e);
           
           //Done rendering.
           this.hideStatusBar(false);
@@ -409,15 +409,15 @@ aethyrnet.backbone['viewport'] = new (function(){
         
         var typestring = (type ? "<strong>" + type + ":</strong> " : "");
         
-        this.$el.text(message).html( typestring + this.$el.html());
+        this.$el.html(message).html( typestring + this.$el.html());
         next();
       }.bind(this)).animate({
         //Then animate us visible
-        bottom : "10%",
+        top : "10%",
         
-      }, 300).delay(1200).animate({
+      }, 300).delay(2500).animate({
         //Then delay, then animate us back out.
-        bottom : -60,
+        top : -60,
         
       }, 300).queue('fx', function(next){
         //Now remove error text and class.

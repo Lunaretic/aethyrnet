@@ -175,10 +175,20 @@ aethyrnet.backbone['user'] = new (function(){
       
       if(eText)
       {
-        aethyrnet.error(eText)
+        this.postError(eText);
       }
       
       this.delegateEvents();
+    },
+    
+    postError : function(eText)
+    {
+      $(document.createElement('div')).appendTo(this.$el.find('.modal-body')).addClass('alert alert-danger').text(eText).delay(2000).animate({
+        opacity : 0
+      }, 400).queue('fx', function(next)
+      {
+        $(this).alert('close');
+      });
     },
     
     //Attempt login with server
@@ -299,6 +309,8 @@ aethyrnet.util.setupUser = function(user)
   {
     //Bind our data
     aethyrnet.user = new aethyrnet.backbone['user'].UserModel(user);
+    if(aethyrnet.notify)
+      aethyrnet.notify("Now logged in as <strong>" + aethyrnet.util.prettyName(user.username) + "</strong>", 'success');
     return aethyrnet.events.trigger('user:logInOut', true);
   }
 };

@@ -127,9 +127,9 @@ a
 #alert-panel
 {
   position: fixed;
-  bottom : -60px;
+  top : -60px;
   
-  z-index: 2500;
+  z-index: 900;
   
   left: 20%;
   right: 20%;
