@@ -9,11 +9,11 @@ prod:
 	cd $(PRODPATH); NODE_ENV=production forever start -l $(PRODPATH)/log/$(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
 
 commit:
-	cd $(DEVPATH); git add .; git commit -a; npm version patch; git push;
+	cd $(DEVPATH); git add .; git commit -a; git push;
 
 commit-r:
 	cd $(DEVPATH); git add .; git commit -a; git push;
-	cd $(PRODPATH); git pull;
+	cd $(PRODPATH); git pull; npm version minor;
 	-NODE_ENV=production forever stop aethyrnet.js
 	cd $(PRODPATH); NODE_ENV=production forever start -l $(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
   
