@@ -38,14 +38,6 @@ aethyrnet.backbone['user'] = new (function(){
       anonymous : {
         "click" : "showLogin",
       },
-      login : {
-        "click .submit" : 'attemptLogin',
-        "click" : 'frameClick',
-        "click .register" : 'attemptRegister',
-        'focus input' : 'focusField',
-        'blur input' : 'blurField',
-        'keyup input': 'keyupField',
-      },
       loggedIn : {
         //"click" : "profilePage",
       },
@@ -100,124 +92,17 @@ aethyrnet.backbone['user'] = new (function(){
         mode : this.mode,
       }));
       
-        
-      /*this.$el.animateAuto("both",100,function(){
-        //Focus username box.
-      }.bind(this));*/
-      
       this.events = this.modeEvents[this.mode];
       this.delegateEvents();
-      
-      if(this.mode == 'login')
-        $('#loginUsername', this.$el).focus();
     },
-    
-    
-    
     
     //=========================================
     //         User State Management
     //=========================================
     showLogin : function()
     {
-      this.render('login');
+      this.loginModal = new aethyrnet.backbone['user'].LoginModalView();
     },
-    
-    //Attempt login with server
-    attemptLogin : function()
-    {
-      var username = $('#loginUsername', this.$el).val().toLowerCase().trim();
-      var password = $('#loginPassword', this.$el).val().trim();
-      
-      if(
-           username == "username" ||
-           username == "" ||
-           password == "" ||
-           password == "password"
-        )
-        return this.enableForm("Invalid username/password");
-      
-      //Remove handlers for now.
-      this.undelegateEvents();
-      $('.button', this.$el).toggleClass('disabled');
-      $('input', this.$el).prop('disabled', true);
-      
-      var v = this;      
-      $.post('/api/login', {
-        username : username,
-        password : password,
-      }, function(data) {
-        //User successfully logged in.
-        aethyrnet.util.setupUser(data);
-      }, 'json').fail(this.enableForm.bind(this, "Bad Username/Password"));
-    },
-    
-    //Post the registration info.
-    attemptRegister : function()
-    {
-      //Basic form info.
-      var username = $('#loginUsername', this.$el).val();
-      var password = $('#loginPassword', this.$el).val();
-      
-      if(
-           username == "username" ||
-           username == "" ||
-           password == "" ||
-           password == "password"
-        )
-        return this.enableForm("Invalid username/password");
-      
-      //Remove handlers for now while we're working.
-      this.undelegateEvents();
-      $('.button', this.$el).toggleClass('disabled');
-      $('input', this.$el).prop('disabled', true);
-      
-      //Post (v for scope)
-      var v = this;
-      $.post('/api/register', {
-        username : username,
-        password : password,
-      }, function(data) {
-      
-        //If bad result.
-        if(data.result && data.result == "ERROR") 
-          return v.enableForm(data.error);
-        
-        //Welcome user.
-        aethyrnet.util.setupUser(data);
-      }, 'json').fail(function()
-      {
-        this.enableForm("There was an error. :(")
-      }.bind(this));
-    },
-    
-    enableForm : function(eText)
-    { 
-      $('.button', this.$el).toggleClass('disabled');
-      $('input', this.$el).prop('disabled', false);
-      
-      if(eText)
-      {
-        $('.errorText', this.$el).text(eText);
-        this.$el.animateAuto("both",100,function(){
-        });
-      }
-      if((!eText) && $('.errorText', this.$el).text() != "")
-      {
-        $('.errorText', this.$el).text("");
-        this.$el.animateAuto("both",100,function(){
-        });
-      }
-      
-      this.delegateEvents();
-    },
-    
-    frameClick : function(event)
-    {
-      if(event.delegateTarget == event.target)
-        this.logOut();
-    },
-    
     
     profilePage : function(event)
     {
@@ -229,16 +114,51 @@ aethyrnet.backbone['user'] = new (function(){
       aethyrnet.util.logOut();
     },
     
+  });
+  
+  this.LoginModalView = Backbone.View.extend({
+    id : "login-modal",
+    className : "modal fade",
     
-    //Generic focus and blur functions for text/password fields.
-    focusField : function(event)
-    {
-      aethyrnet.util.focusField(event);
+    events : {
+      "click .login" : 'attemptLogin',
+      "click .register" : 'attemptRegister',
+      'keyup input': 'keyupField',
     },
     
-    blurField : function(event)
+    initialize : function()
     {
-      aethyrnet.util.blurField(event);
+      //Don't allow modal to persist. Get rid of that potentially dangerous user data.
+      this.$el.on('hidden.bs.modal', function(){
+        this.remove();
+      }.bind(this));
+    
+      //Retreive our shared template, should already be cached.
+      getTemplate('loginStatus', { css : false, view : this }, function(err, context)
+      {
+        this.render();
+      }.bind(this));
+      
+      this.$el.appendTo(document.body);
+    },
+    
+    render : function()
+    {
+      this.$el.html(this.template({
+        mode : 'modal',
+      }));
+      
+      this.$el.modal({
+        show : true,
+        keyboard : true,
+      });
+      
+      this.$el.delay(200).queue('fx', function(next)
+      {
+        console.log("Focus Trigger");
+        $('#login-username').focus();
+        next();
+      });
     },
     
     keyupField : function(event)
@@ -246,9 +166,86 @@ aethyrnet.backbone['user'] = new (function(){
       if(event.keyCode == 13) {
         this.attemptLogin();
       }
-    }
+    },
     
+    enableForm : function(eText)
+    { 
+      $('.button', this.$el).toggleClass('disabled');
+      $('input', this.$el).prop('disabled', false);
+      
+      if(eText)
+      {
+        aethyrnet.error(eText)
+      }
+      
+      this.delegateEvents();
+    },
     
+    //Attempt login with server
+    attemptLogin : function()
+    {
+      var username = $('#login-username', this.$el).val().toLowerCase().trim();
+      var password = $('#login-password', this.$el).val().trim();
+      
+      if(
+           username == "username" ||
+           username == "" ||
+           password == "" ||
+           password == "Password"
+        )
+        return this.enableForm("Invalid username/password");
+      
+      //Remove handlers for now.
+      this.undelegateEvents();
+      $('.btn', this.$el).toggleClass('disabled');
+      $('input', this.$el).prop('disabled', true);
+      
+      $.post('/api/login', {
+        username : username,
+        password : password,
+      }, function(data) {
+        this.$el.modal('hide')
+        //User successfully logged in.
+        aethyrnet.util.setupUser(data);
+      }.bind(this), 'json').fail(this.enableForm.bind(this, "Bad Username/Password"));
+    },
+    
+    //Post the registration info.
+    attemptRegister : function()
+    {
+      var username = $('#login-username', this.$el).val().toLowerCase().trim();
+      var password = $('#login-password', this.$el).val().trim();
+      
+      if(
+           username == "username" ||
+           username == "" ||
+           password == "" ||
+           password == "Password"
+        )
+        return this.enableForm("Invalid username/password");
+      
+      //Remove handlers for now while we're working.
+      this.undelegateEvents();
+      $('.btn', this.$el).toggleClass('disabled');
+      $('input', this.$el).prop('disabled', true);
+      
+      $.post('/api/register', {
+        username : username,
+        password : password,
+      }, function(data) {
+      
+        //If bad result.
+        if(data.result && data.result == "ERROR") 
+          return this.enableForm(data.error);
+        
+        //Welcome user.
+        aethyrnet.util.setupUser(data);
+        this.$el.modal('hide')
+      }.bind(this), 'json').fail(function()
+      {
+        this.enableForm("There was an error. :(")
+      }.bind(this));
+    },
   });
 })();
 
@@ -318,5 +315,6 @@ aethyrnet.util.logOut = function(user)
     username : 'anonymous',
   });
   
+  aethyrnet.notify("You have been successfully logged out.");
   return aethyrnet.events.trigger('user:logInOut', false);
 };

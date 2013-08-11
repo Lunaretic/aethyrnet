@@ -1,6 +1,6 @@
 body
 {
-    overflow-y: scroll;
+    overflow-y: scroll !important;
 }
 
 a
@@ -122,9 +122,9 @@ a
 #alert-panel
 {
   position: fixed;
-  top : -60px;
+  bottom : -60px;
   
-  z-index: 900;
+  z-index: 2500;
   
   left: 20%;
   right: 20%;
@@ -218,4 +218,16 @@ a
 	margin-top: 12px;
 
   transition: opacity 0.5s, right 0.5s, bottom 0.5s;
+}
+
+
+.modal-backdrop
+{
+  z-index: 2000;
+}
+
+.modal
+{
+  z-index: 2100;
+  overflow-y: auto;
 }

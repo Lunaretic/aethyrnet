@@ -53,9 +53,13 @@ aethyrnet.backbone['viewport'] = new (function(){
       
       
       //Hook our other events we want.
-      aethyrnet.events.on('user:logInOut', function()
+      aethyrnet.events.on('user:logInOut', function(loggedIn)
       {
-        this.reload();
+        if(loggedIn)
+          this.reload();
+        else
+          aethyrnet.router.navigate('', { trigger : true });
+          
         aethyrnet.util.showUserBg();
       }.bind(this));
     },
@@ -341,7 +345,7 @@ aethyrnet.backbone['viewport'] = new (function(){
       aethyrnet.notify = this.post.bind(this);
       
       aethyrnet.error = function(msg)
-      {
+      {      
         this.post.call(this, msg, "ERROR");
       }.bind(this);
       
@@ -386,11 +390,11 @@ aethyrnet.backbone['viewport'] = new (function(){
         next();
       }.bind(this)).animate({
         //Then animate us visible
-        top : "10%",
+        bottom : "10%",
         
-      }, 300).delay(2000).animate({
+      }, 300).delay(1200).animate({
         //Then delay, then animate us back out.
-        top : -60,
+        bottom : -60,
         
       }, 300).queue('fx', function(next){
         //Now remove error text and class.
