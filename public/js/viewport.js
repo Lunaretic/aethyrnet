@@ -117,13 +117,7 @@ aethyrnet.backbone['viewport'] = new (function(){
       aethyrnet.events.trigger('page-frame:unload');
       
       //Display the loading bar.
-      var statusBar = $('#page-status-bar .progress-bar');
-      statusBar.stop(true, true);
-      statusBar.css({
-        width : "10%",
-        visibility : "visible",
-        opacity: 0.8,
-      });
+      this.startStatusBar();
       
       //Slice up our view string.
       var view = viewString.split('.');
@@ -157,17 +151,12 @@ aethyrnet.backbone['viewport'] = new (function(){
       
       window.document.title = "Aethyrnet - " + aethyrnet.util.prettyName(page);
       
-      //Update status bar.
-      statusBar.css({
-        width : "30%",
-      });
+      this.updateStatusBar(10);
       
       //Load the view we want.
       getBackbone(view[0], (function renderMainView(err, context)
-      {      
-        statusBar.css({
-          width : "70%",
-        });
+      {
+        this.updateStatusBar(40);
       
         //Bind the render callback to the main event listener.
         aethyrnet.events.once('page-frame:render', this.renderCallback);
@@ -176,8 +165,6 @@ aethyrnet.backbone['viewport'] = new (function(){
         try 
         {
           this.mainView = new context[view[1]]();
-          
-          this.mainView.$el.appendTo('#main');
         }
         
         //Because Chrome is too retarded to support if e instanceof aethyrnet.SecurityError
@@ -186,9 +173,13 @@ aethyrnet.backbone['viewport'] = new (function(){
           //We only want our security errors and nothing else.
           if(!(e instanceof aethyrnet.SecurityError))
             throw e;
-            
+          
+          //Kill the main view.
           this.mainView = false;
           aethyrnet.notify(e);
+          
+          //Done rendering.
+          this.hideStatusBar(false);
           aethyrnet.events.trigger('viewport:renderComplete');
         }
         
@@ -204,33 +195,65 @@ aethyrnet.backbone['viewport'] = new (function(){
       
     renderCallback : function()
     {
-      var statusBar = $('#page-status-bar .progress-bar');
-      statusBar.css({
-        width : "100%",
-      });
-      
-      //Fade out status bar.
-      statusBar.delay(300, 'fx').animate({
-        opacity : 0,
-      },{
-        duration : 200,
-        easing : 'linear'
-      }).queue('fx', function(next)
-      {
-        statusBar.css({
-          visibility : 'hidden',
-          width : "0%",
-        });
-        return next();
-      });
+      aethyrnet.viewport.hideStatusBar(true);
       
       //Display main page view.
       $('#main').queue('fx', function(next)
       {
+        //Attach us to the main viewport area and display.
+        if(aethyrnet.viewport.mainView)
+          aethyrnet.viewport.mainView.$el.appendTo('#main');
+        
         $(this).css({
           opacity: 1
         });
         return next();
+      });
+    },
+    
+    startStatusBar : function(type)
+    {
+      type = type | "";
+      var statusBar = $(document.createElement('div')).addClass('progress-bar ' + type).appendTo($('#page-status-bar')).css(
+      {
+        width : "10%",
+      });
+    },
+    
+    updateStatusBar : function(percent)
+    {
+      $('#page-status-bar .progress-bar').css({
+        width : percent + "%",
+      });
+    },
+    
+    hideStatusBar : function(complete)
+    {
+      var statusBar = $('#page-status-bar .progress-bar');
+      if(complete)
+        this.updateStatusBar(100);
+      
+      //Wait on CSS transition.
+      statusBar.one("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(event){
+        statusBar.off("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd");
+        if(complete)
+          statusBar.delay(300, 'fx');
+        else
+        {
+          statusBar.addClass('progress-bar-danger');
+          statusBar.delay(1000, 'fx');
+        }
+        
+        statusBar.animate({
+          opacity : 0,
+        },{
+          duration : 200,
+          easing : 'linear'
+        }).queue('fx', function(next)
+        {
+          statusBar.remove()
+          return next();
+        });
       });
     },
   

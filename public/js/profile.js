@@ -3,10 +3,10 @@ aethyrnet.backbone['profile'] = new (function(){
         
     events : {
       'click #logoutButton' : 'logOut',
-      'click #saveButton' : 'saveUser',
       'click #background-dropdown li' : 'bgChange',
       'click #orientation-dropdown li' : 'orientChange',
       'click #scrolling-dropdown li' : 'scrollChange',
+      'change input' : 'inputChange',
     },
     
     security : {
@@ -44,20 +44,23 @@ aethyrnet.backbone['profile'] = new (function(){
       this.$el.find('#background-dropdown button').html($(event.target).text() + ' <span class="caret">');
       aethyrnet.util.changeBG($(event.target).text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, ''));
       
-      aethyrnet.user.save().done(function()
-      {
-        aethyrnet.notify('Profile updated successfully.', 'success');
-                
-      })
+      this.saveUser();
     },
     
     orientChange : function(event)
     {
       this.$el.find('#orientation-dropdown .value').text($(event.target).text());
+      this.saveUser();
     },
     scrollChange : function(event)
     {
       this.$el.find('#scrolling-dropdown .value').text($(event.target).text());
+      this.saveUser();
+    },
+    
+    inputChange : function(event)
+    {
+      this.saveUser();
     },
     
     logOut : function(event)
@@ -65,7 +68,7 @@ aethyrnet.backbone['profile'] = new (function(){
       aethyrnet.util.logOut();
     },
     
-    saveUser : function(event)
+    saveUser : function()
     {
       var email = $('#emailField',this.$el).val() || "";
       var charUrl = $('#charUrlField',this.$el).val() || "";

@@ -119,6 +119,11 @@ a
   background: none;
 }
 
+#page-status-bar .progress-bar {
+  -webkit-transition: width 0.4s ease;
+          transition: width 0.4s ease;
+}
+
 #alert-panel
 {
   position: fixed;
