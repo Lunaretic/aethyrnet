@@ -1,8 +1,8 @@
 <% if(mode == "loggedIn") { %>
-  Welcome back, <a href="#profile" class="navbar-link"><%= username %></a>
+  Welcome back, <a href="/profile" class="navbar-link"><%= username %></a>
 
 <% } else if (mode == "anonymous") { %>
- <a href="#login" class="navbar-link">Log In / Register</a>
+ <a class="navbar-link">Log In / Register</a>
 
 <% } else if (mode == "login") { %>
   <form id="loginForm">

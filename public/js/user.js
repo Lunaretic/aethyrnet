@@ -47,7 +47,7 @@ aethyrnet.backbone['user'] = new (function(){
         'keyup input': 'keyupField',
       },
       loggedIn : {
-        "click" : "profilePage",
+        //"click" : "profilePage",
       },
       register : {
       },
@@ -143,7 +143,7 @@ aethyrnet.backbone['user'] = new (function(){
       $('input', this.$el).prop('disabled', true);
       
       var v = this;      
-      $.post('/login', {
+      $.post('/api/login', {
         username : username,
         password : password,
       }, function(data) {
@@ -174,7 +174,7 @@ aethyrnet.backbone['user'] = new (function(){
       
       //Post (v for scope)
       var v = this;
-      $.post('/register', {
+      $.post('/api/register', {
         username : username,
         password : password,
       }, function(data) {
@@ -221,7 +221,7 @@ aethyrnet.backbone['user'] = new (function(){
     
     profilePage : function(event)
     {
-      window.location = "/#profile";
+      aethyrnet.router.navigate("profile", { trigger : true });
     },
     
     logOut : function(event)
@@ -308,7 +308,7 @@ aethyrnet.util.setupUser = function(user)
 
 aethyrnet.util.logOut = function(user)
 {
-  $.get('/logout');
+  $.get('/api/logout');
   
   //Get rid of old user.
   delete aethyrnet.user;

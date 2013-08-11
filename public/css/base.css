@@ -3,6 +3,11 @@ body
     overflow-y: scroll;
 }
 
+a
+{
+  cursor: pointer;
+}
+
 .gradient-down
 {
   background: -moz-linear-gradient(top,  rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%); /* FF3.6+ */
@@ -128,6 +133,62 @@ body
 #page-frame
 {
   position: relative;
+  
+  color: #000;
+  
+  font-family: "Helvetica", sans-serif;
+  z-index: 100;
+}
+
+#page-frame>p
+{
+  color: #fff;
+  text-shadow: 0px 0px 6px #000;
+}
+
+#page-frame .header
+{
+  font-family: Helvetica, sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  font-style: italic;
+  text-shadow: 0px 0px 5px #000;
+  padding-left: 10px;
+  border-bottom: 1px solid #fff;
+  margin-bottom: 6px;
+}
+
+#page-frame .content-block
+{
+  position: relative;
+  color: #eee;
+  background: rgba(0,0,0, .6);
+  z-index: 100;
+  
+  border-radius: 12px;
+  padding: 8px 16px;
+  
+  
+  margin-bottom: 12px;
+  color: #fff;
+  word-wrap: break-word;
+}
+
+@media (min-width: 1200px)
+{
+  #main
+  {
+    max-width: 1000px;
+  }
+}
+
+#page-frame .subheader
+{
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 1px;
+  
+  margin-top: 2px;
 }
 
 

@@ -8,6 +8,53 @@ var fs = require('fs');
 
 module.exports = function(server)
 {
+
+  //Store the main frame in RAM.
+  util.log("Caching main index frame.");
+  var indexTemplate = _.template(fs.readFileSync(__dirname + '/index.html', 'utf8'));
+
+  //Set up routing for the main frame.
+  util.log("Setting up main index routing.");
+  var indexFile = path.join(__dirname,'/index.html');
+  var indexMTime = fs.statSync(indexFile).mtime;
+  var template = _.template(fs.readFileSync(__dirname + '/index.html').toString());
+  
+  //All non public/api calls.
+  server.get(/^(\/(?!(api|public|favicon))).*$/, function(req, res)
+  {
+    //Check index file's Mtime.
+    fs.stat(indexFile, function(err, stat){
+      if(err)
+        throw err;
+        
+      //New version? Gotta update cache.
+      if(stat.mtime.toString() != indexMTime.toString())
+      {
+        util.log("Updating Cache for Index.");
+        return fs.readFile(indexFile, function(err, data){
+          if(err)
+            throw err;
+          indexMTime = stat.mtime;
+          template = _.template(data.toString());
+          res.end(template({
+            environment : process.env.NODE_ENV,
+            userData : getUserInfo(req.user, true),
+            bgImage : ( req.user ? req.user.bgImage : false ),
+          }));
+        });
+      }
+      
+      //Old version?  Throw the cache at the request.
+      return res.end(template({
+        environment : process.env.NODE_ENV,
+        userData : getUserInfo(req.user, true),
+        bgImage : ( req.user ? req.user.bgImage : false ),
+      }));
+    });
+  });
+  
+
+
   //Basic news feed.
   server.get('/api/feed', function(req, res){
     database.model('feedEntry').find().sort('-date').limit(10).exec(function(err, docs)
@@ -58,58 +105,6 @@ module.exports = function(server)
   }); 
  
 
-  //Store the main frame in RAM.
-  util.log("Caching main index frame.");
-  var indexTemplate = _.template(fs.readFileSync(__dirname + '/index.html', 'utf8'));
-
-  //Set up routing for the main frame.
-  util.log("Setting up main index routing.");
-  var indexFile = path.join(__dirname,'/index.html');
-  var indexMTime = fs.statSync(indexFile).mtime;
-  var template = _.template(fs.readFileSync(__dirname + '/index.html').toString());
-  
-  //Get root?
-  server.get('/', function(req, res)
-  {
-    //Check index file's Mtime.
-    fs.stat(indexFile, function(err, stat){
-      if(err)
-        throw err;
-        
-      //New version? Gotta update cache.
-      if(stat.mtime.toString() != indexMTime.toString())
-      {
-        util.log("Updating Cache for Index.");
-        return fs.readFile(indexFile, function(err, data){
-          if(err)
-            throw err;
-          indexMTime = stat.mtime;
-          template = _.template(data.toString());
-          res.end(template({
-            environment : process.env.NODE_ENV,
-            userData : getUserInfo(req.user, true),
-            bgImage : ( req.user ? req.user.bgImage : false ),
-          }));
-        });
-      }
-      
-      //Old version?  Throw the cache at the request.
-      return res.end(template({
-        environment : process.env.NODE_ENV,
-        userData : getUserInfo(req.user, true),
-        bgImage : ( req.user ? req.user.bgImage : false ),
-      }));
-    });
-  });
-
-  //Main frame reloading.
-  server.get('/clearCache', function(req, res){
-    res.send("Reloading main index..");
-    indexTemplate = _.template(fs.readFileSync(__dirname + '/index.html', 'utf8'));
-    res.end("Reload complete.");
-  });
-  
-  
   //==========================================
   //              Authentication
   //==========================================
@@ -141,20 +136,20 @@ module.exports = function(server)
   };
   
   //Cookie User-Info retreival
-  server.get('/login', function(req, res)
+  server.get('/api/login', function(req, res)
   {
     return res.end(getUserInfo(req.user));
   });
   
   //Log out
-  server.get('/logout', function(req, res)
+  server.get('/api/logout', function(req, res)
   {
     req.logout();
     return res.end();
   });
   
   //Username/Password Login
-  server.post('/login', passport.authenticate('local'), function(req, res) 
+  server.post('/api/login', passport.authenticate('local'), function(req, res) 
   {
     // If this function gets called, authentication was successful.
     // `req.user` contains the authenticated user.
@@ -162,7 +157,7 @@ module.exports = function(server)
   });
   
   //User Registration
-  server.post('/register', function(req, res)
+  server.post('/api/register', function(req, res)
   {
     //Validate inputs
     if(!validateInput(req.body, {

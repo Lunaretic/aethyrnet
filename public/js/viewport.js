@@ -18,6 +18,7 @@ aethyrnet.backbone['viewport'] = new (function(){
     
     events : {
       'click #header .navbar-brand' : 'goHome',
+      "click a[href^='/']" : 'navigateLink',
     },
     
     initialize : function(options)
@@ -63,6 +64,16 @@ aethyrnet.backbone['viewport'] = new (function(){
     reload : function()
     {
       this.render(this.currentPage, true);
+    },
+    
+    navigateLink : function(event)
+    {
+      // Allow shift+click for new tabs, etc.
+      if(!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey)
+        event.preventDefault()
+        
+      
+      aethyrnet.router.navigate($(event.currentTarget).attr('href').substring(1), { trigger : true });
     },
     
     
@@ -260,14 +271,11 @@ aethyrnet.backbone['viewport'] = new (function(){
     
     render : function()
     {
-      var loc = String(document.location);
-      var idx = loc.indexOf('#');
-      var activePage = (-1 == idx ? "" : loc.substring(idx + 1));
-      activePage = "/#" + activePage.trim();
+      var activePage = location.pathname.trim();
       
       //Fix for default page.
-      if(activePage === '/#')
-        activePage = "/#news";
+      if(activePage === '/')
+        activePage = "/news";
     
       var items = {};
       for(var idx in this.items)
@@ -285,7 +293,7 @@ aethyrnet.backbone['viewport'] = new (function(){
         if(page.substring(0,4) == 'url:')
           page = page.substring(4);
         else
-          page = "/#" + page;
+          page = "/" + page;
         
         //Ensure login requirement for log-in required items.
         if((!this.items[idx].loggedIn) || (this.items[idx].loggedIn && aethyrnet.user.loggedIn()))
@@ -302,7 +310,10 @@ aethyrnet.backbone['viewport'] = new (function(){
     // CheckRoute is fired each time aethyrnet.router routes us anywhere.
     checkRoute : function(router, route, params)
     {
-      route = '/#' + route;
+      route = '/' + route;
+      if(route == '/')
+        route = "/news";
+      
       this.$el.find('.active').removeClass('active');
       
       //Activate the button if it matches our route.
@@ -328,6 +339,22 @@ aethyrnet.backbone['viewport'] = new (function(){
     initialize : function()
     {
       aethyrnet.notify = this.post.bind(this);
+      
+      aethyrnet.error = function(msg)
+      {
+        this.post.call(this, msg, "ERROR");
+      }.bind(this);
+      
+      this.popError();
+    },
+    
+    popError : function()
+    {
+      if(aethyrnet.errors.length > 0)
+      {
+        var error = aethyrnet.errors.splice(0, 1)[0];
+        aethyrnet.error(error);
+      }
     },
     
     render : function()
@@ -336,11 +363,26 @@ aethyrnet.backbone['viewport'] = new (function(){
     
     post : function(message, type)
     {
-      type = type || "WARNING";
-      type.toUpperCase();
+      var classname = "alert-info";
+      
+      var type = type || "";
+      type = type.toUpperCase();
+      
+      if(type == "ERROR")
+        classname = "alert-danger";
+      else if(type == "SUCCESS")
+        classname = "alert-success";
+      else if(type == "WARNING")
+        classname = "";
+        
+      
       //First, change our displayed text.
       this.$el.queue('fx',function(next){
-        this.$el.text(message).html("<strong>" + type + ":</strong> " + this.$el.html());
+        this.$el.attr("class", "alert " + classname);
+        
+        var typestring = (type ? "<strong>" + type + ":</strong> " : "");
+        
+        this.$el.text(message).html( typestring + this.$el.html());
         next();
       }.bind(this)).animate({
         //Then animate us visible
@@ -354,6 +396,7 @@ aethyrnet.backbone['viewport'] = new (function(){
         //Now remove error text and class.
         this.$el.text("");
         this.$el.removeClass(type);
+        this.popError();
         next();
       }.bind(this));
     },
@@ -462,6 +505,7 @@ aethyrnet.backbone['viewport'] = new (function(){
   });
 })();
 
+aethyrnet.PageView = aethyrnet.backbone['viewport'].PageView;
 
 //====================================================//
 //                     Router
@@ -496,7 +540,16 @@ aethyrnet.router = new (Backbone.Router.extend({
     viewString = aethyrnet.viewMap[page];
     
     if(!viewString)
-      return console.log("Unknown page requested: " + page);
+    {
+      var errorMessage = "The page you request does not exist. :("
+      if(aethyrnet.notify)
+        aethyrnet.error(errorMessage);
+      else
+        aethyrnet.errors.push(errorMessage)
+      return;
+    }
+    
+    //Backbone.history.pushState(page);
     
     
     if(aethyrnet.viewport)
@@ -514,9 +567,8 @@ aethyrnet.router = new (Backbone.Router.extend({
     //Don't do shit, cap'n!
   },
 }))();
-aethyrnet.PageView = aethyrnet.backbone['viewport'].PageView;
 
-Backbone.history.start();
+Backbone.history.start({ pushState: true });
 
 //====================================================//
 //                  Util Functions

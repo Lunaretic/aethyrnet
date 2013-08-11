@@ -40,6 +40,7 @@
       this.router = false;
       this.viewport = false;
       this.pageQueue = false;
+      this.errors = [];
       <%= (environment != "production" ? "this.debug = true" : "") %>
     })();
     
@@ -74,7 +75,7 @@
   <!-- Bootstrap navbar -->
   <div id="header" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="#">Aethyrnet</a>
+      <a class="navbar-brand" href="/">Aethyrnet</a>
       
       <div class="nav-collapse collapse">
         <ul id="main-menu" class="nav navbar-nav" >
@@ -83,9 +84,9 @@
       
       <p id="login-status" class="navbar-text pull-right">
         <% if(userData.username != "anonymous") { %>
-          Welcome back, <a href="#profile" class="navbar-link"><% print(userData.username) %></a>
+          Welcome back, <a href="/profile" class="navbar-link"><% print(userData.username) %></a>
         <% } else { %>
-          <a href="#login" class="navbar-link">Log In / Register</a>
+          <a href="/login" class="navbar-link">Log In / Register</a>
         <% } %>
       </p>  
       

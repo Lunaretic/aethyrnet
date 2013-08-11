@@ -68,7 +68,7 @@ aethyrnet.backbone['profile'] = new (function(){
       //Backbone smart save.
       aethyrnet.user.save().done(function()
       {
-        aethyrnet.notify('Profile updated successfully.');
+        aethyrnet.notify('Profile updated successfully.', 'success');
                 
       }).fail(function(jqXHR, arg2, arg3) 
       {
@@ -77,7 +77,7 @@ aethyrnet.backbone['profile'] = new (function(){
           return;
         
         //Bad data.
-        aethyrnet.notify('Profile update failed.');
+        aethyrnet.error('Profile update failed.');
         for(key in jqXHR.responseJSON.err)
         {
           $('#'+key+'Field', this.$el).addClass('error');
