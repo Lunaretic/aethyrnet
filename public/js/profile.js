@@ -70,8 +70,8 @@ aethyrnet.backbone['profile'] = new (function(){
     
     saveUser : function()
     {
-      var email = $('#emailField',this.$el).val() || "";
-      var charUrl = $('#charUrlField',this.$el).val() || "";
+      var email = $('#email-input',this.$el).val() || "";
+      var charUrl = $('#char-url-input',this.$el).val() || "";
       var sidebarOrientation = $('#orientation-dropdown .value').text();
       sidebarOrientation = sidebarOrientation.toLowerCase();
       var sidebarSticky = ($('#scrolling-dropdown .value').text() == "Fixed Sidebar" ? true : false);
@@ -83,6 +83,8 @@ aethyrnet.backbone['profile'] = new (function(){
         sidebarOrientation : sidebarOrientation,
         sidebarSticky : sidebarSticky,
       };
+      
+      console.log(email);
       aethyrnet.user.set(opts);
       
       //Backbone smart save.
@@ -99,7 +101,7 @@ aethyrnet.backbone['profile'] = new (function(){
         //Bad data.
         for(key in jqXHR.responseJSON.err)
         {
-          aethyrnet.error('Profile update failed: ' + key);
+          aethyrnet.error('Profile update failed: ' + key + ' is not valid.');
         }
       }.bind(this));
     },

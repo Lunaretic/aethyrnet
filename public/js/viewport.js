@@ -767,40 +767,8 @@ jQuery.fn.animateAuto = function(prop, speed, callback){
 aethyrnet.util.prettyName = function(username)
 {
   //Capitalize first letter
-  return username.charAt(0).toUpperCase() + username.slice(1);
+  return (username.charAt(0).toUpperCase() + username.slice(1)).replace("_", " ");
 }
-
-
-//Generic focus and blur functions for text/password fields.
-aethyrnet.util.focusField = function(event)
-{
-  var elem = $(event.target);
-  
-  elem.removeClass("inactive");
-
-  if(elem.prop('title') == 'password')
-    elem.prop('type','password');
-  
-  if(elem.val() == elem.prop('title'))
-    elem.val("");
-};
-
-aethyrnet.util.blurField = function(event)
-{
-  var elem = $(event.target);
-  
-  if(elem.val() == "")
-  {
-    elem.val(elem.prop('title'));
-    
-    
-    if(elem.prop('title') == 'password')
-      elem.prop('type','text');
-    
-    elem.addClass("inactive");
-  }
-};
-
 
 //=============================================//
 //                Error Objects

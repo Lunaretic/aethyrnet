@@ -25,6 +25,8 @@
 #page-frame table.profileTable
 {
   width: 100%;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #fff;
 }
 
 #page-frame form
@@ -42,14 +44,7 @@
   margin-top: -2px;
 }
 
-#page-frame .sprawl
-{
-  border-top: 1px solid #fff;
-  margin-top: 2px;
-  padding-top: 12px; 
-}
-
-#page-frame .sprawl .sectionHeader
+#page-frame .sectionHeader
 {
   font-size: 16px;
   

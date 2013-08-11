@@ -8,80 +8,76 @@
       <% } %>
       <span class="username">Profile &amp; Settings - <%= username %></span>
     </td>
-    <td><span id="logoutButton" class="button">Log Out</span></td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <div class="sprawl">        
-        <div class="sectionHeader">Additional User Info</div>
-        <form>
-          <div class="input-group" style="margin-bottom: 8px; width: 100%">
-            <span class="input-group-addon" style="width: 20%; color: #000;">Email</span>
-            <input id="emailField" type="text" class="form-control" placeholder="Email">
-          </div>  
-          <div class="input-group" style="margin-bottom: 8px; width: 100%">
-            <span class="input-group-addon" style="width: 20%; color: #000;">Lodestone URL</span>
-            <input id="char-url" type="text" class="form-control" placeholder="http://na.beta.finalfantasyxiv.com/lodestone/character/######/">
-          </div></form>
-        
-        <br/>
-        <div class="sectionHeader">Aethyrnet.com Background</div>
-        <form>
-          
-          <div class="input-group" id="background-dropdown" style="margin-bottom: 8px; width: 100%">
-            <span class="input-group-addon" style="width: 20%; color: #000;">Aethyrnet Background</span>
-            <div class="input-group-btn" style="width: 100%">
-              <!-- Button and dropdown menu -->
-                          
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <%= background %> <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu dropdown-toggle">
-                <li><a>Coerthas</a></li>
-                <li><a>Ul'Dah</a></li>
-                <li><a>Gridania</a></li>
-                <li><a>Limsa Lominsa</a></li>
-            </div>
-          </div>
-        </form>
-      
-        <br/>
-        <div class="sectionHeader">Sidebar Options</div>
-        <form>
-        
-          <div id="scrolling-dropdown" class="input-group" style="margin-bottom: 8px; width: 100%">
-            <span class="input-group-addon" style="width: 20%; color: #000;">Sidebar Scrolling</span>
-            <div class="input-group-btn" style="width: 100%">
-              <!-- Button and dropdown menu -->
-                          
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="value"><%= (onScreen ? "Fixed Sidebar" : "Scrolling Sidebar") %></span> <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu dropdown-toggle">
-                <li><a>Fixed Sidebar</a></li>
-                <li><a>Scrolling Sidebar</a></li>
-            </div>
-          </div>
-          
-          <div id="orientation-dropdown" class="input-group" style="margin-bottom: 8px; width: 100%">
-            <span class="input-group-addon" style="width: 20%; color: #000;">Sidebar Orientation</span>
-            <div class="input-group-btn" style="width: 100%">
-              <!-- Button and dropdown menu -->
-                          
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="value"><%= orientation %></span> <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu dropdown-toggle">
-                <li><a>Left</a></li>
-                <li><a>Right</a></li>
-            </div>
-          </div>
-        
-        </form>
-        
-
-      </div>
-    </td>
+    <td><a id="logoutButton">Log Out</a></td>
   </tr>
 </table>
+
+<div class="sectionHeader">Additional User Info</div>
+<form>
+
+  <div class="input-group" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon" style="width: 20%; color: #000;">Email</span>
+    <input id="email-input" type="text" class="form-control" placeholder="Email" <%= email ? 'value="' + email + '"' : '' %>>
+  </div>
+  
+  <div class="input-group" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon" style="width: 20%; color: #000;">Lodestone URL</span>
+    <input id="char-url-input" type="text" class="form-control" placeholder="http://na.beta.finalfantasyxiv.com/lodestone/character/######/" <%= charUrl ? 'value="' + charUrl + '"' : '' %>>
+  </div></form>
+
+<br/>
+<div class="sectionHeader">Aethyrnet.com Background</div>
+<form>
+  
+  <div class="input-group" id="background-dropdown" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon" style="width: 20%; color: #000;">Aethyrnet Background</span>
+    <div class="input-group-btn" style="width: 100%">
+      <!-- Button and dropdown menu -->
+                  
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <%= background %> <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-toggle">
+        <li><a>Coerthas</a></li>
+        <li><a>Ul'Dah</a></li>
+        <li><a>Gridania</a></li>
+        <li><a>Limsa Lominsa</a></li>
+    </div>
+  </div>
+</form>
+
+<br/>
+<div class="sectionHeader">Sidebar Options</div>
+<form>
+
+  <div id="scrolling-dropdown" class="input-group" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon" style="width: 20%; color: #000;">Sidebar Scrolling</span>
+    <div class="input-group-btn" style="width: 100%">
+      <!-- Button and dropdown menu -->
+                  
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <span class="value"><%= (onScreen ? "Fixed Sidebar" : "Scrolling Sidebar") %></span> <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-toggle">
+        <li><a>Fixed Sidebar</a></li>
+        <li><a>Scrolling Sidebar</a></li>
+    </div>
+  </div>
+  
+  <div id="orientation-dropdown" class="input-group" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon" style="width: 20%; color: #000;">Sidebar Orientation</span>
+    <div class="input-group-btn" style="width: 100%">
+      <!-- Button and dropdown menu -->
+                  
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <span class="value"><%= orientation %></span> <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-toggle">
+        <li><a>Left</a></li>
+        <li><a>Right</a></li>
+    </div>
+  </div>
+
+</form>
+
 </div>
