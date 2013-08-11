@@ -30,7 +30,7 @@ aethyrnet.backbone['feed'] = new (function(){
   //----------------------------------------
   var FeedEntryView = this.FeedEntryView = Backbone.View.extend({
     
-    className : 'feedEntry media',
+    className : 'feedEntry media content-block',
     
     initialize : function()
     {

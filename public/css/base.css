@@ -140,6 +140,26 @@ a
   z-index: 100;
 }
 
+#page-frame a
+{
+  color: #529bda;
+}
+
+#page-frame a:hover
+{
+  color: #62abea;
+}
+
+#page-frame h4 a,
+#page-frame h4 a:hover
+{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  color: #fff;
+}
+
 #page-frame>p
 {
   color: #fff;
@@ -165,8 +185,8 @@ a
   background: rgba(0,0,0, .6);
   z-index: 100;
   
-  border-radius: 12px;
-  padding: 8px 16px;
+	border-radius: 20px;
+	padding: 10px;
   
   
   margin-bottom: 12px;
@@ -192,4 +212,10 @@ a
 }
 
 
+#page-frame .media
+{
+  margin-bottom: 0px;
+	margin-top: 12px;
 
+  transition: opacity 0.5s, right 0.5s, bottom 0.5s;
+}
