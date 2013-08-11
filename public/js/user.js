@@ -155,7 +155,6 @@ aethyrnet.backbone['user'] = new (function(){
       
       this.$el.delay(200).queue('fx', function(next)
       {
-        console.log("Focus Trigger");
         $('#login-username').focus();
         next();
       });
