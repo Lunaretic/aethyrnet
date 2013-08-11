@@ -1,16 +1,11 @@
-#page-frame
-{
-  font-family: Helvetica, sans-serif;
-}
-
 #page-frame .avatar,
 #page-frame .avatarGloss
 {
   display: block;
   position: absolute;
   
-  top: 8px;
-  left: 22px;
+  top: 10px;
+  left: 12px;
   
   border-radius: 6px;
 }
@@ -35,11 +30,6 @@
 #page-frame form
 {
   margin: 0px 16px;
-}
-
-#page-frame input[type="text"]
-{
-  display: block;
 }
 
 #page-frame #logoutButton,
@@ -75,7 +65,7 @@
   padding: 0px 8px;
 }
 
-#page-frame .sprawl input
+#page-frame .dropdown-toggle
 {
-  
+  width : 30%;
 }

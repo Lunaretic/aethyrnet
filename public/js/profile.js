@@ -4,10 +4,9 @@ aethyrnet.backbone['profile'] = new (function(){
     events : {
       'click #logoutButton' : 'logOut',
       'click #saveButton' : 'saveUser',
-      'change input[name="background"]' : 'radioChange',
-      'focus input[type="text"]' : 'focusField',
-      'blur input[type="text"]' : 'blurField',
-      'change input[type="text"]' : 'changeField',
+      'click #background-dropdown li' : 'bgChange',
+      'click #orientation-dropdown li' : 'orientChange',
+      'click #scrolling-dropdown li' : 'scrollChange',
     },
     
     security : {
@@ -29,20 +28,36 @@ aethyrnet.backbone['profile'] = new (function(){
       this.$el.html(this.template({
         //Template vars
         username : aethyrnet.util.prettyName(aethyrnet.user.get('username')),
-        background : aethyrnet.user.get('bgImage'),
+        background : aethyrnet.util.prettyName(aethyrnet.user.get('bgImage')),
         email : aethyrnet.user.get('email'),
         charUrl : aethyrnet.user.get('charUrl'),
         avatar : aethyrnet.user.get('avatar'),
-        orientation : aethyrnet.user.get('sidebarOrientation'),
+        orientation : aethyrnet.util.prettyName(aethyrnet.user.get('sidebarOrientation')),
         onScreen : aethyrnet.user.get('sidebarSticky'),
       }));
       
       $('input[type="text"]', this.$el).blur();
     },
     
-    radioChange : function(event)
+    bgChange : function(event)
     {
-      aethyrnet.util.changeBG($(event.target).val());
+      this.$el.find('#background-dropdown button').html($(event.target).text() + ' <span class="caret">');
+      aethyrnet.util.changeBG($(event.target).text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, ''));
+      
+      aethyrnet.user.save().done(function()
+      {
+        aethyrnet.notify('Profile updated successfully.', 'success');
+                
+      })
+    },
+    
+    orientChange : function(event)
+    {
+      this.$el.find('#orientation-dropdown .value').text($(event.target).text());
+    },
+    scrollChange : function(event)
+    {
+      this.$el.find('#scrolling-dropdown .value').text($(event.target).text());
     },
     
     logOut : function(event)
@@ -52,18 +67,20 @@ aethyrnet.backbone['profile'] = new (function(){
     
     saveUser : function(event)
     {
-      var email = ($('#emailField',this.$el).val() != $('#emailField',this.$el).attr('title') ? $('#emailField',this.$el).val() : '');
-      var charUrl = ($('#charUrlField',this.$el).val() != $('#charUrlField',this.$el).attr('title') ? $('#charUrlField',this.$el).val() : '');
-      var sidebarOrientation = $('#sidebarOrientation').val();
-      var sidebarSticky = ($('#sidebarSticky').val() == "true" ? true : false);
+      var email = $('#emailField',this.$el).val() || "";
+      var charUrl = $('#charUrlField',this.$el).val() || "";
+      var sidebarOrientation = $('#orientation-dropdown .value').text();
+      sidebarOrientation = sidebarOrientation.toLowerCase();
+      var sidebarSticky = ($('#scrolling-dropdown .value').text() == "Fixed Sidebar" ? true : false);
       
       //Background attribute set previously.
-      aethyrnet.user.set({
+      var opts = {
         email : email,
         charUrl : charUrl,
         sidebarOrientation : sidebarOrientation,
         sidebarSticky : sidebarSticky,
-      });
+      };
+      aethyrnet.user.set(opts);
       
       //Backbone smart save.
       aethyrnet.user.save().done(function()
@@ -77,28 +94,11 @@ aethyrnet.backbone['profile'] = new (function(){
           return;
         
         //Bad data.
-        aethyrnet.error('Profile update failed.');
         for(key in jqXHR.responseJSON.err)
         {
-          $('#'+key+'Field', this.$el).addClass('error');
+          aethyrnet.error('Profile update failed: ' + key);
         }
       }.bind(this));
-    },
-    
-    //Generic focus and blur functions for text/password fields.
-    focusField : function(event)
-    {
-      aethyrnet.util.focusField(event);
-    },
-    
-    blurField : function(event)
-    {
-      aethyrnet.util.blurField(event);
-    },
-    
-    changeField : function(event)
-    {
-      $(event.target).removeClass('error');
     },
     
   });

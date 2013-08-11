@@ -7,7 +7,7 @@
         <img class="avatarGloss" width="24" height="24" src="/public/images/iconFrame.png"/>
       <% } %>
       <span class="username">Profile &amp; Settings - <%= username %></span>
-      </td>
+    </td>
     <td><span id="logoutButton" class="button">Log Out</span></td>
   </tr>
   <tr>
@@ -16,44 +16,72 @@
         <span id="saveButton" class="button">Save Settings</span>
         
         <div class="sectionHeader">Additional User Info</div>
-        <form><table cellspacing="0" cellpadding="0">
-          
-          <tr>
-            <td width="120"><label for="emailField">Email:</label></td>
-            <td><input type="text" size="40" maxlength="40" title="Email Address" id="emailField" value="<%= email %>"/></td>
-          </tr>
-          <tr>
-            <td width="120"><label for="charUrlField">Lodestone URL:</label></td>
-            <td><input type="text" size="70" maxlength="70" title="http://na.beta.finalfantasyxiv.com/lodestone/character/######/" id="charUrlField" value="<%= charUrl %>"/></td>
-          </tr>
-        </table></form>
+        <form>
+          <div class="input-group" style="margin-bottom: 8px; width: 100%">
+            <span class="input-group-addon" style="width: 20%; color: #000;">Email</span>
+            <input id="emailField" type="text" class="form-control" placeholder="Email">
+          </div>  
+          <div class="input-group" style="margin-bottom: 8px; width: 100%">
+            <span class="input-group-addon" style="width: 20%; color: #000;">Lodestone URL</span>
+            <input id="char-url" type="text" class="form-control" placeholder="http://na.beta.finalfantasyxiv.com/lodestone/character/######/">
+          </div></form>
         
         <br/>
         <div class="sectionHeader">Aethyrnet.com Background</div>
         <form>
-          <input type="radio" name="background" value="coerthas" <% if(background == "coerthas"){ %>checked="checked"<% } %>>Coerthas</input><br/>
-          <input type="radio" name="background" value="uldah" <% if(background == "uldah"){ %>checked="checked"<% } %>>Ul'Dah</input><br/>
-          <input type="radio" name="background" value="gridania" <% if(background == "gridania"){ %>checked="checked"<% } %>>Gridania</input><br/>
-          <input type="radio" name="background" value="limsa" <% if(background == "limsa"){ %>checked="checked"<% } %>>Limsa Lominsa</input><br/>
+          
+          <div class="input-group" id="background-dropdown" style="margin-bottom: 8px; width: 100%">
+            <span class="input-group-addon" style="width: 20%; color: #000;">Aethyrnet Background</span>
+            <div class="input-group-btn" style="width: 100%">
+              <!-- Button and dropdown menu -->
+                          
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <%= background %> <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-toggle">
+                <li><a>Coerthas</a></li>
+                <li><a>Ul'Dah</a></li>
+                <li><a>Gridania</a></li>
+                <li><a>Limsa Lominsa</a></li>
+            </div>
+          </div>
         </form>
       
         <br/>
         <div class="sectionHeader">Sidebar Options</div>
-        <form><table cellspacing="0" cellpadding="0">
-          <tr><td width="180"><label for="sidebarOrientation">Sidebar Orientation:</label></td>
-          <td><select id="sidebarOrientation" style="width: 200px">
-            <option value="left" <% if(orientation=="left"){ %>selected="selected"<% } %>>Left</option>
-            <option value="right" <% if(orientation=="right"){ %>selected="selected"<% } %>>Right</option>
-          </select></td></tr>
+        <form>
+        
+          <div id="scrolling-dropdown" class="input-group" style="margin-bottom: 8px; width: 100%">
+            <span class="input-group-addon" style="width: 20%; color: #000;">Sidebar Scrolling</span>
+            <div class="input-group-btn" style="width: 100%">
+              <!-- Button and dropdown menu -->
+                          
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="value"><%= (onScreen ? "Fixed Sidebar" : "Scrolling Sidebar") %></span> <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-toggle">
+                <li><a>Fixed Sidebar</a></li>
+                <li><a>Scrolling Sidebar</a></li>
+            </div>
+          </div>
           
-          <tr><td><label for="onScreen">Sticky Sidebar:</label></td>
-          <td><select id="sidebarSticky" style="width: 200px">
-            <option value="true" <% if(onScreen){ %>selected="selected"<% } %>>Keep On Screen</option>
-            <option value="false" <% if(!onScreen){ %>selected="selected"<% } %>>Allow Scrolling</option>
-          </select></td></tr>
-        </table></form>
+          <div id="orientation-dropdown" class="input-group" style="margin-bottom: 8px; width: 100%">
+            <span class="input-group-addon" style="width: 20%; color: #000;">Sidebar Orientation</span>
+            <div class="input-group-btn" style="width: 100%">
+              <!-- Button and dropdown menu -->
+                          
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="value"><%= orientation %></span> <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-toggle">
+                <li><a>Left</a></li>
+                <li><a>Right</a></li>
+            </div>
+          </div>
         
+        </form>
         
+
       </div>
     </td>
   </tr>
