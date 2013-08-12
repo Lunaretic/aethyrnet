@@ -1,0 +1,10 @@
+#admin-body
+{
+}
+
+#admin-body .loading
+{
+  display: block;
+  position: relative;
+  margin: 50px auto;
+}

@@ -7,62 +7,128 @@ aethyrnet.backbone['admin'] = new (function(){
   //----------------------------------------
   this.DashboardView = aethyrnet.PageView.extend({
     
-    events : {
-      'keyup #username-search' : 'searchUsers',
-      'change #username-search' : 'searchUsers',
-    },
-  
     security : {
       loggedIn : true,
       adminLevel : 3,
     },
     
+    events : {
+      'click .nav li' : 'navClick',
+    },
+    
     initializePage : function(options)
     {
-      //TODO: Async.Parallel this later.
-      
       //Retrieve template files.
-      getTemplate('dashboard', { view : this }, function(err, context)
+      getTemplate('dashboard', { css : true, view : this }, function(err, context)
       {
-      
-        this.collection = this.renderCollection = new thisBone.SysUserCollection();
-        
-        //Options for Backbone.Collection.Fetch.
-        var options = 
-        {
-          success : function(results, response, options)
-          {
-            //Once we have data we're good to render.
-            this.render();
-          }.bind(this),
-          error : function(collection, response, options)
-          {
-            //For debugging failures currently.
-            console.log("Fetch Failed.");
-            console.log(collection);
-            console.log(response);
-            console.log(options);
-          },
-        };
-        
-        //Retrevie User List
-        this.collection.fetch(options);
+        this.switchView('UserlistPanel');
       }.bind(this));
     },
     
     //Basic template render, but split into segments.
-    renderPage : function()
+    renderPage : function(viewName)
+    {
+      if(this.$el.html() == "")
+      {
+        this.$el.html(this.template({
+          view : "DashboardView",
+          mode : 'full',
+        }));
+        this.$('.nav li[data-view="'+viewName+'"]').addClass('active');
+      }
+      
+      
+      if(this.subview)
+      {
+        this.$('.loading').remove();
+        this.subview.render();
+        this.subview.$el.appendTo(this.$("#admin-body"));
+      }
+    },
+    
+    switchView : function(viewName)
+    {
+      if(!thisBone[viewName])
+        return aethyrnet.error("The requested page does not exist.");
+    
+      if(this.subview)
+        this.subview.remove();
+        
+      this.$('.nav li.active').removeClass('active');
+      this.$('.nav li[data-view="'+viewName+'"]').addClass('active');
+        
+      
+      var loader = $('<img class="loading" src="/public/images/loading.gif"></img>');
+      this.$("#admin-body").append(loader);
+      
+      this.subview = new thisBone[viewName](this.render.bind(this, viewName));
+    },
+    
+    navClick : function(event)
+    {
+      this.switchView($(event.currentTarget).attr('data-view'));
+    }
+  });
+  
+  //----------------------------------------
+  //       Userlist Panel
+  //----------------------------------------
+  this.UserlistPanel = Backbone.View.extend({
+    id : "admin-panel",
+    className : "panel container",
+    
+    events : {
+      'keyup #username-search' : 'searchUsers',
+      'change #username-search' : 'searchUsers',
+      'click a' : 'selectUser',
+    },
+  
+  
+    initialize : function(callback)
+    {
+      //Retrieve template files - Should be coming straight out of cache, so nbd.
+      getTemplate('dashboard', { view : this }, function(err, context)
+      {
+        this.collection = this.renderCollection = new thisBone.SysUserCollection();
+        
+        
+        //Retrevie User List
+        this.collection.fetch({
+          success : function(results, response, options)
+          {
+            return callback();
+          },
+          error : function(collection, response, options)
+          {
+            return callback();
+          },
+        });
+      }.bind(this));
+      
+    },
+    
+    //Basic template render, but split into segments.
+    render : function()
     {
       this.$el.html(this.template({
+        view : "UserlistPanel",
         users : this.renderCollection,
         mode : 'full',
       }));
+    
+      
+      //Focus us once everything is said and done.
+      this.listenToOnce(aethyrnet.events, 'page-frame:renderComplete', function()
+      {
+        this.$('#username-search').focus();
+      }.bind(this));
     },
     
     //Render userlist only.
     renderList : function()
     {
-      this.$el.find('.list-group').html(this.template({
+      this.$('.list-group').html(this.template({
+        view : "UserlistPanel",
         users : this.renderCollection,
         mode : 'list',
       }));
@@ -82,8 +148,12 @@ aethyrnet.backbone['admin'] = new (function(){
       this.renderList();
     },
     
+    selectUser : function(event)
+    {
+      var username = $(event.currentTarget).text();
+      aethyrnet.viewport.mainView.switchView('UserlistPanel');
+    },
   });
-  
   
   //----------------------------------------
   //         Users Model/Collection

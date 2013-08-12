@@ -153,37 +153,43 @@ aethyrnet.backbone['viewport'] = new (function(){
       
       this.updateStatusBar(30);
       
-      //Load the view we want.
+      //Begin loading the view we want while the fade-out si playing.
       getBackbone(view[0], (function renderMainView(err, context)
       {
-        this.updateStatusBar(70);
-      
-        //Bind the render callback to the main event listener.
-        aethyrnet.events.once('page-frame:render', this.renderCallback);
-        
-        //Attempt to instantiate view.
-        try 
+        //Queue us onto #main's queue to prevent DOM collisions
+        //mv.remove() is queued on 'fx' waiting on the fade-out.
+        $('#main').queue('fx', function(next)
         {
-          this.mainView = new context[view[1]]();
-        }
+          this.updateStatusBar(70);
         
-        //Because Chrome is too retarded to support if e instanceof aethyrnet.SecurityError
-        catch(e)
-        {
-          //We only want our security errors and nothing else.
-          if(!(e instanceof aethyrnet.SecurityError))
-            throw e;
+          //Bind the render callback to the main event listener.
+          aethyrnet.events.once('page-frame:render', this.renderCallback);
           
-          //Kill the main view.
-          this.mainView = false;
-          aethyrnet.error(e);
+          //Attempt to instantiate view.
+          try 
+          {
+            this.mainView = new context[view[1]]();
+          }
           
-          //Done rendering.
-          this.hideStatusBar(false);
-          aethyrnet.events.trigger('viewport:renderComplete');
-        }
-        
-        this.rendering = false;
+          //Because Chrome is too retarded to support if e instanceof aethyrnet.SecurityError
+          catch(e)
+          {
+            //We only want our security errors and nothing else.
+            if(!(e instanceof aethyrnet.SecurityError))
+              throw e;
+            
+            //Kill the main view.
+            this.mainView = false;
+            aethyrnet.error(e);
+            
+            //Done rendering.
+            this.hideStatusBar(false);
+            aethyrnet.events.trigger('viewport:renderComplete');
+          }
+          
+          this.rendering = false;
+          next();
+        }.bind(this));
       }).bind(this));
     },
     
@@ -528,16 +534,28 @@ aethyrnet.backbone['viewport'] = new (function(){
     
     render : function()
     {
-      aethyrnet.events.trigger('page-frame:render');
+      var ret = true;
+      
+      //Render the page.
       if(this.renderPage)
-        return this.renderPage.apply(this, arguments);
+        ret = this.renderPage.apply(this, arguments);
+      
+      //Allow custom page rendering to cancel the page-frame:render event.
+      if(ret !== false)
+      {
+        aethyrnet.events.trigger('page-frame:render');
+        aethyrnet.events.trigger('page-frame:renderComplete');
+      }
     },
     
     //Default page render
     renderPage : function()
     {
       //Render template file.
-      this.$el.html(this.template());
+      if(this.template)
+        this.$el.html(this.template());
+      
+      return true;
     }
     
   });
@@ -612,6 +630,26 @@ Backbone.history.start({ pushState: true });
 //====================================================//
 //                  Util Functions
 //====================================================//
+
+//A simple loading queue class for storing functions which need to be called later.
+var CacheQueue = function CacheQueue()
+{
+  var myQueue = [];
+  
+  this.queue = function(callback)
+  {
+    myQueue.push(callback);
+  }
+  
+  this.proc = function()
+  {
+    for(var idx in myQueue)
+    {
+      myQueue[idx]();
+    }
+  }
+};
+
 function getBackbone(file, exec, callback){
   if(!callback)
   {
@@ -620,38 +658,42 @@ function getBackbone(file, exec, callback){
   }
 
   async.waterfall([
+    //First, load the script off cache or the web.
     function(callback)
     {
+      //If we're currently waiting on script load/evaluation.
+      if(aethyrnet.backbone[file] && aethyrnet.backbone[file] instanceof CacheQueue)
+      { 
+        //Then just queue us onto the list of waiting calls.
+        return aethyrnet.backbone[file].queue(callback);
+      }
+    
       //Return the context from the previously executed file.
       if(aethyrnet.backbone[file])
       {
-        return callback(null, aethyrnet.backbone[file]);
+        return callback();
       }
       
       //Or load file from server if we haven't seen it yet.
       else
       {
+        //Setup the CacheQueue to handle any other GetBackbone calls
+        //to this backbone while we're still loading.
+        var queue = aethyrnet.backbone[file] = new CacheQueue();
+        queue.queue(callback);
+        
+        //Script should evaluate and add itself into the aethyrnet.
         $.getScript( '/public/js/' + file + '.js', function(data)
         {
-          //Script should evaluate and add itself into the aethyrnet.
-          return callback(null, aethyrnet.backbone[file]);
+          //Proc any other calls to this backbone that were cached.
+          return queue.proc();
         });
       }
     },
-    function(file, callback)
-    {
-      return callback(null, file);
-    },
   ],
-  function(err, context)
+  function(err)
   {
-    if(err)
-    {
-      console.log("Error during evaluation of script:" + file);
-      console.log(err);
-      return callback(err, context);
-    }
-    
+    var context = aethyrnet.backbone[file];
     //Call function in new context if we have one.
     if(exec)
     {
@@ -679,6 +721,8 @@ function getTemplate(file, options, callback)
   
   //Default options.
   options.css = ( options.css === undefined ? false : options.css );
+  if(options.mainCSS !== false)
+    options.mainCSS = true;
   options.template = ( options.template === undefined ? true : options.template );
   
   
