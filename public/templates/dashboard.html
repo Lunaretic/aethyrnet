@@ -1,3 +1,23 @@
-<div class="content-block container">
-  Admin Dashboard!
+<div class="panel container">
+  <div class="panel-heading">Admin Dashboard</div>
+  <ul class="nav nav-pills">
+    <li class="active"><a>Users</a></li>
+    <li><a>Posts</a></li>
+  </ul>
+  
+  <div class="panel container" style="margin-top: 6px;">
+    <div class="panel-heading">User Administration</div>
+  
+    <div class="input-group">
+      <span class="input-group-addon">Username</span>
+      <input id="username-search" type="text" class="form-control" placeholder="Search by Username">
+    </div>
+
+  
+    <div class="list-group container">
+    <% users.each(function(user){ %>
+      <a class="list-group-item"><%= aethyrnet.util.prettyName(user.get("username")) %></a>
+    <% }); %>
+    </div>
+  </div>
 </div>

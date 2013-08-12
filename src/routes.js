@@ -200,6 +200,27 @@ module.exports = function(server)
   });
   
   
+  server.get('/api/users', function(req, res)
+  {
+    if(!req.user || req.user.adminLevel < 3)
+      return util.clientErr(res, "You do not have permission to access this resource");
+      
+    database.model('user').find({}, 'username').sort('+username').exec(function(err, docs)
+    {
+      var data = [];
+      if(err)
+        util.log(err);
+      else if((!docs) || docs.length == 0)
+        util.warn("No users found in user table?");
+      else
+      {
+        data = docs;
+      }
+      
+      res.end(JSON.stringify(data));
+    });
+  });
+  
   var validateInput = function(actual, expected, noFalse)
   {
     for(var idx in expected)

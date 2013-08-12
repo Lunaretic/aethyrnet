@@ -155,6 +155,13 @@ a
   color: #62abea;
 }
 
+#page-frame li.active>a,
+#page-frame li.active>a:hover
+{
+  color: #fff;
+}
+
+
 #page-frame h4 a,
 #page-frame h4 a:hover
 {
