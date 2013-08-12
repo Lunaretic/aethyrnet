@@ -6,6 +6,11 @@ aethyrnet.backbone['admin'] = new (function(){
   //            Admin Page
   //----------------------------------------
   this.DashboardView = aethyrnet.PageView.extend({
+    
+    events : {
+      'keyup #username-search' : 'searchUsers',
+      'change #username-search' : 'searchUsers',
+    },
   
     security : {
       loggedIn : true,
@@ -13,12 +18,12 @@ aethyrnet.backbone['admin'] = new (function(){
     },
     
     initializePage : function(options)
-    {      
+    {
       //Retrieve template files.
       getTemplate('dashboard', { view : this }, function(err, context)
       {
       
-        this.collection = new thisBone.SysUserCollection();
+        this.collection = this.renderCollection = new thisBone.SysUserCollection();
         
         var options = 
         {
@@ -43,9 +48,29 @@ aethyrnet.backbone['admin'] = new (function(){
     renderPage : function()
     {
       this.$el.html(this.template({
-        users : this.collection,
+        users : this.renderCollection,
+        mode : 'full',
       }));
-    }
+    },
+    
+    renderList : function()
+    {
+      this.$el.find('.list-group').html(this.template({
+        users : this.renderCollection,
+        mode : 'list',
+      }));
+      return this;
+    },
+    
+    searchUsers : function(event)
+    {
+      var searchString = $(event.currentTarget).val();
+      searchString = searchString || "";
+      searchString = searchString.toLowerCase().replace(" ","_");
+      this.renderCollection = this.collection.byUsername(searchString);
+      
+      this.renderList();
+    },
     
   });
   
@@ -68,6 +93,16 @@ aethyrnet.backbone['admin'] = new (function(){
   
     model : thisBone.SysUserModel,
     url : "/api/users",
+    
+    
+    byUsername: function(username) 
+    {
+      filtered = this.filter(function(user) 
+      {
+        return user.get("username").substring(0, username.length) === username;
+      });
+      return new thisBone.SysUserCollection(filtered);
+    }
     
   });
   
