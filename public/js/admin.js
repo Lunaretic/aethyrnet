@@ -5,6 +5,11 @@ aethyrnet.backbone['admin'] = new (function(){
   //----------------------------------------
   this.DashboardView = aethyrnet.PageView.extend({
   
+    security : {
+      loggedIn : true,
+      adminLevel : 3,
+    },
+    
     initializePage : function(options)
     {      
       //Retrieve template files.
@@ -15,14 +20,4 @@ aethyrnet.backbone['admin'] = new (function(){
     },
     
   });
-  
-  
-  
-  //----------------------------------------
-  //         Recruitment Page
-  //----------------------------------------
-  this.RecruitmentView = aethyrnet.PageView.extend({
-  });
-  
-  
 })();

@@ -395,12 +395,16 @@ aethyrnet.backbone['viewport'] = new (function(){
     {
     },
     
-    post : function(message, type)
+    post : function(msg, type)
     {
       var classname = "alert-info";
       
       var type = type || "";
       type = type.toUpperCase();
+      
+      var message = msg;
+      if(typeof(msg) != 'string')
+        message = msg.toString()
       
       if(type == "ERROR")
         classname = "alert-danger";
@@ -511,10 +515,10 @@ aethyrnet.backbone['viewport'] = new (function(){
       
       //Client-side security checking.
       if(this.security.loggedIn && !aethyrnet.user.loggedIn())
-      {
-        //If we failed security, throw us out of here.
         throw new aethyrnet.SecurityError("You must be logged in to access this page.");
-      }
+      
+      if(this.security.adminLevel && aethyrnet.user.get('adminLevel') < this.security.adminLevel)
+        throw new aethyrnet.SecurityError("You do not have rights to access this page.");
       
       this.neverRendered = true;
       
