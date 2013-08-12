@@ -16,16 +16,6 @@
   
   <!-- Bootstrap & Assistant Libraries -->
   <script type="text/javascript" src="/public/js/lib/jquery.js"></script>
-  <script type="text/javascript" src="/public/js/lib/bootstrap.min.js"></script>
-  
-  <script type="text/javascript" src="/public/js/lib/jquery.easing.1.3.min.js"></script>
-  
-  
-  
-  <!-- Backbone and JS-Heavy Dependencies -->
-  <script type="text/javascript" src="/public/js/lib/underscore-min.js"></script>
-  <script type="text/javascript" src="/public/js/lib/backbone-min.js"></script>
-  <script type="text/javascript" src="/public/js/lib/async.js"></script>
   
   <script id="startupScript" type="text/javascript">
     //Basic Aethyrnet Setup.
@@ -62,10 +52,6 @@
     });
   </script>
   
-  <!-- Aethyrnet Scripts -->
-  <% if (environment != "production") { %><script type="text/javascript" src="/public/js/debugMode.js"></script><% } %>
-  <script type="text/javascript" src="/public/js/viewport.js"></script>
-  <script type="text/javascript" src="/public/js/user.js"></script>
 </head>
 <body>
   <div id="page-status-bar" class="progress">
@@ -83,7 +69,7 @@
       
       <p id="login-status" class="navbar-text pull-right">
         <% if(userData.username != "anonymous") { %>
-          Welcome back, <a href="/profile" class="navbar-link"><% print(userData.username) %></a>
+          Welcome back, <a href="/profile" class="navbar-link"><%= niceName %></a>
         <% } else { %>
           <a href="/login" class="navbar-link">Log In / Register</a>
         <% } %>
@@ -109,5 +95,29 @@
   
 
   <div id="bottom-fade" class="gradient-down"></div>
-  <div id="copyright"><%= (environment != "production" ? "Environment: " + environment + "<br/>" : "") %>Aethyrnet Logo &copy; 50DKP, LLC.<br/>Background Images &amp; Meteor Logo &copy; SQUARE-ENIX CO. LTD.</div>
+  
+  <div class="copyright pull-left">
+    Version: <%= version %>
+    <%= (environment != "production" ? "<br/>Environment: " + environment : "") %>
+  </div>
+  <div class="copyright">
+    Aethyrnet Logo &copy; 50DKP, LLC.<br/>
+    Background Images &amp; Meteor Logo &copy; SQUARE-ENIX CO. LTD.
+  </div>
+  
+  
+  
+  <!-- Bootstrap JS Code -->
+  <script type="text/javascript" src="/public/js/lib/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/jquery.easing.1.3.min.js"></script>
+  
+  <!-- Backbone and JS-Heavy Dependencies -->
+  <script type="text/javascript" src="/public/js/lib/underscore-min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/backbone-min.js"></script>
+  <script type="text/javascript" src="/public/js/lib/async.js"></script>
+  
+  <!-- Aethyrnet Scripts -->
+  <% if (environment != "production") { %><script type="text/javascript" src="/public/js/debugMode.js"></script><% } %>
+  <script type="text/javascript" src="/public/js/viewport.js"></script>
+  <script type="text/javascript" src="/public/js/user.js"></script>
 </body>

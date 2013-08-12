@@ -63,7 +63,7 @@ a
   z-index: 999;
 }
 
-#copyright
+.copyright
 {
   position: fixed;
   z-index: 2000;
@@ -80,6 +80,13 @@ a
   
   width: 400px;
   opacity: 0.4;
+}
+
+.copyright.pull-left
+{
+  right: 0px;
+  left: 4px;
+  text-align: left;
 }
 
 .navbar-inverse
@@ -155,6 +162,13 @@ a
   color: #62abea;
 }
 
+#page-frame li.active>a,
+#page-frame li.active>a:hover
+{
+  color: #fff;
+}
+
+
 #page-frame h4 a,
 #page-frame h4 a:hover
 {
@@ -214,6 +228,8 @@ a
   letter-spacing: 1px;
   
   margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 

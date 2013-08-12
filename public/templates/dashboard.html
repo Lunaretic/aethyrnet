@@ -1,0 +1,34 @@
+<% if(view == "DashboardView") { %>
+
+<div id="admin-body" class="panel container">
+  <div class="panel-heading">Admin Dashboard</div>
+  <ul class="nav nav-pills" style="margin-bottom: 6px; margin-left: 2px;">
+    <li data-view="UserlistPanel"><a>Users</a></li>
+    <li data-view="PostAdminPanel"><a>Posts</a></li>
+  </ul>
+</div>
+<% } else if(view == "UserlistPanel") { %>
+  <% if(mode == "full") { %>
+  
+    <div class="panel-heading">User Administration</div>
+  
+    <div class="input-group">
+      <span class="input-group-addon">Username</span>
+      <input id="username-search" type="text" class="form-control" placeholder="Search by Username">
+    </div>
+
+  
+    <div class="list-group container">
+    <% users.each(function(user){ %>
+      <a class="list-group-item"><%= aethyrnet.util.prettyName(user.get("username")) %></a>
+    <% }); %>
+    </div>
+  
+  <% } else if(mode == "list") { %>
+  
+    <% users.each(function(user){ %>
+        <a class="list-group-item"><%= aethyrnet.util.prettyName(user.get("username")) %></a>
+    <% }); %>
+
+  <% } %>
+<% } %>

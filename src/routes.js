@@ -6,6 +6,9 @@ var _ = require('underscore');
 var path = require('path');
 var fs = require('fs');
 
+//Import the base package.json for data resding.
+var aethyrPackage = require('../package.json');
+
 module.exports = function(server)
 {
 
@@ -26,6 +29,15 @@ module.exports = function(server)
     fs.stat(indexFile, function(err, stat){
       if(err)
         throw err;
+      
+      var userData = getUserInfo(req.user, true);
+      var options = {
+        environment : util.prettyName(process.env.NODE_ENV),
+        userData : userData,
+        niceName : util.prettyName(userData.username),
+        bgImage : ( req.user ? req.user.bgImage : false ),
+        version : aethyrPackage.version,
+      };
         
       //New version? Gotta update cache.
       if(stat.mtime.toString() != indexMTime.toString())
@@ -36,20 +48,12 @@ module.exports = function(server)
             throw err;
           indexMTime = stat.mtime;
           template = _.template(data.toString());
-          res.end(template({
-            environment : process.env.NODE_ENV,
-            userData : getUserInfo(req.user, true),
-            bgImage : ( req.user ? req.user.bgImage : false ),
-          }));
+          res.end(template(options));
         });
       }
       
       //Old version?  Throw the cache at the request.
-      return res.end(template({
-        environment : process.env.NODE_ENV,
-        userData : getUserInfo(req.user, true),
-        bgImage : ( req.user ? req.user.bgImage : false ),
-      }));
+      return res.end(template(options));
     });
   });
   
@@ -127,6 +131,7 @@ module.exports = function(server)
         avatar : user.avatar,
         sidebarSticky : user.sidebarSticky,
         sidebarOrientation: user.sidebarOrientation,
+        adminLevel : user.adminLevel
       };
       
     if(objectify)
@@ -198,6 +203,27 @@ module.exports = function(server)
     });
   });
   
+  
+  server.get('/api/users', function(req, res)
+  {
+    if(!req.user || req.user.adminLevel < 3)
+      return util.clientErr(res, "You do not have permission to access this resource");
+      
+    database.model('user').find({}, 'username').sort('+username').exec(function(err, docs)
+    {
+      var data = [];
+      if(err)
+        util.log(err);
+      else if((!docs) || docs.length == 0)
+        util.warn("No users found in user table?");
+      else
+      {
+        data = docs;
+      }
+      
+      res.end(JSON.stringify(data));
+    });
+  });
   
   var validateInput = function(actual, expected, noFalse)
   {
