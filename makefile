@@ -12,8 +12,8 @@ commit:
 	cd $(DEVPATH); git add .; git commit -a; git push;
 
 commit-r:
-	cd $(DEVPATH); git add .; git commit -a; git push;
-	cd $(PRODPATH); git pull; npm version minor;
+	cd $(DEVPATH); git add .; git commit -a; npm version minor; git push;
+	cd $(PRODPATH); git pull;
 	-NODE_ENV=production forever stop aethyrnet.js
 	cd $(PRODPATH); NODE_ENV=production forever start -l $(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
   
