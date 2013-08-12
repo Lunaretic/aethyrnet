@@ -280,6 +280,12 @@ aethyrnet.backbone['viewport'] = new (function(){
       'About' : 'about',
       
       'Free Company Board' : 'url:http://na.beta.finalfantasyxiv.com/lodestone/',
+      
+      'Dashboard' : {
+        'page' : 'dashboard',
+        'loggedIn' : true,
+        'adminLevel' : 3,
+      },
     },
     
     initialize : function()
@@ -323,8 +329,9 @@ aethyrnet.backbone['viewport'] = new (function(){
           page = "/" + page;
         
         //Ensure login requirement for log-in required items.
-        if((!this.items[idx].loggedIn) || (this.items[idx].loggedIn && aethyrnet.user.loggedIn()))
-          items[idx] = page;
+        if((!this.items[idx].loggedIn) || (aethyrnet.user.loggedIn()))
+          if((!this.items[idx].adminLevel) || (aethyrnet.user.get('adminLevel') >= this.items[idx].adminLevel))
+            items[idx] = page;
       }
       
       this.$el.html(this.template({
@@ -544,6 +551,7 @@ aethyrnet.viewMap = {
   'profile' : 'profile.ProfileView',
   'about' : 'about.AboutView',
   'recruitment' : 'about.RecruitmentView',
+  'dashboard' : 'admin.DashboardView',
 };
 
 aethyrnet.router = new (Backbone.Router.extend({

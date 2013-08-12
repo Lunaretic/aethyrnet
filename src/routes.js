@@ -127,6 +127,7 @@ module.exports = function(server)
         avatar : user.avatar,
         sidebarSticky : user.sidebarSticky,
         sidebarOrientation: user.sidebarOrientation,
+        adminLevel : user.adminLevel
       };
       
     if(objectify)
