@@ -19,20 +19,25 @@ aethyrnet.backbone['admin'] = new (function(){
     
     initializePage : function(options)
     {
+      //TODO: Async.Parallel this later.
+      
       //Retrieve template files.
       getTemplate('dashboard', { view : this }, function(err, context)
       {
       
         this.collection = this.renderCollection = new thisBone.SysUserCollection();
         
+        //Options for Backbone.Collection.Fetch.
         var options = 
         {
           success : function(results, response, options)
           {
+            //Once we have data we're good to render.
             this.render();
           }.bind(this),
           error : function(collection, response, options)
           {
+            //For debugging failures currently.
             console.log("Fetch Failed.");
             console.log(collection);
             console.log(response);
@@ -45,6 +50,7 @@ aethyrnet.backbone['admin'] = new (function(){
       }.bind(this));
     },
     
+    //Basic template render, but split into segments.
     renderPage : function()
     {
       this.$el.html(this.template({
@@ -53,15 +59,19 @@ aethyrnet.backbone['admin'] = new (function(){
       }));
     },
     
+    //Render userlist only.
     renderList : function()
     {
       this.$el.find('.list-group').html(this.template({
         users : this.renderCollection,
         mode : 'list',
       }));
+      
+      //Return this for chaining.
       return this;
     },
     
+    //Filters current rendering collection.
     searchUsers : function(event)
     {
       var searchString = $(event.currentTarget).val();
@@ -76,7 +86,7 @@ aethyrnet.backbone['admin'] = new (function(){
   
   
   //----------------------------------------
-  //              Users Model
+  //         Users Model/Collection
   //----------------------------------------
   this.SysUserModel = Backbone.Model.extend({
     
@@ -94,7 +104,7 @@ aethyrnet.backbone['admin'] = new (function(){
     model : thisBone.SysUserModel,
     url : "/api/users",
     
-    
+    //Simple collection-return style filtering.
     byUsername: function(username) 
     {
       filtered = this.filter(function(user) 
