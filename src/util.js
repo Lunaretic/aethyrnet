@@ -191,6 +191,12 @@ module.exports.webGet = function(options, callback)
   }).end();
 }
 
+module.exports.prettyName = function(username)
+{
+  //Capitalize first letter
+  return (username.charAt(0).toUpperCase() + username.slice(1)).replace("_", " ");
+}
+
 var padLeft = function (str, paddingValue) {
    return String(paddingValue + str).slice(-paddingValue.length);
 };

@@ -63,7 +63,7 @@ a
   z-index: 999;
 }
 
-#copyright
+.copyright
 {
   position: fixed;
   z-index: 2000;
@@ -80,6 +80,13 @@ a
   
   width: 400px;
   opacity: 0.4;
+}
+
+.copyright.pull-left
+{
+  right: 0px;
+  left: 4px;
+  text-align: left;
 }
 
 .navbar-inverse
