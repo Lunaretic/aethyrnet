@@ -8,8 +8,11 @@ prod:
 	-NODE_ENV=production forever stop aethyrnet.js
 	cd $(PRODPATH); NODE_ENV=production forever start -l $(PRODPATH)/log/$(LOGFILE) -a --minUptime 5000 --spinSleepTime 60000 aethyrnet.js
 
+save:
+	cd $(DEVPATH); git add .; git commit -a;
+	
 commit:
-	cd $(DEVPATH); git add .; git commit -a; git push;
+	cd $(DEVPATH); git add .; git commit -a; npm version patch; git push;
 
 commit-r:
 	cd $(DEVPATH); git add .; git commit -a; npm version minor; git push;
@@ -26,4 +29,4 @@ test:
 test-w:
 	cd $(DEVPATH); NODE_ENV=test mocha --reporter $(REPORTER) --recursive --watch --growl
   
-.PHONY: test test-w dev commit commit-r prod
+.PHONY: test test-w dev commit commit-r prod save
