@@ -209,7 +209,7 @@ module.exports = function(server)
     if(!req.user || req.user.adminLevel < 3)
       return util.clientErr(res, "You do not have permission to access this resource");
       
-    database.model('user').find({}, 'username').sort('+username').exec(function(err, docs)
+    database.model('user').find({}, 'username email charUrl adminLevel').sort('+username').exec(function(err, docs)
     {
       var data = [];
       if(err)

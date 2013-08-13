@@ -43,7 +43,6 @@ aethyrnet.backbone['admin'] = new (function(){
         this.$('.loading').remove();
         this.subview.render();
         this.subview.$el.appendTo(this.$("#admin-body"));
-        console.log("Hi");
       }
     },
     
@@ -65,7 +64,6 @@ aethyrnet.backbone['admin'] = new (function(){
       opts = opts || {};
       opts.callback = this.render.bind(this, viewName);
       this.subview = new thisBone[viewName](opts);
-        console.log("Hi");
     },
     
     navClick : function(event)
@@ -156,7 +154,9 @@ aethyrnet.backbone['admin'] = new (function(){
     {
       var username = $(event.currentTarget).text();
       aethyrnet.viewport.mainView.switchView('UserAdminPanel', {
-        
+        model : this.collection.findWhere({
+          _id : $(event.currentTarget).attr('data-id'),
+        }),
       });
     },
   });
@@ -167,15 +167,24 @@ aethyrnet.backbone['admin'] = new (function(){
   //           UserAdmin Panel
   //----------------------------------------
   this.UserAdminPanel = Backbone.View.extend({
+    id : "admin-panel",
+    className : "panel container",
     
     initialize : function(options)
     {
       //Retrieve template files - Should be coming straight out of cache, so nbd.
-      getTemplate('dashboard', { view : this }, function(err, context)
+      getTemplate('dashboard/userAdmin', { view : this }, function(err, context)
       {
         return options.callback();
       }.bind(this));
     },
+    
+    render : function()
+    {
+      this.$el.html(this.template({
+        model : this.model,
+      }));
+    }
     
   });
   

@@ -11,10 +11,10 @@ module.exports.user = new mongoose.Schema({
   bgImage : { type : String, trim : true, lowercase : true, default : 'gridania' },
   
   //Email -- Add Validator later.
-  email : { type : String, trim : true, lowercase : true },
+  email : { type : String, trim : true, lowercase : true, default : '' },
   
   //Character URL - Validator?
-  charUrl : { type : String, trim : true, lowercase : true },
+  charUrl : { type : String, trim : true, lowercase : true, default : '' },
   
   avatar : { type : String, trim : true, default : '_default.jpg' },
   

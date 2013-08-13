@@ -20,14 +20,14 @@
   
     <div class="list-group container">
     <% users.each(function(user){ %>
-      <a class="list-group-item"><%= aethyrnet.util.prettyName(user.get("username")) %></a>
+      <a class="list-group-item" data-id="<%= user.id %>"><%= aethyrnet.util.prettyName(user.get("username")) %></a>
     <% }); %>
     </div>
   
   <% } else if(mode == "list") { %>
   
     <% users.each(function(user){ %>
-        <a class="list-group-item"><%= aethyrnet.util.prettyName(user.get("username")) %></a>
+        <a class="list-group-item" data-id="<%= user.id %>"><%= aethyrnet.util.prettyName(user.get("username")) %></a>
     <% }); %>
 
   <% } %>
