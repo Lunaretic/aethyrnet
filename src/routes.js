@@ -96,6 +96,8 @@ module.exports = function(server)
     req.user.bgImage = req.body.bgImage;
     req.user.email = req.body.email;
     req.user.charUrl = req.body.charUrl;
+    req.user.charName = req.body.charName;
+    console.log(req.user.charName);
     
     req.user.sidebarOrientation = req.body.sidebarOrientation;
     req.user.sidebarSticky = (req.body.sidebarSticky ? true : false);
@@ -128,6 +130,7 @@ module.exports = function(server)
         bgImage : user.bgImage,
         email : user.email,
         charUrl : user.charUrl,
+        charName : user.charName,
         avatar : user.avatar,
         sidebarSticky : user.sidebarSticky,
         sidebarOrientation: user.sidebarOrientation,

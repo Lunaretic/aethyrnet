@@ -31,6 +31,7 @@ aethyrnet.backbone['profile'] = new (function(){
         background : aethyrnet.util.prettyName(aethyrnet.user.get('bgImage')),
         email : aethyrnet.user.get('email'),
         charUrl : aethyrnet.user.get('charUrl'),
+        charName : aethyrnet.user.get('charName'),
         avatar : aethyrnet.user.get('avatar'),
         orientation : aethyrnet.util.prettyName(aethyrnet.user.get('sidebarOrientation')),
         onScreen : aethyrnet.user.get('sidebarSticky'),
@@ -72,6 +73,7 @@ aethyrnet.backbone['profile'] = new (function(){
     {
       var email = $('#email-input',this.$el).val() || "";
       var charUrl = $('#char-url-input',this.$el).val() || "";
+      var charName = $('#char-name-input',this.$el).val() || "";
       var sidebarOrientation = $('#orientation-dropdown .value').text();
       sidebarOrientation = sidebarOrientation.toLowerCase();
       var sidebarSticky = ($('#scrolling-dropdown .value').text() == "Fixed Sidebar" ? true : false);
@@ -79,6 +81,7 @@ aethyrnet.backbone['profile'] = new (function(){
       //Background attribute set previously.
       var opts = {
         email : email,
+        charName : charName,
         charUrl : charUrl,
         sidebarOrientation : sidebarOrientation,
         sidebarSticky : sidebarSticky,

@@ -16,6 +16,8 @@ module.exports.user = new mongoose.Schema({
   //Character URL - Validator?
   charUrl : { type : String, trim : true, lowercase : true, default : '' },
   
+  charName : { type : String, trim : true, lowercase : true, default : '' },
+  
   avatar : { type : String, trim : true, default : '_default.jpg' },
   
   sidebarSticky : { type : Boolean, default : false },

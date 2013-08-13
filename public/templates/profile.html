@@ -21,6 +21,11 @@
   </div>
   
   <div class="input-group" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon" style="width: 20%; color: #000;">Character Name</span>
+    <input id="char-name-input" type="text" class="form-control" placeholder="Character Name" <%= charName ? 'value="' + charName + '"' : '' %>>
+  </div>
+  
+  <div class="input-group" style="margin-bottom: 8px; width: 100%">
     <span class="input-group-addon" style="width: 20%; color: #000;">Lodestone URL</span>
     <input id="char-url-input" type="text" class="form-control" placeholder="http://na.beta.finalfantasyxiv.com/lodestone/character/######/" <%= charUrl ? 'value="' + charUrl + '"' : '' %>>
   </div></form>
