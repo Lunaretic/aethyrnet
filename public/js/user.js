@@ -167,22 +167,23 @@ aethyrnet.backbone['user'] = new (function(){
       }
     },
     
-    enableForm : function(eText)
+    enableForm : function(eText, className)
     { 
-      $('.button', this.$el).toggleClass('disabled');
+      $('.btn', this.$el).removeClass('disabled');
       $('input', this.$el).prop('disabled', false);
       
       if(eText)
       {
-        this.postError(eText);
+        this.postError(eText, className);
       }
       
       this.delegateEvents();
     },
     
-    postError : function(eText)
+    postError : function(eText, className)
     {
-      $(document.createElement('div')).appendTo(this.$el.find('.modal-body')).addClass('alert alert-danger').text(eText).delay(2000).animate({
+      className = className || "alert-danger";
+      $(document.createElement('div')).appendTo(this.$el.find('.modal-body')).addClass('alert ' + className).text(eText).delay(2000).animate({
         opacity : 0
       }, 400).queue('fx', function(next)
       {
@@ -248,8 +249,10 @@ aethyrnet.backbone['user'] = new (function(){
           return this.enableForm(data.error);
         
         //Welcome user.
-        aethyrnet.util.setupUser(data);
-        this.$el.modal('hide')
+        //aethyrnet.util.setupUser(data);
+        this.postError("Your account has been registered, now logging you in..", "alert-success");
+        this.attemptLogin();
+        //this.$el.modal('hide')
       }.bind(this), 'json').fail(function()
       {
         this.enableForm("There was an error. :(")
