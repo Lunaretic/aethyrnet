@@ -56,13 +56,15 @@ module.exports.error = module.exports.err = function logError(msg, kill)
 
 
 
-module.exports.makeSlug = function(str)
+module.exports.makeSlug = function(data)
 {
 	//Strip bad characters.
-	str = str.replace(/[^a-zA-Z 0-9\]\[\-.]+/g,'');
-	str = str.replace(' ','_');
+  str = data || "";
+  if(typeof(str) != "string")
+    str = str.toString
 	str = str.toLowerCase();
-  str = str.trim();
+	str = str.replace(' ','_');
+	str = str.replace(/[^a-z0-9_]+/g,'');
 	return str;
 };
 

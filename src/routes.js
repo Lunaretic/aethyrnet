@@ -173,6 +173,9 @@ module.exports = function(server)
       password : 'string',
     }, true))
       return util.clientErr(res, 'Bad Input.');
+      
+    req.body.username = util.makeSlug(req.body.username);
+    req.body.password = req.body.password.trim();
     
     //Test password requirements
     if(req.body.password.length < 7)

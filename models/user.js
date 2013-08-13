@@ -30,7 +30,7 @@ module.exports.user = new mongoose.Schema({
 });
 
 var regexValidator = {
-  username : /^[0-9a-z ]*$/,
+  username : /^[0-9a-z_]*$/,
   email : /^$|^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
   charUrl : /^$|^http\:\/\/[a-z.]*finalfantasyxiv\.com\/lodestone\/character\/[0-9]*\/$/,
 };
