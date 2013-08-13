@@ -725,79 +725,75 @@ function getTemplate(file, options, callback)
     options.mainCSS = true;
   options.template = ( options.template === undefined ? true : options.template );
   
-  
-  if(
-    ( (!options.template) || aethyrnet.template[file] ) &&
-    ( (!options.css) || aethyrnet.css[file] )
-  )
-  {
-    if(options.view)
-      options.view.template = aethyrnet.template[file];
-    return callback(null, aethyrnet.template[file]);
-  }
-  else
-  {
-    async.parallel([
-      function(callback)
+  async.parallel(
+  [
+    function(callback)
+    {
+      if(!options.template)
+        return callback(false);
+        
+      //Retreive from cache if we have it.
+      if(aethyrnet.template[file])
+        //Use setImmediate to ensure this is triggered Asynchronously.
+        //This seems to be a potential quirk of the Async lib, is that
+        //Async.parallel actually runs synchronously at first until its processes
+        //Yield via their own asynchronous calls.
+        return setImmediate(callback.bind(this, null, aethyrnet.template[file]));
+        
+      $.get('/public/templates/' + file + '.html', function(data, status, jqXHR)
       {
-        if(!options.template)
-          return callback(false);
-          
-        $.get('/public/templates/' + file + '.html', function(data, status, jqXHR)
-        {
-          if(status != 'success')
-          {
-            console.log("Failed to retreive template: " + file);
-            return callback(status);
-          }
-          
-          data = _.template(data);
-          
-          if(options.view)
-            options.view.template = data;
-          
-          aethyrnet.template[file] = data;
-          
-          return callback(null, data);
-        }).fail(function()
+        if(status != 'success')
         {
           console.log("Failed to retreive template: " + file);
-          return callback(true);
-        });
-      },
-      function(callback)
+          return callback(status);
+        }
+        
+        data = _.template(data);
+        
+        aethyrnet.template[file] = data;
+        
+        return callback(null, data);
+      }).fail(function()
       {
-        if(!options.css)
-          return callback(false);
-        
-        //Strip old core CSS if it exists.
-        if(options.mainCSS)
-          $('#mainCSS').remove();
-          
-        
-        $.get('/public/css/' + file + '.css',function(data, status, jqXHR)
-        {
-          
-          var e = $(document.createElement('style')).addClass('css_' + file).appendTo("head").html(data);
-          if(options.mainCSS)
-            e.attr('id','mainCSS');
-            
-          //Safety precaution for memory leaks
-          e = null;
-          
-          return callback(false);
-        }).fail(function()
-        {
-          console.log("Failed to retreive CSS: " + file);
-          return callback(true);
-        });
-      },
-    ],
-    function(err, result)
+        console.log("Failed to retreive template: " + file);
+        return callback(true);
+      });
+    },
+    function(callback)
     {
-      return callback(err, result[0]);
-    });
-  }
+      if(!options.css)
+        return callback(false);
+      
+      //Strip old core CSS if it exists.
+      if(options.mainCSS)
+        $('#mainCSS').remove();
+        
+      
+      $.get('/public/css/' + file + '.css',function(data, status, jqXHR)
+      {
+        
+        var e = $(document.createElement('style')).addClass('css_' + file).appendTo("head").html(data);
+        if(options.mainCSS)
+          e.attr('id','mainCSS');
+          
+        //Safety precaution for memory leaks
+        e = null;
+        
+        return callback(false);
+      }).fail(function()
+      {
+        console.log("Failed to retreive CSS: " + file);
+        return callback(true);
+      });
+    },
+  ],
+  function(err, result)
+  {
+    if(options.view)
+      options.view.template = result[0];
+    return callback(err, result[0]);
+  });
+  
 }
 
 
@@ -852,3 +848,7 @@ if(aethyrnet.debug)
     console.log("Aethyrnet Route: " + route);
   });
 }
+
+var setImmediate = setImmediate || function setImmediateFn(func) {
+  return setTimeout(func, 0);
+};

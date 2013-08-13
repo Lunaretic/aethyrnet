@@ -43,10 +43,11 @@ aethyrnet.backbone['admin'] = new (function(){
         this.$('.loading').remove();
         this.subview.render();
         this.subview.$el.appendTo(this.$("#admin-body"));
+        console.log("Hi");
       }
     },
     
-    switchView : function(viewName)
+    switchView : function(viewName, opts)
     {
       if(!thisBone[viewName])
         return aethyrnet.error("The requested page does not exist.");
@@ -61,7 +62,10 @@ aethyrnet.backbone['admin'] = new (function(){
       var loader = $('<img class="loading" src="/public/images/loading.gif"></img>');
       this.$("#admin-body").append(loader);
       
-      this.subview = new thisBone[viewName](this.render.bind(this, viewName));
+      opts = opts || {};
+      opts.callback = this.render.bind(this, viewName);
+      this.subview = new thisBone[viewName](opts);
+        console.log("Hi");
     },
     
     navClick : function(event)
@@ -84,7 +88,7 @@ aethyrnet.backbone['admin'] = new (function(){
     },
   
   
-    initialize : function(callback)
+    initialize : function(options)
     {
       //Retrieve template files - Should be coming straight out of cache, so nbd.
       getTemplate('dashboard', { view : this }, function(err, context)
@@ -94,13 +98,13 @@ aethyrnet.backbone['admin'] = new (function(){
         
         //Retrevie User List
         this.collection.fetch({
-          success : function(results, response, options)
+          success : function()
           {
-            return callback();
+            return options.callback();
           },
-          error : function(collection, response, options)
+          error : function()
           {
-            return callback();
+            return options.callback();
           },
         });
       }.bind(this));
@@ -151,8 +155,28 @@ aethyrnet.backbone['admin'] = new (function(){
     selectUser : function(event)
     {
       var username = $(event.currentTarget).text();
-      aethyrnet.viewport.mainView.switchView('UserlistPanel');
+      aethyrnet.viewport.mainView.switchView('UserAdminPanel', {
+        
+      });
     },
+  });
+  
+  
+  
+  //----------------------------------------
+  //           UserAdmin Panel
+  //----------------------------------------
+  this.UserAdminPanel = Backbone.View.extend({
+    
+    initialize : function(options)
+    {
+      //Retrieve template files - Should be coming straight out of cache, so nbd.
+      getTemplate('dashboard', { view : this }, function(err, context)
+      {
+        return options.callback();
+      }.bind(this));
+    },
+    
   });
   
   //----------------------------------------
@@ -161,7 +185,7 @@ aethyrnet.backbone['admin'] = new (function(){
   this.SysUserModel = Backbone.Model.extend({
     
     idAttribute: "_id",
-    url : '/api/users',
+    url : '/api/user',
     
     initialize : function(attributes, options)
     {
