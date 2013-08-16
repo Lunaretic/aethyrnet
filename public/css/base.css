@@ -82,6 +82,16 @@ a
   opacity: 0.4;
 }
 
+.copyright.pull-center
+{
+  right: 0px;
+  left: 50%;
+  
+  width: 300px;
+  margin-left: -150px;
+  text-align: center;
+}
+
 .copyright.pull-left
 {
   right: 0px;

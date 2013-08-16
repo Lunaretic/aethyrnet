@@ -97,7 +97,6 @@ module.exports = function(server)
     req.user.email = req.body.email;
     req.user.charUrl = req.body.charUrl;
     req.user.charName = req.body.charName;
-    console.log(req.user.charName);
     
     req.user.sidebarOrientation = req.body.sidebarOrientation;
     req.user.sidebarSticky = (req.body.sidebarSticky ? true : false);
