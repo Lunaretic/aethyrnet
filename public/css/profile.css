@@ -66,7 +66,8 @@
   width : 30%;
 }
 
-#page-frame .input-group-addon.status
+#page-frame .input-group-addon .status
 {
   min-width: 50px;
+  color: #0f0;
 }

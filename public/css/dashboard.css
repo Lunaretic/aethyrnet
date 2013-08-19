@@ -8,3 +8,14 @@
   position: relative;
   margin: 50px auto;
 }
+
+#page-frame .panel-default>.panel-heading
+{
+  margin: 0px -15px 15px;
+}
+
+
+#page-frame .list-group
+{
+  margin: 15px -15px 0px -15px;
+}

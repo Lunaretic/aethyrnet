@@ -69,20 +69,40 @@ function(database, callback)
   
   //Session settings.
   server.use(express.cookieParser());
-  server.use(express.session({
-    secret : secrets.cookieSecret,
-    cookie : 
-    {
-      //One year expiration
-      maxAge: 365 * 24 * 60 * 60 * 1000,
-      domain:'.aethyrnet.com'
-    },
-    store : new MongoStore({
-      mongoose_connection : database,
-      collection : 'sessions',
-      auto_reconnect : true,
-    }),
-  }));
+  server.configure('production', function()
+  {
+    server.use(express.session({
+      secret : secrets.cookieSecret,
+      cookie : 
+      {
+        //One year expiration
+        maxAge: 365 * 24 * 60 * 60 * 1000,
+        domain:'.aethyrnet.com'
+      },
+      store : new MongoStore({
+        mongoose_connection : database,
+        collection : 'sessions',
+        auto_reconnect : true,
+      }),
+    }));
+  });
+  server.configure('development', function()
+  {
+    server.use(express.session({
+      secret : secrets.cookieSecret,
+      cookie : 
+      {
+        //One year expiration
+        maxAge: 365 * 24 * 60 * 60 * 1000,
+        domain:'test.aethyrnet.com'
+      },
+      store : new MongoStore({
+        mongoose_connection : database,
+        collection : 'sessions',
+        auto_reconnect : true,
+      }),
+    }));
+  });
   
   //Automatic GZipping.
   server.use(gzip.gzip());

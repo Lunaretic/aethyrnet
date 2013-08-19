@@ -77,7 +77,7 @@ aethyrnet.backbone['admin'] = new (function(){
   //----------------------------------------
   this.UserlistPanel = Backbone.View.extend({
     id : "admin-panel",
-    className : "panel container",
+    className : "container panel panel-default",
     
     events : {
       'keyup #username-search' : 'searchUsers',
@@ -168,7 +168,7 @@ aethyrnet.backbone['admin'] = new (function(){
   //----------------------------------------
   this.UserAdminPanel = Backbone.View.extend({
     id : "admin-panel",
-    className : "panel container",
+    className : "container panel panel-default",
     
     initialize : function(options)
     {
