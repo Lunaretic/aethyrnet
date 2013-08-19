@@ -65,3 +65,8 @@
 {
   width : 30%;
 }
+
+#page-frame .input-group-addon.status
+{
+  min-width: 50px;
+}

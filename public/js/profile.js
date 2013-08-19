@@ -4,8 +4,8 @@ aethyrnet.backbone['profile'] = new (function(){
     events : {
       'click #logoutButton' : 'logOut',
       'click #background-dropdown li' : 'bgChange',
-      'click #orientation-dropdown li' : 'orientChange',
-      'click #scrolling-dropdown li' : 'scrollChange',
+      'click #sidebarOrientation-input li' : 'orientChange',
+      'click #sidebarSticky-input li' : 'scrollChange',
       'change input' : 'inputChange',
     },
     
@@ -50,12 +50,12 @@ aethyrnet.backbone['profile'] = new (function(){
     
     orientChange : function(event)
     {
-      this.$el.find('#orientation-dropdown .value').text($(event.target).text());
+      this.$el.find('#sidebarOrientation-input .value').text($(event.target).text());
       this.saveUser();
     },
     scrollChange : function(event)
     {
-      this.$el.find('#scrolling-dropdown .value').text($(event.target).text());
+      this.$el.find('#sidebarSticky-input .value').text($(event.target).text());
       this.saveUser();
     },
     
@@ -72,11 +72,11 @@ aethyrnet.backbone['profile'] = new (function(){
     saveUser : function()
     {
       var email = $('#email-input',this.$el).val() || "";
-      var charUrl = $('#char-url-input',this.$el).val() || "";
-      var charName = $('#char-name-input',this.$el).val() || "";
-      var sidebarOrientation = $('#orientation-dropdown .value').text();
+      var charUrl = $('#charUrl-input',this.$el).val() || "";
+      var charName = $('#charName-input',this.$el).val() || "";
+      var sidebarOrientation = $('#sidebarOrientation-input .value').text();
       sidebarOrientation = sidebarOrientation.toLowerCase();
-      var sidebarSticky = ($('#scrolling-dropdown .value').text() == "Fixed Sidebar" ? true : false);
+      var sidebarSticky = ($('#sidebarSticky-input .value').text() == "Fixed Sidebar" ? true : false);
       
       //Background attribute set previously.
       var opts = {
@@ -87,24 +87,51 @@ aethyrnet.backbone['profile'] = new (function(){
         sidebarSticky : sidebarSticky,
       };
       
-      console.log(email);
-      aethyrnet.user.set(opts);
+      var changed = {};
+      for(var idx in opts)
+      {
+        if(opts[idx] != aethyrnet.user.get(idx))
+        {
+          changed[idx] = opts[idx];
+        }
+      };
+      
+      
+      aethyrnet.user.set(changed);
       
       //Backbone smart save.
       aethyrnet.user.save().done(function()
       {
-        aethyrnet.notify('Profile updated successfully.', 'success');
-                
-      }).fail(function(jqXHR, arg2, arg3) 
+        //Save OK.
+        this.$('.has-error').removeClass('has-error');
+        
+        for(idx in changed)
+        {
+          this.$('#'+idx+'-input').parent().addClass('has-success').delay(1500).queue('fx', function(next)
+          {
+            $(this).removeClass('has-success');
+            return next();
+          });
+          this.$('#'+idx+'-input').parent().find('.status').attr('class', 'status glyphicon glyphicon-ok');
+        }
+        
+      }.bind(this)).fail(function(jqXHR, arg2, arg3) 
       {
         //Hard fail. Bad news bears.
         if(jqXHR.status != 400)
           return;
         
         //Bad data.
-        for(key in jqXHR.responseJSON.err)
+        for(idx in changed)
         {
-          aethyrnet.error('Profile update failed: ' + key + ' is not valid.');
+          if(idx in jqXHR.responseJSON.err)
+            this.$('#'+idx+'-input').parent().addClass('has-error');
+          else
+            this.$('#'+idx+'-input').parent().addClass('has-success').delay(1500).queue('fx', function(next)
+            {
+              $(this).removeClass('has-success');
+              return next();
+            });
         }
       }.bind(this));
     },
