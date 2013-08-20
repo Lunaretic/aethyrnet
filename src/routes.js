@@ -81,25 +81,30 @@ module.exports = function(server)
     return res.end(getUserInfo(req.user));
   });
   
-  server.put('/api/profile', function(req, res){
+  server.patch('/api/profile', function(req, res){
     if(!req.user)
       return util.clientErr(res, "Not Logged In.");
     
     //Username failure
-    if(req.user.username != req.body.username)      
-      return util.clientErr(res, "Username Mismatch.");
+    if(req.body.username && req.user.username != req.body.username)
+      util.err('Username mismatch.');
     
     if(req.user.charUrl != req.body.charUrl)
       req.user.avatar = '_default.jpg';
     
     //Todo: Make generalized merge function
-    req.user.bgImage = req.body.bgImage;
-    req.user.email = req.body.email;
-    req.user.charUrl = req.body.charUrl;
-    req.user.charName = req.body.charName;
-    
-    req.user.sidebarOrientation = req.body.sidebarOrientation;
-    req.user.sidebarSticky = (req.body.sidebarSticky ? true : false);
+    if(req.body.bgImage)
+      req.user.bgImage = req.body.bgImage;
+    if(req.body.email)
+      req.user.email = req.body.email;
+    if(req.body.charUrl)
+      req.user.charUrl = req.body.charUrl;
+    if(req.body.charName)
+      req.user.charName = req.body.charName;
+    if(req.body.sidebarOrientation)
+      req.user.sidebarOrientation = req.body.sidebarOrientation;
+    if(req.body.sidebarSticky)
+      req.user.sidebarSticky = (req.body.sidebarSticky ? true : false);
     
     req.user.save(function(err) {
       if(err)

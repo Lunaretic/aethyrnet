@@ -3,7 +3,7 @@ aethyrnet.backbone['profile'] = new (function(){
         
     events : {
       'click #logoutButton' : 'logOut',
-      'click #background-dropdown li' : 'bgChange',
+      'click #bgImage-input li' : 'bgChange',
       'click #sidebarOrientation-input li' : 'orientChange',
       'click #sidebarSticky-input li' : 'scrollChange',
       'change input' : 'inputChange',
@@ -19,8 +19,20 @@ aethyrnet.backbone['profile'] = new (function(){
       security = {
         loggedIn : true,
       };
-      
-      getTemplate('profile', { css : true, view : this, mainCss : true }, this.render.bind(this));
+      getTemplate('profile', { css : true, view : this, mainCss : true }, function()
+      {
+        //Refresh the user data.
+        aethyrnet.user.fetch({
+          success : function(mdl, res, err)
+          {
+            this.render();
+          }.bind(this),
+          error : function(mdl, res, err)
+          {
+            this.render();
+          }.bind(this),
+        });
+      }.bind(this));
     },
     
     renderPage : function()
@@ -42,10 +54,11 @@ aethyrnet.backbone['profile'] = new (function(){
     
     bgChange : function(event)
     {
-      this.$el.find('#background-dropdown button').html($(event.target).text() + ' <span class="caret">');
-      aethyrnet.util.changeBG($(event.target).text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, ''));
-      
+      this.$el.find('#bgImage-input .value').html($(event.target).text());
       this.saveUser();
+      
+      //TODO: Change to use model change event.
+      aethyrnet.util.changeBG($(event.target).text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, ''));
     },
     
     orientChange : function(event)
@@ -74,9 +87,9 @@ aethyrnet.backbone['profile'] = new (function(){
       var email = $('#email-input',this.$el).val() || "";
       var charUrl = $('#charUrl-input',this.$el).val() || "";
       var charName = $('#charName-input',this.$el).val() || "";
-      var sidebarOrientation = $('#sidebarOrientation-input .value').text();
-      sidebarOrientation = sidebarOrientation.toLowerCase();
+      var sidebarOrientation = $('#sidebarOrientation-input .value').text().toLowerCase();
       var sidebarSticky = ($('#sidebarSticky-input .value').text() == "Fixed Sidebar" ? true : false);
+      var bgImage = $('#bgImage-input .value').text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, '');
       
       //Background attribute set previously.
       var opts = {
@@ -85,6 +98,7 @@ aethyrnet.backbone['profile'] = new (function(){
         charUrl : charUrl,
         sidebarOrientation : sidebarOrientation,
         sidebarSticky : sidebarSticky,
+        bgImage : bgImage,
       };
       
       var changed = {};
@@ -93,17 +107,19 @@ aethyrnet.backbone['profile'] = new (function(){
         if(opts[idx] != aethyrnet.user.get(idx))
         {
           changed[idx] = opts[idx];
+          this.$('#'+idx+'-input').parent().find('.status').attr('class', 'status glyphicon glyphicon-retweet');
         }
       };
       
       
-      aethyrnet.user.set(changed);
+      //Save OK.
+      this.$('.has-error').removeClass('has-error');
+      this.$('.has-success').removeClass('has-success');
+      
       
       //Backbone smart save.
-      aethyrnet.user.save().done(function()
+      aethyrnet.user.save(changed, {patch: true}).done(function()
       {
-        //Save OK.
-        this.$('.has-error').removeClass('has-error');
         
         for(idx in changed)
         {
@@ -125,13 +141,23 @@ aethyrnet.backbone['profile'] = new (function(){
         for(idx in changed)
         {
           if(idx in jqXHR.responseJSON.err)
-            this.$('#'+idx+'-input').parent().addClass('has-error');
-          else
-            this.$('#'+idx+'-input').parent().addClass('has-success').delay(1500).queue('fx', function(next)
+          {
+            this.$('#'+idx+'-input').parent().addClass('has-error').delay(1500).queue('fx', function(next)
             {
-              $(this).removeClass('has-success');
+              $(this).removeClass('has-error');
               return next();
             });
+            this.$('#'+idx+'-input').parent().find('.status').attr('class', 'status glyphicon glyphicon-remove');
+          }
+          else
+          {
+          this.$('#'+idx+'-input').parent().addClass('has-success').delay(1500).queue('fx', function(next)
+          {
+            $(this).removeClass('has-success');
+            return next();
+          });
+          this.$('#'+idx+'-input').parent().find('.status').attr('class', 'status glyphicon glyphicon-ok');
+          }
         }
       }.bind(this));
     },

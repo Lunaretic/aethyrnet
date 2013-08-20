@@ -68,6 +68,20 @@
 
 #page-frame .input-group-addon .status
 {
-  min-width: 50px;
-  color: #0f0;
+  min-width: 30px;
+  color: #000;
+  
+  text-shadow: 0 0 3px #555;
+}
+#page-frame .input-group-addon .status.glyphicon-ok
+{
+  color: #0d0;
+}
+#page-frame .input-group-addon .status.glyphicon-retweet
+{
+  color: #dd0;
+}
+#page-frame .input-group-addon .status.glyphicon-remove
+{
+  color: #d00;
 }
