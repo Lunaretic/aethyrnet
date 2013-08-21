@@ -195,6 +195,9 @@ module.exports.webGet = function(options, callback)
 
 module.exports.prettyName = function(username)
 {
+  if(!username || typeof(username) != 'string')
+    return '';
+  
   //Capitalize first letter
   return (username.charAt(0).toUpperCase() + username.slice(1)).replace("_", " ");
 }

@@ -18,22 +18,87 @@
   <div class="input-group" style="margin-bottom: 8px; width: 100%">
     <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
     <span class="input-group-addon" style="width: 20%; color: #000;">Email</span>
-    <input id="email-input" type="text" class="form-control" placeholder="Email" <%= email ? 'value="' + email + '"' : '' %>>
+    <input id="email-input" type="text" class="form-control" placeholder="Email" <%= email ? "value=\"" + email + "\"" : "" %>>
   </div>
   
   <div class="input-group" style="margin-bottom: 8px; width: 100%">
     <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
     <span class="input-group-addon" style="width: 20%; color: #000;">Character Name</span>
-    <input id="charName-input" type="text" class="form-control" placeholder="Character Name" <%= charName ? 'value="' + charName + '"' : '' %>>
+    <input id="charName-input" type="text" class="form-control" placeholder="Character Name" <%= charName ? "value=\"" + charName + "\"" : "" %>>
   </div>
   
   <div class="input-group" style="margin-bottom: 8px; width: 100%">
     <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
     <span class="input-group-addon" style="width: 20%; color: #000;">Lodestone URL</span>
-    <input id="charUrl-input" type="text" class="form-control" placeholder="http://na.beta.finalfantasyxiv.com/lodestone/character/######/" <%= charUrl ? 'value="' + charUrl + '"' : '' %>>
+    <input id="charUrl-input" type="text" class="form-control" placeholder="http://na.beta.finalfantasyxiv.com/lodestone/character/######/" <%= charUrl ? "value=\"" + charUrl + "\"" : "" %>>
   </div></form>
 
 <br/>
+<div class="sectionHeader">Character Preferences</div>
+<form>
+
+  <!-- Primary Job -->
+  <div><div id="primaryJob-input" class="input-group" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
+    <span class="input-group-addon" style="width: 20%; color: #000;">Primary Job</span>
+    <div class="input-group-btn" style="width: 100%">   
+    
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <span class="value"><%= ( primaryJob ? primaryJob : "No Primary Job" )%></span> <span class="caret"></span>
+      </button>
+      
+      <ul class="dropdown-menu dropdown-toggle">
+        <li class="dropdown-header">Tank</li>
+        <li><a>Paladin</a></li>
+        <li><a>Warrior</a></li>
+        <li class="dropdown-header">Melee DPS</li>
+        <li><a>Dragoon</a></li>
+        <li><a>Monk</a></li>
+        <li class="dropdown-header">Ranged DPS</li>
+        <li><a>Bard</a></li>
+        <li><a>Black Mage</a></li>
+        <li><a>Summoner</a></li>
+        <li class="dropdown-header">Support</li>
+        <li><a>White Mage</a></li>
+        <li><a>Scholar</a></li>
+        <li class="dropdown-header">Other</li>
+        <li><a>No Primary Job</a></li>
+        
+    </div>
+  </div></div>
+  
+  
+  <!-- Secondary Job -->
+  <div><div id="secondaryJob-input" class="input-group" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
+    <span class="input-group-addon" style="width: 20%; color: #000;">Secondary Job</span>
+    <div class="input-group-btn" style="width: 100%">   
+    
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <span class="value"><%= ( secondaryJob ? secondaryJob : "No Secondary Job" )%></span> <span class="caret"></span>
+      </button>
+      
+      <ul class="dropdown-menu dropdown-toggle">
+        <li class="dropdown-header">Tank</li>
+        <li><a>Paladin</a></li>
+        <li><a>Warrior</a></li>
+        <li class="dropdown-header">Melee DPS</li>
+        <li><a>Dragoon</a></li>
+        <li><a>Monk</a></li>
+        <li class="dropdown-header">Ranged DPS</li>
+        <li><a>Bard</a></li>
+        <li><a>Black Mage</a></li>
+        <li><a>Summoner</a></li>
+        <li class="dropdown-header">Support</li>
+        <li><a>White Mage</a></li>
+        <li><a>Scholar</a></li>
+        <li class="dropdown-header">Other</li>
+        <li><a>No Secondary Job</a></li>
+        
+    </div>
+  </div></div>
+  
+</form>
 <div class="sectionHeader">Aethyrnet.com Background</div>
 <form>
   

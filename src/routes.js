@@ -9,6 +9,21 @@ var fs = require('fs');
 //Import the base package.json for data resding.
 var aethyrPackage = require('../package.json');
 
+//Get a JSON client-safe representation of a user.
+function getUserInfo(user, objectify)
+{
+  if(!user)
+    var uData = new (database.model('user'))().toObject();
+  else
+    var uData = user.toObject();
+    
+  if(objectify)
+    return uData;
+  else
+    return JSON.stringify(uData);
+};
+
+
 module.exports = function(server)
 {
 
@@ -118,34 +133,6 @@ module.exports = function(server)
   //==========================================
   //              Authentication
   //==========================================
-  
-  //Get a JSON client-safe representation of a user.
-  function getUserInfo(user, objectify)
-  {
-    if(!user)
-      var uData = {
-        username : 'anonymous',
-        sidebarSticky : 'false',
-        sidebarOrientation: 'right',
-      };
-    else
-      var uData = {
-        username : user.username,
-        bgImage : user.bgImage,
-        email : user.email,
-        charUrl : user.charUrl,
-        charName : user.charName,
-        avatar : user.avatar,
-        sidebarSticky : user.sidebarSticky,
-        sidebarOrientation: user.sidebarOrientation,
-        adminLevel : user.adminLevel
-      };
-      
-    if(objectify)
-      return uData;
-    else
-      return JSON.stringify(uData);
-  };
   
   //Cookie User-Info retreival
   server.get('/api/login', function(req, res)

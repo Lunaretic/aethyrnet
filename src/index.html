@@ -48,8 +48,10 @@
         el : document.body,
       });
       
-      //Wipe out the startup script
-      $('#startupScript').remove();
+      <% if (environment == "production") { %>
+        //Wipe out the startup script
+        $('#startupScript').remove();
+      <% } %>
     });
   </script>
   

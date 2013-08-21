@@ -47,6 +47,9 @@ aethyrnet.backbone['profile'] = new (function(){
         avatar : aethyrnet.user.get('avatar'),
         orientation : aethyrnet.util.prettyName(aethyrnet.user.get('sidebarOrientation')),
         onScreen : aethyrnet.user.get('sidebarSticky'),
+        preferredActivity : aethyrnet.user.get('preferredActivity'),
+        primaryJob : aethyrnet.user.get('primaryJob'),
+        secondaryJob : aethyrnet.user.get('secondaryJob'),
       }));
       
       $('input[type="text"]', this.$el).blur();

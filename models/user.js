@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 module.exports.user = new mongoose.Schema({
 
   //Basic info
-  username : { type : String, required : true, unique : true, trim : true, lowercase : true },
+  username : { type : String, required : true, unique : true, trim : true, lowercase : true, default : 'anonymous' },
   password : { type : String, trim : true, required : true },
   
   //Website BG
@@ -24,8 +24,13 @@ module.exports.user = new mongoose.Schema({
   
   sidebarOrientation : { type : String, trim : true, default : 'right' },
   
-  //0 Gues, 1 User, 2 Guildie, 3 Officer, 4 Leader, 5 SuperAdmin
+  //0 Guest, 1 User, 2 Guildie, 3 Officer, 4 Leader, 5 SuperAdmin
   adminLevel : { type : Number, min : 1, max : 5, default : 1 },
+  
+  primaryJob : { type : String, trim : true, default : '' },
+  secondaryJob : { type : String, trim : true, default : '' },
+  
+  preferredActivity : { type : String, trim : true, default : '' },
   
 });
 
@@ -49,3 +54,13 @@ module.exports.user.path('charUrl').validate(function (charUrl)
 {
   return ( regexValidator.charUrl.test(charUrl) )
 }, 'Lodestone Character URL not valid.');
+
+//Shred password data when converting to JSON or Object.
+module.exports.user.options.toObject = module.exports.user.options.toJSON = {
+  getters : true,
+  minimize : false,
+  transform : function (doc, ret, options) {
+    // Remove password
+    delete ret.password;
+  }
+};
