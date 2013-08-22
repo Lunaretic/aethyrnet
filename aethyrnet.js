@@ -128,7 +128,7 @@ function(database, callback)
   
   //Load the main query manager.
   var query_manager = require('./src/query_manager.js');
-  query_manager.register(query_manager.query_user_avatars);
+  query_manager.register(query_manager.query_lodestone);
   query_manager.register(query_manager.query_ffxiv_blog);
   query_manager.register(query_manager.query_reddit);
   query_manager.register(query_manager.query_dev_tracker);

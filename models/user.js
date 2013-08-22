@@ -10,13 +10,13 @@ module.exports.user = new mongoose.Schema({
   //Website BG
   bgImage : { type : String, trim : true, lowercase : true, default : 'gridania' },
   
-  //Email -- Add Validator later.
+  //Email
   email : { type : String, trim : true, lowercase : true, default : '' },
   
-  //Character URL - Validator?
+  //Character URL
   charUrl : { type : String, trim : true, lowercase : true, default : '' },
-  
   charName : { type : String, trim : true, lowercase : true, default : '' },
+  charValidated : { type : Boolean, default : true },
   
   avatar : { type : String, trim : true, default : '_default.jpg' },
   
@@ -54,6 +54,16 @@ module.exports.user.path('charUrl').validate(function (charUrl)
 {
   return ( regexValidator.charUrl.test(charUrl) )
 }, 'Lodestone Character URL not valid.');
+
+
+module.exports.user.virtual('charId')
+.get(function () {
+  if(!this.charValidated)
+    return 0;
+  var url = this.charUrl.split('/');
+  return parseInt(url[url.length -2]);
+});
+
 
 //Shred password data when converting to JSON or Object.
 module.exports.user.options.toObject = module.exports.user.options.toJSON = {

@@ -50,6 +50,7 @@ module.exports = {
 };
 
 //TODO: Patch this into a file reader later.
+module.exports.query_lodestone = require('./query/lodestone.js').query;
 module.exports.query_user_avatars = require('./query/user_avatars.js').query;
 module.exports.query_ffxiv_blog = require('./query/lodestone_blog.js').query;
 module.exports.query_reddit = require('./query/reddit.js').query;
