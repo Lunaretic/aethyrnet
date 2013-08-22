@@ -1,22 +1,22 @@
 aethyrnet.backbone['profile'] = new (function(){
   var jobList = {
-    "Tank" : {
-      "Paladin" : "Paladin",
-      "Warrior" : "Warrior",
-    },
-    "Melee DPS" : {
-      "Monk" : "Monk",
-      "Dragoon" : "Dragoon",
-    },
-    "Ranged DPS" : {
-      "Bard" : "Bard",
-      "Black Mage" : "Black Mage",
-      "Summoner" : "Summoner",
-    },
-    "Support" : {
-      "White Mage" : "White Mage",
-      "Scholar" : "Scholar",
-    }
+    "Tank" : [
+      "Paladin",
+      "Warrior",
+    ],
+    "Melee DPS" : [
+      "Monk",
+      "Dragoon",
+    ],
+    "Ranged DPS" : [
+      "Bard",
+      "Black Mage",
+      "Summoner",
+    ],
+    "Support" : [
+      "White Mage",
+      "Scholar",
+    ]
   };
 
   this.ProfileView = aethyrnet.PageView.extend({
@@ -103,7 +103,26 @@ aethyrnet.backbone['profile'] = new (function(){
               text : 'Preferred Activity',
               default : 'No Preferred Activity',
               value : aethyrnet.user.get('preferredActivity'),
-              options : {},
+              options : {
+                'Social' : [
+                  'Roleplaying',
+                  'General Socializing',
+                ],
+                'PvE' : [
+                  'Missions & Quests',
+                  'Leveling',
+                  'Instances & Raiding',
+                ],
+                'PvP' : [
+                  'Colliseum',
+                  'FC vs FC',
+                  'GC vs GC',
+                ],
+                'Misc' : [
+                  'Crafting',
+                  'Gathering',
+                ],
+              },
             },
           },
           

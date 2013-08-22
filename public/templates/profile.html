@@ -42,7 +42,7 @@
             <% for(var optionsIdx in field.options) { %>
               <li class="dropdown-header"><%= optionsIdx %></li>
                 <% for(var dropdownItemIdx in field.options[optionsIdx]) { %>
-                  <li data-value="<%= dropdownItemIdx %>"><a><%= field.options[optionsIdx][dropdownItemIdx] %></a></li>
+                  <li <%= $.isNumeric(dropdownItemIdx) ? "" : "data-value=\"" + dropdownItemIdx + "\"" %>><a><%= field.options[optionsIdx][dropdownItemIdx] %></a></li>
                 <% } %>
             <% } %>
             <% if(field.default) { %>
