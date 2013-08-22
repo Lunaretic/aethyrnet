@@ -24,7 +24,7 @@
     "url": "git://github.com/lunaretic/aethyrnet.git"
   },
   "main": "aethyrnet.js",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.6.0",
