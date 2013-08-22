@@ -38,6 +38,7 @@ module.exports = {
             title : topic.title,
             source : ( topic.is_self ? '/r/ffxiv' : /(?:[^:]*:\/\/)?(?:www\.)?([^\/]+\.[^\/]+)/.exec(topic.url)[1] ),
             link : ( topic.is_self ? 'http://www.reddit.com' + topic.permalink : topic.url ),
+            author : topic.author,
             date : new Date(topic.created_utc * 1000),
             image : ( topic.is_self ? 'reddit.png' : 'reddit_link.png' ),
             imageLink : ( topic.is_self ? 'http://www.reddit.com' + topic.permalink : topic.url ),
