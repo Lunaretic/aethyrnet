@@ -78,9 +78,9 @@ module.exports = {
             //Convert to same date format as SE's other dates.
             if(dt == "today" || dt == "yesterday")
               dt = today;
-            
-            //Convert date to ISO format, and then into a JS object. Trying to get a nice RFC2822 string here.
-            dt = new Date(dt.slice(6) + '-' + dt.slice(0,2) + '-' + dt.slice(3,5));
+                        
+            //Convert date to ISO 8601 format, and then into a JS object. Trying to get a nice RFC2822 string here.
+            dt = new Date(dt.slice(6) + '-' + dt.slice(0,2) + '-' + dt.slice(3,5) + ' 04:00:00');
             
             //Slices off the time end to just retreive the RFC 2822 date without time.
             dt = dt.toString().split(':')[0].slice(0,-2);
