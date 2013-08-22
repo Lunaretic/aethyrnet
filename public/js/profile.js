@@ -1,4 +1,24 @@
 aethyrnet.backbone['profile'] = new (function(){
+  var jobList = {
+    "Tank" : {
+      "Paladin" : "Paladin",
+      "Warrior" : "Warrior",
+    },
+    "Melee DPS" : {
+      "Monk" : "Monk",
+      "Dragoon" : "Dragoon",
+    },
+    "Ranged DPS" : {
+      "Bard" : "Bard",
+      "Black Mage" : "Black Mage",
+      "Summoner" : "Summoner",
+    },
+    "Support" : {
+      "White Mage" : "White Mage",
+      "Scholar" : "Scholar",
+    }
+  };
+
   this.ProfileView = aethyrnet.PageView.extend({
         
     events : {
@@ -39,18 +59,70 @@ aethyrnet.backbone['profile'] = new (function(){
       this.$el.html(this.template({
         //Template vars
         username : aethyrnet.util.prettyName(aethyrnet.user.get('username')),
-        background : aethyrnet.util.prettyName(aethyrnet.user.get('bgImage')),
-        email : aethyrnet.user.get('email'),
-        charUrl : aethyrnet.user.get('charUrl'),
-        charName : aethyrnet.user.get('charName'),
         avatar : aethyrnet.user.get('avatar'),
-        orientation : aethyrnet.util.prettyName(aethyrnet.user.get('sidebarOrientation')),
-        onScreen : aethyrnet.user.get('sidebarSticky'),
-        preferredActivity : aethyrnet.user.get('preferredActivity'),
-        primaryJob : aethyrnet.user.get('primaryJob'),
-        secondaryJob : aethyrnet.user.get('secondaryJob'),
-        preferredActivity : aethyrnet.user.get('preferredActivity'),
-      }));
+        
+        //Sections
+        sections : {
+          "User Info" : {
+            "email" : {
+              type : 'text',
+              text : 'Email',
+              default : 'Email',
+              value : aethyrnet.user.get('email'),
+            },
+            "charName" : {
+              type : 'text',
+              text : 'Character Name',
+              default : 'Character Name',
+              value : aethyrnet.user.get('charName'),
+            },
+            "charUrl" : {
+              type : 'text',
+              text : 'Character URL',
+              default : 'http://na.finalfantasyxiv.com/lodestone/character/######/',
+              value : aethyrnet.user.get('charUrl'),
+            },
+          },
+          "Character Preferences" : {
+            "primaryJob" : {
+              type : 'dropdown',
+              text : 'Primary Job',
+              default : 'No Primary Job',
+              value : aethyrnet.user.get('primaryJob'),
+              options : jobList,
+            },
+            "secondaryJob" : {
+              type : 'dropdown',
+              text : 'Secondary Job',
+              default : 'No Secondary Job',
+              value : aethyrnet.user.get('secondaryJob'),
+              options : jobList,
+            },
+            "preferredActivity" : {
+              type : 'dropdown',
+              text : 'Preferred Activity',
+              default : 'No Preferred Activity',
+              value : aethyrnet.user.get('preferredActivity'),
+              options : {},
+            },
+          },
+          
+          "Aethyrnet Preferences" : {
+            "sidebarOrientation" : {
+              type : 'dropdown',
+              text : 'Sidebar Orientation',
+              default : '',
+              value : aethyrnet.util.prettyName(aethyrnet.user.get('sidebarOrientation')),
+              options : {
+                'Direction' : {
+                  'right' : "Right",
+                  'left' : "Left",
+                }
+              },
+            },
+          },
+        },
+    }));
       
       $('input[type="text"]', this.$el).blur();
     },
@@ -95,8 +167,6 @@ aethyrnet.backbone['profile'] = new (function(){
         preferredActivity : ($('#preferredActivity-input .value').text() != "No Preferred Activity" ? $('#preferredActivity-input .value').text() : ""),
       };
       
-      console.log(opts.charUrl);
-      
       var changed = {};
       for(var idx in opts)
       {
@@ -127,11 +197,15 @@ aethyrnet.backbone['profile'] = new (function(){
           this.$('#'+idx+'-input').parent().find('.status').attr('class', 'status glyphicon glyphicon-ok');
         }
         
-      }.bind(this)).fail(function(jqXHR, arg2, arg3) 
+      }.bind(this)).fail(function(jqXHR, textStatus, errorThrown) 
       {
         //Hard fail. Bad news bears.
         if(jqXHR.status != 400)
+        {
+          console.log("Hard Failure on jqXHR Request.");
+          console.log(JSON.stringify(jqXHR) + " ||" + textStatus + " || " + errorThrown);
           return;
+        }
         
         //Bad data.
         for(idx in changed)

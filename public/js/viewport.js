@@ -734,11 +734,8 @@ function getTemplate(file, options, callback)
         
       //Retreive from cache if we have it.
       if(aethyrnet.template[file])
-        //Use setImmediate to ensure this is triggered Asynchronously.
-        //This seems to be a potential quirk of the Async lib, is that
-        //Async.parallel actually runs synchronously at first until its processes
-        //Yield via their own asynchronous calls.
-        return setImmediate(callback.bind(this, null, aethyrnet.template[file]));
+        //Hijack async's exposed call.
+        return async.nextTick(callback.bind(this, null, aethyrnet.template[file]));
         
       $.get('/public/templates/' + file + '.html', function(data, status, jqXHR)
       {
@@ -852,6 +849,7 @@ if(aethyrnet.debug)
   });
 }
 
+/*
 var setImmediate = setImmediate || function setImmediateFn(func) {
   return setTimeout(func, 0);
-};
+};*/

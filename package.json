@@ -16,7 +16,8 @@
     "underscore": "~1.5.1",
     "emailjs": "~0.3.4",
     "cli-color": "~0.2.2",
-    "http-proxy": "~0.10.3"
+    "http-proxy": "~0.10.3",
+    "cheerio": "~0.12.1"
   },
   "repository": {
     "type": "git",

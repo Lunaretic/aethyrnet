@@ -12,176 +12,52 @@
   </tr>
 </table>
 
-<div class="sectionHeader">Additional User Info</div>
-<form>
-
-  <div class="input-group" style="margin-bottom: 8px; width: 100%">
-    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
-    <span class="input-group-addon" style="width: 20%; color: #000;">Email</span>
-    <input id="email-input" type="text" class="form-control" placeholder="Email" <%= email ? "value=\"" + email + "\"" : "" %>>
-  </div>
+<% for(var sectionIdx in sections) { %>
+  <div class="sectionHeader"><%= sectionIdx %></div>
+  <form>
   
-  <div class="input-group" style="margin-bottom: 8px; width: 100%">
-    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
-    <span class="input-group-addon" style="width: 20%; color: #000;">Character Name</span>
-    <input id="charName-input" type="text" class="form-control" placeholder="Character Name" <%= charName ? "value=\"" + charName + "\"" : "" %>>
-  </div>
-  
-  <div class="input-group" style="margin-bottom: 8px; width: 100%">
-    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
-    <span class="input-group-addon" style="width: 20%; color: #000;">Lodestone URL</span>
-    <input id="charUrl-input" type="text" class="form-control" placeholder="http://na.beta.finalfantasyxiv.com/lodestone/character/######/" <%= charUrl ? "value=\"" + charUrl + "\"" : "" %>>
-  </div></form>
-
-<br/>
-<div class="sectionHeader">Character Preferences</div>
-<form>
-
-  <!-- Primary Job -->
-  <div><div id="primaryJob-input" class="input-group" style="margin-bottom: 8px; width: 100%">
-    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
-    <span class="input-group-addon" style="width: 20%; color: #000;">Primary Job</span>
-    <div class="input-group-btn" style="width: 100%">   
+  <% for(var fieldIdx in sections[sectionIdx]) { %>
+    <% var field = sections[sectionIdx][fieldIdx]; %>
+    <% if(field.type == "text") { %>
     
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <span class="value"><%= ( primaryJob ? primaryJob : "No Primary Job" )%></span> <span class="caret"></span>
-      </button>
-      
-      <ul class="dropdown-menu dropdown-toggle">
-        <li class="dropdown-header">Tank</li>
-        <li><a>Paladin</a></li>
-        <li><a>Warrior</a></li>
-        <li class="dropdown-header">Melee DPS</li>
-        <li><a>Dragoon</a></li>
-        <li><a>Monk</a></li>
-        <li class="dropdown-header">Ranged DPS</li>
-        <li><a>Bard</a></li>
-        <li><a>Black Mage</a></li>
-        <li><a>Summoner</a></li>
-        <li class="dropdown-header">Support</li>
-        <li><a>White Mage</a></li>
-        <li><a>Scholar</a></li>
-        <li class="dropdown-header">Other</li>
-        <li><a>No Primary Job</a></li>
-        
-    </div>
-  </div></div>
-  
-  
-  <!-- Secondary Job -->
-  <div><div id="secondaryJob-input" class="input-group" style="margin-bottom: 8px; width: 100%">
-    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
-    <span class="input-group-addon" style="width: 20%; color: #000;">Secondary Job</span>
-    <div class="input-group-btn" style="width: 100%">   
+      <!-- Text Input -->
+      <div class="input-group" style="margin-bottom: 8px; width: 100%">
+        <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
+        <span class="input-group-addon" style="width: 20%; color: #000;"><%= field.text %></span>
+        <input id="<%= fieldIdx %>-input" type="text" class="form-control" placeholder="<%= field.default %>" value="<%= field.value %>">
+      </div>
+    <% } else if(field.type == "dropdown") { %>
     
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <span class="value"><%= ( secondaryJob ? secondaryJob : "No Secondary Job" )%></span> <span class="caret"></span>
-      </button>
-      
-      <ul class="dropdown-menu dropdown-toggle">
-        <li class="dropdown-header">Tank</li>
-        <li><a>Paladin</a></li>
-        <li><a>Warrior</a></li>
-        <li class="dropdown-header">Melee DPS</li>
-        <li><a>Dragoon</a></li>
-        <li><a>Monk</a></li>
-        <li class="dropdown-header">Ranged DPS</li>
-        <li><a>Bard</a></li>
-        <li><a>Black Mage</a></li>
-        <li><a>Summoner</a></li>
-        <li class="dropdown-header">Support</li>
-        <li><a>White Mage</a></li>
-        <li><a>Scholar</a></li>
-        <li class="dropdown-header">Other</li>
-        <li><a>No Secondary Job</a></li>
+      <!-- Dropdown Input -->
+      <div><div id="<%= fieldIdx %>-input" class="input-group" style="margin-bottom: 8px; width: 100%">
+        <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
+        <span class="input-group-addon" style="width: 20%; color: #000;"><%= field.text %></span>
+        <div class="input-group-btn" style="width: 100%">
         
-    </div>
-  </div></div>
-  
-  <!-- Preferred Activity -->
-  <div><div id="preferredActivity-input" class="input-group" style="margin-bottom: 8px; width: 100%">
-    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
-    <span class="input-group-addon" style="width: 20%; color: #000;">Preferred Activity</span>
-    <div class="input-group-btn" style="width: 100%">   
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <span class="value"><%= ( field.value ? field.value : field.default )%></span> <span class="caret"></span>
+          </button>
+          
+          <ul class="dropdown-menu dropdown-toggle">
+            <% for(var optionsIdx in field.options) { %>
+              <li class="dropdown-header"><%= optionsIdx %></li>
+                <% for(var dropdownItemIdx in field.options[optionsIdx]) { %>
+                  <li data-value="<%= dropdownItemIdx %>"><a><%= field.options[optionsIdx][dropdownItemIdx] %></a></li>
+                <% } %>
+            <% } %>
+            <% if(field.default) { %>
+              <li class="dropdown-header">Other</li>
+              <li><a><%= field.default %></a></li>
+            <% } %>
+            
+          </ul>
+        </div>
+      </div></div>
     
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <span class="value"><%= ( preferredActivity ? preferredActivity : "No Preferred Activity" )%></span> <span class="caret"></span>
-      </button>
-      
-      <ul class="dropdown-menu dropdown-toggle">
-        <li class="dropdown-header">Social</li>
-        <li><a>Roleplaying</a></li>
-        <li><a>General Socializing</a></li>
-        <li class="dropdown-header">PvE</li>
-        <li><a>Leveling</a></li>
-        <li><a>Instances & Raiding</a></li>
-        <li class="dropdown-header">PvP</li>
-        <li><a>Colliseum</a></li>
-        <li><a>FC vs FC</a></li>
-        <li><a>GC vs GC</a></li>
-        <li class="dropdown-header">Other</li>
-        <li><a>Crafting</a></li>
-        <li><a>Gathering</a></li>
-        <li><a>No Preferred Activity</a></li>
-        
-    </div>
-  </div></div>
-</form>
-<div class="sectionHeader">Aethyrnet.com Background</div>
-<form>
-  
-  <div class="input-group" id="bgImage-input" style="margin-bottom: 8px; width: 100%">
-    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
-    <span class="input-group-addon" style="width: 20%; color: #000;">Aethyrnet Background</span>
-    <div class="input-group-btn" style="width: 100%">
-      <!-- Button and dropdown menu -->
-                  
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <span class="value"><%= background %></span> <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu dropdown-toggle">
-        <li><a>Coerthas</a></li>
-        <li><a>Ul'Dah</a></li>
-        <li><a>Gridania</a></li>
-        <li><a>Limsa Lominsa</a></li>
-    </div>
-  </div>
-</form>
-
-<br/>
-<div class="sectionHeader">Sidebar Options</div>
-<form>
-
-  <div><div id="sidebarSticky-input" class="input-group" style="margin-bottom: 8px; width: 100%">
-    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
-    <span class="input-group-addon" style="width: 20%; color: #000;">Sidebar Scrolling</span>
-    <div class="input-group-btn" style="width: 100%">
-      <!-- Button and dropdown menu -->
-                  
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <span class="value"><%= (onScreen ? "Fixed Sidebar" : "Scrolling Sidebar") %></span> <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu dropdown-toggle">
-        <li><a>Fixed Sidebar</a></li>
-        <li><a>Scrolling Sidebar</a></li>
-    </div>
-  </div></div>
-  
-  <div><div id="sidebarOrientation-input" class="input-group" style="margin-bottom: 8px; width: 100%">
-    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
-    <span class="input-group-addon" style="width: 20%; color: #000;">Sidebar Orientation</span>
-    <div class="input-group-btn" style="width: 100%">
-      <!-- Button and dropdown menu -->
-                  
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <span class="value"><%= orientation %></span> <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu dropdown-toggle">
-        <li><a>Left</a></li>
-        <li><a>Right</a></li>
-    </div>
-  </div></div>
-
-</form>
+    <% } %>
+  <% } %>
+  </form>
+  <br/>
+<% } %>
 
 </div>
