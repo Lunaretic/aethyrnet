@@ -120,7 +120,12 @@ module.exports = function(server)
       req.user.sidebarOrientation = req.body.sidebarOrientation;
     if(req.body.sidebarSticky)
       req.user.sidebarSticky = (req.body.sidebarSticky ? true : false);
-    
+    if(req.body.primaryJob)
+      req.user.primaryJob = req.body.primaryJob;
+    if(req.body.secondaryJob)
+      req.user.secondaryJob = req.body.secondaryJob;
+    if(req.body.preferredActivity)
+      req.user.preferredActivity = req.body.preferredActivity;
     req.user.save(function(err) {
       if(err)
         return util.clientErr(res, err.errors);

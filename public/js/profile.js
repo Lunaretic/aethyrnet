@@ -4,8 +4,7 @@ aethyrnet.backbone['profile'] = new (function(){
     events : {
       'click #logoutButton' : 'logOut',
       'click #bgImage-input li' : 'bgChange',
-      'click #sidebarOrientation-input li' : 'orientChange',
-      'click #sidebarSticky-input li' : 'scrollChange',
+      'click li' : 'dropdownChange',
       'change input' : 'inputChange',
     },
     
@@ -50,6 +49,7 @@ aethyrnet.backbone['profile'] = new (function(){
         preferredActivity : aethyrnet.user.get('preferredActivity'),
         primaryJob : aethyrnet.user.get('primaryJob'),
         secondaryJob : aethyrnet.user.get('secondaryJob'),
+        preferredActivity : aethyrnet.user.get('preferredActivity'),
       }));
       
       $('input[type="text"]', this.$el).blur();
@@ -64,14 +64,9 @@ aethyrnet.backbone['profile'] = new (function(){
       aethyrnet.util.changeBG($(event.target).text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, ''));
     },
     
-    orientChange : function(event)
+    dropdownChange : function(event)
     {
-      this.$el.find('#sidebarOrientation-input .value').text($(event.target).text());
-      this.saveUser();
-    },
-    scrollChange : function(event)
-    {
-      this.$el.find('#sidebarSticky-input .value').text($(event.target).text());
+      $(event.currentTarget).parent().parent().find('.value').text($(event.target).text());
       this.saveUser();
     },
     
@@ -87,22 +82,20 @@ aethyrnet.backbone['profile'] = new (function(){
     
     saveUser : function()
     {
-      var email = $('#email-input',this.$el).val() || "";
-      var charUrl = $('#charUrl-input',this.$el).val() || "";
-      var charName = $('#charName-input',this.$el).val() || "";
-      var sidebarOrientation = $('#sidebarOrientation-input .value').text().toLowerCase();
-      var sidebarSticky = ($('#sidebarSticky-input .value').text() == "Fixed Sidebar" ? true : false);
-      var bgImage = $('#bgImage-input .value').text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, '');
-      
       //Background attribute set previously.
       var opts = {
-        email : email,
-        charName : charName,
-        charUrl : charUrl,
-        sidebarOrientation : sidebarOrientation,
-        sidebarSticky : sidebarSticky,
-        bgImage : bgImage,
+        email : $('#email-input',this.$el).val() || "",
+        charName : $('#charName-input',this.$el).val() || "",
+        charUrl : $('#charUrl-input',this.$el).val() || "",
+        sidebarOrientation : $('#sidebarOrientation-input .value').text().toLowerCase(),
+        sidebarSticky : ($('#sidebarSticky-input .value').text() == "Fixed Sidebar" ? true : false),
+        bgImage : $('#bgImage-input .value').text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, ''),
+        primaryJob : ($('#primaryJob-input .value').text() != "No Primary Job" ? $('#primaryJob-input .value').text() : ""),
+        secondaryJob : ($('#secondaryJob-input .value').text() != "No Secondary Job" ? $('#secondaryJob-input .value').text() : ""),
+        preferredActivity : ($('#preferredActivity-input .value').text() != "No Preferred Activity" ? $('#preferredActivity-input .value').text() : ""),
       };
+      
+      console.log(opts.charUrl);
       
       var changed = {};
       for(var idx in opts)

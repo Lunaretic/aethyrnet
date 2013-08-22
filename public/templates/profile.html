@@ -98,6 +98,34 @@
     </div>
   </div></div>
   
+  <!-- Preferred Activity -->
+  <div><div id="preferredActivity-input" class="input-group" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
+    <span class="input-group-addon" style="width: 20%; color: #000;">Preferred Activity</span>
+    <div class="input-group-btn" style="width: 100%">   
+    
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <span class="value"><%= ( preferredActivity ? preferredActivity : "No Preferred Activity" )%></span> <span class="caret"></span>
+      </button>
+      
+      <ul class="dropdown-menu dropdown-toggle">
+        <li class="dropdown-header">Social</li>
+        <li><a>Roleplaying</a></li>
+        <li><a>General Socializing</a></li>
+        <li class="dropdown-header">PvE</li>
+        <li><a>Leveling</a></li>
+        <li><a>Instances & Raiding</a></li>
+        <li class="dropdown-header">PvP</li>
+        <li><a>Colliseum</a></li>
+        <li><a>FC vs FC</a></li>
+        <li><a>GC vs GC</a></li>
+        <li class="dropdown-header">Other</li>
+        <li><a>Crafting</a></li>
+        <li><a>Gathering</a></li>
+        <li><a>No Preferred Activity</a></li>
+        
+    </div>
+  </div></div>
 </form>
 <div class="sectionHeader">Aethyrnet.com Background</div>
 <form>
