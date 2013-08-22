@@ -14,7 +14,10 @@ module.exports = {
         'User-Agent' : 'aethyrnet query manager bot by /u/crabcommander',
       },
       type : 'json',
-    }, callback);
+    }, function(err, data, res)
+    {
+      return callback(err, data);
+    });
   },
   
   query : function query_reddit(db, callback){

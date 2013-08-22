@@ -252,6 +252,13 @@ a
   transition: opacity 0.5s, right 0.5s, bottom 0.5s;
 }
 
+#page-frame .media p.meta
+{
+  margin: 0px 12px 4px 0px;
+  font-size: 10px;
+  font-family: Verdana, sans-serif;
+}
+
 
 .modal-backdrop
 {

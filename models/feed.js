@@ -9,6 +9,7 @@ module.exports.feedEntry = new mongoose.Schema({
   link : { type : String, trim : true },
   content : { type : String, trim : true },
   date : { type : Date, required : true },
+  author : { type : String, required : false, default : '', trim : true },
 });
 
 module.exports.feedEntry.index({ date : 1 });

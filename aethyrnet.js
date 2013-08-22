@@ -58,6 +58,7 @@ function(database, callback)
   };
 
   //Cache images and JS libraries for up to a day.
+  server.use(express.favicon(__dirname + '/public/images/favicon.ico'));
   server.use('/public/images', staticRouting('/public/images', 1 * 24 * 60 * 60 * 1000));
   server.use('/public/js/lib', staticRouting('/public/js/lib', 1 * 24 * 60 * 60 * 1000));
 
@@ -130,6 +131,7 @@ function(database, callback)
   query_manager.register(query_manager.query_user_avatars);
   query_manager.register(query_manager.query_ffxiv_blog);
   query_manager.register(query_manager.query_reddit);
+  query_manager.register(query_manager.query_dev_tracker);
   query_manager.start();
 
 

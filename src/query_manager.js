@@ -15,8 +15,8 @@ var query_all = function()
     module.exports.queries,
   function(err, result)
   {
-    //Re-query in 90 seconds.
-    setTimeout(query_all, 90000);
+    //Re-query in 15 minutes.
+    setTimeout(query_all, 15 * 60 * 1000);
   });
 };
 
@@ -53,6 +53,7 @@ module.exports = {
 module.exports.query_user_avatars = require('./query/user_avatars.js').query;
 module.exports.query_ffxiv_blog = require('./query/lodestone_blog.js').query;
 module.exports.query_reddit = require('./query/reddit.js').query;
+module.exports.query_dev_tracker = require('./query/dev_tracker.js').query;
 
 
 

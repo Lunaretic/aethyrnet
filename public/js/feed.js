@@ -52,6 +52,7 @@ aethyrnet.backbone['feed'] = new (function(){
         content : content,
         link : this.model.get('link'),
         source : this.model.get('source'),
+        author : this.model.get('author'),
         date : new Date(this.model.get('date')).toLocaleString(),
         imageSource : '/public/images/' + this.model.get('image'),
         imageLink : ( this.model.get('imageLink') ? this.model.get('imageLink') : this.model.get('link') ),

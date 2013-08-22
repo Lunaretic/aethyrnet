@@ -159,7 +159,7 @@ module.exports.webGet = function(options, callback)
   var data = '';
   return http.request(options, function(res)
   {
-    if(res.statusCode != 200)
+    if(res.statusCode != 200 && res.statusCode != 302)
       return callback(options.hostname + " responded with status code: " + res.statusCode + " - [ " + options.path + " ]");
   
     //Save incoming data.
@@ -185,7 +185,7 @@ module.exports.webGet = function(options, callback)
         }
       }
         
-      return callback(null, data);
+      return callback(( res.statusCode != 200 ? res.statusCode : null), data, res);
     });
     
   }).on('error', function(err){
