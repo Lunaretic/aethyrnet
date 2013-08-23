@@ -40,20 +40,23 @@ aethyrnet.backbone['profile'] = new (function(){
       security = {
         loggedIn : true,
       };
-      getTemplate('profile', { css : true, view : this, mainCss : true }, function()
+      
+      async.parallel([
+        //Get template.
+        getTemplate.bind(this, 'profile', { css : true, view : this, mainCss : true }),
+        
+        //Update user data.
+        function(callback){
+          aethyrnet.user.fetch().always(function()
+          {
+            this.render();
+          }.bind(this));
+        }.bind(this),
+        
+      ], function(err)
       {
-        //Refresh the user data.
-        aethyrnet.user.fetch({
-          success : function(mdl, res, err)
-          {
-            this.render();
-          }.bind(this),
-          error : function(mdl, res, err)
-          {
-            this.render();
-          }.bind(this),
-        });
-      }.bind(this));
+        this.render();
+      });
     },
     
     renderPage : function()
