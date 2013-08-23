@@ -253,7 +253,7 @@ aethyrnet.backbone['admin'] = new (function(){
   this.SysUserModel = Backbone.Model.extend({
     
     idAttribute: "_id",
-    url : '/api/profile',
+    urlRoot : '/api/profile',
     
     initialize : function(attributes, options)
     {

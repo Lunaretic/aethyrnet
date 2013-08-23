@@ -72,5 +72,8 @@ module.exports.user.options.toObject = module.exports.user.options.toJSON = {
   transform : function (doc, ret, options) {
     // Remove password
     delete ret.password;
+    
+    if('__v' in ret)
+      delete ret.__v
   }
 };

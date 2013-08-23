@@ -92,9 +92,14 @@ module.exports = function(server)
     });
   });
   
-  server.get('/api/profile', function(req,res){
+  server.get(/\/api\/profile\/?(.*)/, function(req,res){
+    
+    //Assign ID if we don't have one.
+    if(!req.body._id && req.params.length > 0)
+      req.body._id = req.params[0];
+    
     //Get our own data.
-    if(!req.body._id || req.body._id === req.user._id)
+    if((!req.body._id) || req.body._id === req.user._id)
       return res.end(getUserInfo(req.user));
       
     //Prevent non-admin access to other users.
@@ -110,9 +115,13 @@ module.exports = function(server)
       });
   });
   
-  server.patch('/api/profile', function(req, res){
+  server.patch(/\/api\/profile\/?(.*)/, function(req, res){
     if(!req.user)
       return util.clientErr(res, "Not Logged In.");
+      
+    //Assign ID if we don't have one.
+    if((!req.body._id) || req.body._id === req.user._id)
+      req.body._id = req.params[0];
       
     //Non-admins aren't allowed up edit other users.
     if((req.body._id && req.user._id != req.body._id) 
