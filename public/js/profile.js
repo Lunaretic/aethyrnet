@@ -23,9 +23,9 @@ aethyrnet.backbone['profile'] = new (function(){
         
     events : {
       'click #logoutButton' : 'logOut',
-      'click #bgImage-input li' : 'bgChange',
+      //'click #bgImage-input li' : 'bgChange',
       'click li' : 'dropdownChange',
-      'change input' : 'inputChange',
+      'change input' : 'updateServer',
     },
     
     security : {
@@ -34,6 +34,8 @@ aethyrnet.backbone['profile'] = new (function(){
         
     initializePage : function()
     {
+      this.model = aethyrnet.user;
+      
       //Set up Security options
       security = {
         loggedIn : true,
@@ -127,6 +129,20 @@ aethyrnet.backbone['profile'] = new (function(){
           },
           
           "Aethyrnet Preferences" : {
+            "bgImage" : {
+              type : 'dropdown',
+              text : 'Background Image',
+              default : '',
+              value : aethyrnet.util.prettyName(aethyrnet.user.get('bgImage')),
+              options : {
+                'Concept Art' : {
+                  'limsa_lominsa' : "Limsa Lominsa",
+                  'uldah' : "Ul'Dah",
+                  'gridania' : "Gridania",
+                  'coerthas' : "Coerthas",
+                }
+              },
+            },
             "sidebarOrientation" : {
               type : 'dropdown',
               text : 'Sidebar Orientation',
@@ -145,25 +161,22 @@ aethyrnet.backbone['profile'] = new (function(){
       
       $('input[type="text"]', this.$el).blur();
     },
-    
-    bgChange : function(event)
-    {
-      this.$el.find('#bgImage-input .value').html($(event.target).text());
-      this.saveUser();
-      
-      //TODO: Change to use model change event.
-      aethyrnet.util.changeBG($(event.target).text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, ''));
-    },
+  
+    //TODO: Change to use model change event.
+    //aethyrnet.util.changeBG($(event.target).text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, ''));
     
     dropdownChange : function(event)
     {
-      $(event.currentTarget).parent().parent().find('.value').text($(event.target).text());
-      this.saveUser();
-    },
-    
-    inputChange : function(event)
-    {
-      this.saveUser();
+      //Get top level of this dropdown.
+      var $ct = $(event.currentTarget);
+      var $top = $ct.parent().parent().parent();
+      
+      //Assign value.
+      $top.find('.value').text($ct.text());
+      $top.find('.value').attr('data-value', ($ct.attr('data-value') ? $ct.attr('data-value') : $ct.text()));
+      
+      //Pass to update function.
+      this.updateServer($top.find('.input-group-btn'), $top.attr('id').slice(0,-6));
     },
     
     logOut : function(event)
@@ -171,52 +184,41 @@ aethyrnet.backbone['profile'] = new (function(){
       aethyrnet.util.logOut();
     },
     
-    saveUser : function()
+    //Function which parses the value from the event/element, and submits it via
+    //Backbone's HTTP:Patch method to the server, along with some chrome for
+    //the web forms.
+    updateServer : function(event, id)
     {
-      //Background attribute set previously.
-      var opts = {
-        email : $('#email-input',this.$el).val() || "",
-        charName : $('#charName-input',this.$el).val() || "",
-        charUrl : $('#charUrl-input',this.$el).val() || "",
-        sidebarOrientation : $('#sidebarOrientation-input .value').text().toLowerCase(),
-        sidebarSticky : ($('#sidebarSticky-input .value').text() == "Fixed Sidebar" ? true : false),
-        bgImage : $('#bgImage-input .value').text().toLowerCase().replace(" ","_").replace(/[^_a-z]/, ''),
-        primaryJob : ($('#primaryJob-input .value').text() != "No Primary Job" ? $('#primaryJob-input .value').text() : ""),
-        secondaryJob : ($('#secondaryJob-input .value').text() != "No Secondary Job" ? $('#secondaryJob-input .value').text() : ""),
-        preferredActivity : ($('#preferredActivity-input .value').text() != "No Preferred Activity" ? $('#preferredActivity-input .value').text() : ""),
-      };
+      var $this;
+      if('currentTarget' in event)
+        $this = $(event.currentTarget);
+      else
+        $this = event;
       
-      var changed = {};
-      for(var idx in opts)
+      //The field & data to send to server.
+      var data = {};
+      var fieldName = id || ($this.attr('id').slice(0,-6));
+      if($this.prop('tagName') === 'INPUT')
+        data[fieldName] = $this.val();
+      else
+        data[fieldName] = $this.find('.value').attr('data-value');
+      
+      data._id = this.model.get('_id');
+      
+      //Set up for save.
+      $this.removeClass('has-error').removeClass('has-success');
+      
+      //Backbone smart save/patch.
+      this.model.save(data, {patch: true}).done(function()
       {
-        if(opts[idx] != aethyrnet.user.get(idx))
+        $this.parent().addClass('has-success').delay(1500).queue('fx', function(next)
         {
-          changed[idx] = opts[idx];
-          this.$('#'+idx+'-input').parent().find('.status').attr('class', 'status glyphicon glyphicon-retweet');
-        }
-      };
-      
-      
-      //Save OK.
-      this.$('.has-error').removeClass('has-error');
-      this.$('.has-success').removeClass('has-success');
-      
-      
-      //Backbone smart save.
-      aethyrnet.user.save(changed, {patch: true}).done(function()
-      {
+          $(this).removeClass('has-success');
+          return next();
+        });
+        $this.parent().find('.status').attr('class', 'status glyphicon glyphicon-ok');
         
-        for(idx in changed)
-        {
-          this.$('#'+idx+'-input').parent().addClass('has-success').delay(1500).queue('fx', function(next)
-          {
-            $(this).removeClass('has-success');
-            return next();
-          });
-          this.$('#'+idx+'-input').parent().find('.status').attr('class', 'status glyphicon glyphicon-ok');
-        }
-        
-      }.bind(this)).fail(function(jqXHR, textStatus, errorThrown) 
+      }).fail(function(jqXHR, textStatus, errorThrown) 
       {
         //Hard fail. Bad news bears.
         if(jqXHR.status != 400)
@@ -227,27 +229,12 @@ aethyrnet.backbone['profile'] = new (function(){
         }
         
         //Bad data.
-        for(idx in changed)
+        $this.parent().addClass('has-error').delay(1500).queue('fx', function(next)
         {
-          if(idx in jqXHR.responseJSON.err)
-          {
-            this.$('#'+idx+'-input').parent().addClass('has-error').delay(1500).queue('fx', function(next)
-            {
-              $(this).removeClass('has-error');
-              return next();
-            });
-            this.$('#'+idx+'-input').parent().find('.status').attr('class', 'status glyphicon glyphicon-remove');
-          }
-          else
-          {
-          this.$('#'+idx+'-input').parent().addClass('has-success').delay(1500).queue('fx', function(next)
-          {
-            $(this).removeClass('has-success');
-            return next();
-          });
-          this.$('#'+idx+'-input').parent().find('.status').attr('class', 'status glyphicon glyphicon-ok');
-          }
-        }
+          $(this).removeClass('has-error');
+          return next();
+        });
+        $this.parent().find('.status').attr('class', 'status glyphicon glyphicon-remove');
       }.bind(this));
     },
     

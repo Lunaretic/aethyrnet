@@ -1,3 +1,10 @@
-<div class="panel-heading"><%= aethyrnet.util.prettyName(model.get("username")) %> - User Administration</div>
+<div class="panel-heading"><%= aethyrnet.util.prettyName(model.username) %> - User Administration</div>
 
-<%= JSON.stringify(model.attributes) %>
+<% for(var idx in model) { %>
+  <!-- Text Input -->
+  <div class="input-group" style="margin-bottom: 8px; width: 100%">
+    <span class="input-group-addon"><span class="status glyphicon glyphicon-ok"></span></span>
+    <span class="input-group-addon" style="width: 20%; color: #000;"><%= idx %></span>
+    <input id="<%= idx %>-input" <%= (idx == "_id" ? "disabled=\"disabled\"" : "") %> type="text" class="form-control" placeholder="<%= idx %>" value="<%= model[idx] %>">
+  </div>
+<% } %>

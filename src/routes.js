@@ -93,44 +93,60 @@ module.exports = function(server)
   });
   
   server.get('/api/profile', function(req,res){
-    return res.end(getUserInfo(req.user));
+    //Get our own data.
+    if(!req.body._id || req.body._id === req.user._id)
+      return res.end(getUserInfo(req.user));
+      
+    //Prevent non-admin access to other users.
+    else if(req.user.adminLevel < 3)
+      util.clientErr(res, "Not allowed to access other users profile data.");
+      
+    //Return document.
+    else
+      return database.model('user').findById(req.body._id, function(err, doc){
+        if(err || !doc)
+          return util.clientErr(res, err || "User not found.");
+        return res.end(getUserInfo(doc));
+      });
   });
   
   server.patch('/api/profile', function(req, res){
     if(!req.user)
       return util.clientErr(res, "Not Logged In.");
+      
+    //Non-admins aren't allowed up edit other users.
+    if((req.body._id && req.user._id != req.body._id) 
+        && req.user.adminLevel < 3)
+      util.err('You do not have rights to update other users.');
+      
+    //Non-admins aren't allowed to update usernames.
+    if(('username' in req.body) && req.user.adminLevel < 3)
+      util.err('You cannot change your username.');
     
-    //Username failure
-    if(req.body.username && req.user.username != req.body.username)
-      util.err('Username mismatch.');
     
-    if(req.user.charUrl != req.body.charUrl)
-      req.user.avatar = '_default.jpg';
+    function mergeSave(usr)
+    {
+      for(var idx in req.body)
+        usr[idx] = req.body[idx];
+      
+      usr.save(function(err) {
+        if(err)
+          return util.clientErr(res, err.errors);
+        return util.clientOk(res);
+      });
+    };
     
-    //Todo: Make generalized merge function
-    if(req.body.bgImage)
-      req.user.bgImage = req.body.bgImage;
-    if(req.body.email)
-      req.user.email = req.body.email;
-    if(req.body.charUrl)
-      req.user.charUrl = req.body.charUrl;
-    if(req.body.charName)
-      req.user.charName = req.body.charName;
-    if(req.body.sidebarOrientation)
-      req.user.sidebarOrientation = req.body.sidebarOrientation;
-    if(req.body.sidebarSticky)
-      req.user.sidebarSticky = (req.body.sidebarSticky ? true : false);
-    if(req.body.primaryJob)
-      req.user.primaryJob = req.body.primaryJob;
-    if(req.body.secondaryJob)
-      req.user.secondaryJob = req.body.secondaryJob;
-    if(req.body.preferredActivity)
-      req.user.preferredActivity = req.body.preferredActivity;
-    req.user.save(function(err) {
-      if(err)
-        return util.clientErr(res, err.errors);
-      return util.clientOk(res);
-    });
+    //If we're updating ourselves, no need to query DB.
+    if(req.body._id === req.user._id || !req.body._id)
+      return mergeSave(req.user);
+    else
+      //Otherwise, gotta get the mongoDB document.
+      return database.model('user').findById(req.body._id, function(err, doc){
+        if(err || !doc)
+          return util.clientErr(res, err || "User not found.");
+        return mergeSave(doc);
+      });
+    
     
   }); 
  
@@ -211,7 +227,7 @@ module.exports = function(server)
     if(!req.user || req.user.adminLevel < 3)
       return util.clientErr(res, "You do not have permission to access this resource");
       
-    database.model('user').find({}, 'username email charUrl adminLevel').sort('+username').exec(function(err, docs)
+    database.model('user').find({}, 'username _id').sort('+username').exec(function(err, docs)
     {
       var data = [];
       if(err)

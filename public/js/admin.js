@@ -170,21 +170,80 @@ aethyrnet.backbone['admin'] = new (function(){
     id : "admin-panel",
     className : "container panel panel-default",
     
+    events : {
+      'change input' : 'updateServer',
+    },
+    
     initialize : function(options)
     {
-      //Retrieve template files - Should be coming straight out of cache, so nbd.
-      getTemplate('dashboard/userAdmin', { view : this }, function(err, context)
+      async.parallel([
+        getTemplate.bind(this, 'dashboard/userAdmin', { view : this }),
+        function(callback){
+          this.model.fetch().always(function(jqXHR, textStatus, errorThrown)
+          {
+            //Pass error through if we have one.
+            callback((errorThrown === jqXHR ? errorThrown : null));
+          })
+        }.bind(this),
+      ], function(err, results)
       {
         return options.callback();
-      }.bind(this));
+      });
     },
     
     render : function()
     {
+      var renderData = this.model.omit('id');
+    
       this.$el.html(this.template({
-        model : this.model,
+        model : renderData,
       }));
+    },
+    
+    updateServer : function(event)
+    {
+      var $this = $(event.currentTarget);
+      
+      //The field & data to send to server.
+      var data = {};
+      var fieldName = ($this.attr('id').slice(0,-6));
+      data[fieldName] = $this.val();
+      data._id = this.model.get('_id');
+      
+      //Set up for save.
+      $this.removeClass('has-error').removeClass('has-success');
+      
+      //Backbone smart save/patch.
+      this.model.save(data, {patch: true}).done(function()
+      {
+        $this.parent().addClass('has-success').delay(1500).queue('fx', function(next)
+        {
+          $(this).removeClass('has-success');
+          return next();
+        });
+        $this.parent().find('.status').attr('class', 'status glyphicon glyphicon-ok');
+        
+      }).fail(function(jqXHR, textStatus, errorThrown) 
+      {
+        //Hard fail. Bad news bears.
+        if(jqXHR.status != 400)
+        {
+          console.log("Hard Failure on jqXHR Request.");
+          console.log(JSON.stringify(jqXHR) + " ||" + textStatus + " || " + errorThrown);
+          return;
+        }
+        
+        //Bad data.
+        $this.parent().addClass('has-error').delay(1500).queue('fx', function(next)
+        {
+          $(this).removeClass('has-error');
+          return next();
+        });
+        $this.parent().find('.status').attr('class', 'status glyphicon glyphicon-remove');
+      }.bind(this));
     }
+    
+    
     
   });
   
@@ -194,7 +253,7 @@ aethyrnet.backbone['admin'] = new (function(){
   this.SysUserModel = Backbone.Model.extend({
     
     idAttribute: "_id",
-    url : '/api/user',
+    url : '/api/profile',
     
     initialize : function(attributes, options)
     {

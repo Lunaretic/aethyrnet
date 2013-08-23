@@ -61,6 +61,8 @@ a
   
   height: 100px;
   z-index: 999;
+  
+  pointer-events:none;
 }
 
 .copyright
@@ -118,6 +120,7 @@ a
 #main
 {
   padding-top: 70px;
+  padding-bottom: 100px;
 
   position: relative;
   z-index: 100;

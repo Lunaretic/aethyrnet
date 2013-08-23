@@ -72,7 +72,8 @@ module.exports = {
         //Omitted until the lodestone is up and functional.
         return callback();
         
-        //Query each user page in sequence; 
+        //TODO :: - Should probably rate-limit this, rather than doing them in parallel.
+        //          Don't want to get our IP banned from the lodestone.
         async.each(users, function(user, callback)
         {
           util.warn("User: " + user.username);
