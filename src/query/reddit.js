@@ -20,9 +20,7 @@ module.exports = {
     });
   },
   
-  query : function query_reddit(db, callback){
-    util.log("Querying Reddit..");
-    
+  query : function query_reddit(db, callback){    
     async.waterfall([
       module.exports.contactReddit,
       //At this point we have fresh/valid reddit data.
@@ -54,7 +52,6 @@ module.exports = {
         util.log(err);
     
       //Final CB
-      util.log("Reddit Query Done.");
       return callback();
     });
   },

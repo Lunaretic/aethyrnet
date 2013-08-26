@@ -9,7 +9,6 @@ module.exports = {
 
   query : function query_dev_tracker(db, callback)
   {
-    util.log("Querying Dev Tracker..");
     async.waterfall(
     [
       function(callback)
@@ -131,8 +130,7 @@ module.exports = {
     {
       if(err)
         util.err(err);
-        
-      util.log("Dev Tracker query done.");
+      
       return callback();
     });
   },

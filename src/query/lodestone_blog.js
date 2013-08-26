@@ -11,7 +11,6 @@ module.exports = {
     [
       function(callback)
       {
-        util.log("Updating data from FFXIV Blog..");
         //Base XML data.
         var data = [];
         
@@ -42,7 +41,6 @@ module.exports = {
             temp.save();
           })
           .on('end', function() {
-            util.log("FFXIV Blog Update Done.");
             return callback(null, data);
           });
       },

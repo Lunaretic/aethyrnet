@@ -1,51 +1,112 @@
 var async = require('async');
 var util = require('../util');
+var cheerio = require('cheerio');
+var database = require('../database.js')();
 
 //Data we need to retreive, and functions to recover it from the DOM.
 var characterFields = {
   'name' : function($)
   {
-    return '';
+    var elem = $('.area_header .player_name_brown a');
+    if(elem.length !== 1)
+      throw("Document was not properly formatted.");
+    return elem.text();
   },
   'race' : function($)
   {
-    return '';
+    var elem = $('.area_header .chara_profile_title');
+    if(elem.length !== 1)
+      throw("Document was not properly formatted.");
+    return elem.text().split('/')[0].trim();
   },
   'clan' : function($)
   {
-    return '';
+    var elem = $('.area_header .chara_profile_title');
+    if(elem.length !== 1)
+      throw("Document was not properly formatted.");
+    return elem.text().split('/')[1].trim().slice(0,-2);
   },
   'fc' : function($)
   {
-    return '';
+    var elem = $('.area_header li.clearfix:last-child strong a.txt_yellow');
+    if(elem.length !== 1)
+      throw("Document was not properly formatted.");
+    return elem.text();
   },
   'server' : function($)
   {
-    return '';
+    var elem = $('.area_header .area_footer.mb0 h2.player_name_brown span');
+    if(elem.length !== 1)
+      throw("Document was not properly formatted.");
+    return elem.text().slice(1,-1);
   },
   'gc' : function($)
   {
-    return '';
+    var elem = $($('.area_header li.clearfix')[2]).find('strong.txt_yellow');
+    if(elem.length !== 1)
+      throw("Document was not properly formatted.");
+    return elem.text().split('/')[0].trim();
   },
   'primaryJobLevel' : function($)
   {
+    //TODO: Read off user data and figure out best way to find specifically that class info.
     return 0;
   },
   'secondaryJobLevel' : function($)
   {
+    //TODO: Read off user data and figure out best way to find specifically that class info.
     return 0;
   },
   'avatar' : function($)
   {
-    return '';
+    var elem = $('.area_header .area_footer.mb0 .thumb_cont_black_40.mr10 a img');
+    if(elem.length !== 1)
+      throw("Document was not properly formatted.");
+    return elem.attr('src');
   },
 };
+
+
   
 module.exports = {
 
   parseUserData : function parseUserData(user, data, callback)
   {
-    callback();
+    //Watch for malformed HTML/etc.
+    try
+    { 
+      var $ = cheerio.load(data);
+    }
+    catch(e)
+    {
+      return callback(e);
+    }
+    
+    charData = {
+      lodestoneId : user.charId,
+    };
+    
+    var idx;
+    try
+    {
+      //Loop all fields desired.
+      for(idx in characterFields)
+      {
+        charData[idx] = characterFields[idx]($);
+      }
+    }
+    catch(e)
+    {
+      return callback(idx + " : " + e);
+    }
+    
+    database.model('character').update({
+      lodestoneId : user.charId,
+    }, charData, { 
+      upsert : true,
+    }, function(err){
+        return callback(err)
+    });
   },
   
   query : function query_lodestone(db, callback)
@@ -63,59 +124,77 @@ module.exports = {
         .where('charValidated').ne(false) 
         .exec(function(err, docs)
         {
+          util.warn("Total Users queued for update: " + docs.length);
           //return callback(err, [0, 1, 2]);
           return callback(err, docs);
         });
       },
       function(users, callback)
-      {
-        //Omitted until the lodestone is up and functional.
-        return callback();
-        
-        //TODO :: - Should probably rate-limit this, rather than doing them in parallel.
-        //          Don't want to get our IP banned from the lodestone.
-        async.each(users, function(user, callback)
+      {        
+        //Create an array of functions, which are the update
+        //functions for each user.
+        var charFunctions = []
+        for(var idx in users)
         {
-          util.warn("User: " + user.username);
-          //Break down the user's character URL.
-          var charUrl = /(?:[^:]*:\/\/)?(?:www\.)?([^\/]+\.[^\/]+)(.*)/.exec(user.charUrl);
-        
-          //Feed the URL into node's connect's http request.
-          util.webGet(
+          //Create a partial binding, such that the user is (this),
+          // and a callback remains to be passed in.
+          charFunctions.push(function(callback)
           {
-            //Spoof Firefox 19 User-Agent to avoid 302 Error.
-            hostname : charUrl[1],
-            path : charUrl[2],
-            headers : {
-              'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0',
-            }
-          },
-          function(err, data){
-            //Log the error, but don't halt on it or it will kill all of the async.each instances.
-            if(err)
-            {
-              util.warn('Failed to retrieve character data for user : ' + user.username + ' : ' + err);
-              return callback();
-            }
-              
-            return parseUserData(user, data, function(err)
-            {
-              util.warn('Failed to parse character data for user : ' + user.username + ' : ' + err);
-              callback();
-            });
-          });
-        },
+            module.exports.getUserData(this, callback);
+          }.bind(users[idx]));
+        }
+        
+        //Loop the character's retreival functions.
+        async.waterfall(charFunctions,
         function(err)
         {
-          return callback(null, users);
-        }); //End Async.Each
+          return callback(err);
+        }); //End Waterfall
       },
     ],
     function(err, result)
     {
       if(err)
         util.err(err);
+      
       return callback();
+    });
+  },
+  
+  getUserData : function getUserData(user, callback)
+  {
+    util.log("Attempting to retreive lodestone data for user: " + user.username);
+    
+    //Break down the user's character URL.
+    var charUrl = /(?:[^:]*:\/\/)?(?:www\.)?([^\/]+\.[^\/]+)(.*)/.exec(user.charUrl);
+  
+    //Feed the URL into node's connect's http request.
+    util.webGet(
+    {
+      //Spoof Firefox 19 User-Agent to avoid 302 Error.
+      hostname : charUrl[1],
+      path : charUrl[2],
+      headers : {
+        'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0',
+      }
+    },
+    function(err, data){
+      //Log the error, but don't halt on it or it will kill all of the async.each instances.
+      if(err)
+      {
+        util.warn('Failed to retrieve character data for user : ' + user.username + ' : ' + err);
+        return callback();
+      }
+      
+      return module.exports.parseUserData(user, data, function(err)
+      {
+        if(err)
+          util.warn('Failed to parse character data for user : ' + user.username + ' : ' + err);
+        
+        
+        util.log("Character data retreival/update complete.");
+        return callback();
+      });
     });
   },
 }
