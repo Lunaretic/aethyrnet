@@ -87,7 +87,8 @@ aethyrnet.backbone['viewport'] = new (function(){
     =============================================== */
     render : function(page, noHistory)
     {
-      viewString = aethyrnet.viewMap[page];
+      page = page || '';
+      var viewString = aethyrnet.viewMap[page.split('/')[0]];
       
       //Nothing to do here if we're not ready to render & have no string. (Should never happen)
       if(!this.renderOK && !viewString)
@@ -108,7 +109,7 @@ aethyrnet.backbone['viewport'] = new (function(){
           return false;
         
         page = aethyrnet.pageQueue;
-        viewString = aethyrnet.viewMap[page];
+        viewString = aethyrnet.viewMap[page.split('/')[0]];
         aethyrnet.pageQueue = false;  
       }
       
@@ -165,10 +166,15 @@ aethyrnet.backbone['viewport'] = new (function(){
           //Bind the render callback to the main event listener.
           aethyrnet.events.once('page-frame:render', this.renderCallback);
           
+          //Options to pass along to the page view.
+          var opts = {
+            subpage : (page.indexOf('/') === -1 ? '' : page.substring(page.indexOf('/'))),
+          };
+          
           //Attempt to instantiate view.
           try 
           {
-            this.mainView = new context[view[1]]();
+            this.mainView = new context[view[1]](opts);
           }
           
           //Because Chrome is too retarded to support if e instanceof aethyrnet.SecurityError
@@ -581,10 +587,11 @@ aethyrnet.router = new (Backbone.Router.extend({
     //Ghetto router mode, go!
     '' : 'standardPage',
     ':page' : 'standardPage',
+    ':page/*subpage' : 'standardPage',
   },
   
   //Basic translation from client pages to viewStrings.
-  standardPage : function(page)
+  standardPage : function(page, subpage)
   {    
     var firstPage = false;
     if(!page)
@@ -593,7 +600,7 @@ aethyrnet.router = new (Backbone.Router.extend({
       page = 'news';
       firstPage = true;
     }
-    
+      console.log('derp '+subpage);
     viewString = aethyrnet.viewMap[page];
     
     if(!viewString)
@@ -610,11 +617,11 @@ aethyrnet.router = new (Backbone.Router.extend({
     
     
     if(aethyrnet.viewport)
-      aethyrnet.viewport.render(page, firstPage);
+      aethyrnet.viewport.render(page+'/'+subpage, firstPage);
     else
     {
       //Optimization: Go ahead and retreive the backbone for the cache while we wait.
-      aethyrnet.pageQueue = page;
+      aethyrnet.pageQueue = page+'/'+subpage;
       
       var bone = viewString.split('.')[0]
       if(bone)
