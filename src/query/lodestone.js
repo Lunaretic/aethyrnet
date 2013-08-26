@@ -47,12 +47,12 @@ var characterFields = {
       throw("Document was not properly formatted.");
     return elem.text().split('/')[0].trim();
   },
-  'primaryJobLevel' : function($)
+  'primaryJobLevel' : function($, user)
   {
     //TODO: Read off user data and figure out best way to find specifically that class info.
     return 0;
   },
-  'secondaryJobLevel' : function($)
+  'secondaryJobLevel' : function($, user)
   {
     //TODO: Read off user data and figure out best way to find specifically that class info.
     return 0;
@@ -64,6 +64,23 @@ var characterFields = {
       throw("Document was not properly formatted.");
     return elem.attr('src');
   },
+  'validation' : function($, user)
+  {
+    if(user.charValidated)
+      return true;
+    
+    if(!user.charValidationString)
+      return false;
+    
+    var elem = $('.area_inner_header .area_inner_footer .txt_selfintroduction');
+    if(elem.length !== 1)
+      throw("Document was not properly formatted.");
+    
+    if(elem.text().indexOf(user.charValidationString) === -1)
+      return false;
+    
+    return true;
+  }
 };
 
 
@@ -92,13 +109,17 @@ module.exports = {
       //Loop all fields desired.
       for(idx in characterFields)
       {
-        charData[idx] = characterFields[idx]($);
+        charData[idx] = characterFields[idx]($, user);
       }
     }
     catch(e)
     {
       return callback(idx + " : " + e);
     }
+    
+    //Get rid of validation check.
+    delete charData[idx].validation;
+    
     
     database.model('character').update({
       lodestoneId : user.charId,
@@ -118,10 +139,9 @@ module.exports = {
       {
         //Find all of our users who have Lodestone URLs but no avatar yet.
         db.model('user').find()
-        .select('username charUrl')
+        .select('username charUrl charValidated charValidationString')
         .where('charUrl').gt('')
-          // Use ne(false) rather than equals(true) to support old user entries.
-        .where('charValidated').ne(false) 
+        //.where('charValidated').ne(false) 
         .exec(function(err, docs)
         {
           util.warn("Total Users queued for update: " + docs.length);
