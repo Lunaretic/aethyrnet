@@ -28,6 +28,7 @@ aethyrnet.backbone['admin'] = new (function(){
     //Basic template render, but split into segments.
     renderPage : function(viewName)
     {
+      console.log("renderPage: " + viewName );
       if(this.$el.html() == "")
       {
         this.$el.html(this.template({
@@ -44,6 +45,11 @@ aethyrnet.backbone['admin'] = new (function(){
         this.subview.render();
         this.subview.$el.appendTo(this.$("#admin-body"));
       }
+    },
+    
+    renderSubpage : function(subpage, viewName)
+    {
+      console.log("Subpage render: " + subpage + " - " + viewName );
     },
     
     switchView : function(viewName, opts)
@@ -67,7 +73,7 @@ aethyrnet.backbone['admin'] = new (function(){
         this.$("#admin-body").append(loader);
         
         opts = opts || {};
-        opts.callback = this.render.bind(this, viewName);
+        opts.callback = this.render.bind(this, {}, viewName);
       
         this.subview = new context[viewString[1]](opts);
       }.bind(this));

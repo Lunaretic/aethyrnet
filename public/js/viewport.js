@@ -23,6 +23,8 @@ aethyrnet.backbone['viewport'] = new (function(){
     
     initialize : function(options)
     {
+      aethyrnet.viewport = this;
+      
       this.subviews = {};
       this.mainView = false;
       this.renderOK = false;
@@ -67,7 +69,7 @@ aethyrnet.backbone['viewport'] = new (function(){
     // Ease of access function for reloading current page.
     reload : function()
     {
-      this.render(this.currentPage, true);
+      this.render(this.currentPage, true, true);
     },
     
     navigateLink : function(event)
@@ -76,8 +78,11 @@ aethyrnet.backbone['viewport'] = new (function(){
       if(!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey)
         event.preventDefault()
         
+      var $ct = $(event.currentTarget);
       
-      aethyrnet.router.navigate($(event.currentTarget).attr('href').substring(1), { trigger : true });
+      aethyrnet.router.navigate($ct.attr('href').substring(1), {
+        trigger : true,
+      });
     },
     
     
@@ -85,9 +90,13 @@ aethyrnet.backbone['viewport'] = new (function(){
     /* ===============================================
                   Main Page Rendering
     =============================================== */
-    render : function(page, noHistory)
+    render : function(page, noHistory, forceRecreate)
     {
       page = page || '';
+      
+      if(page[page.length - 1] == '/')
+        page = page.slice(0, -1);
+      
       var viewString = aethyrnet.viewMap[page.split('/')[0]];
       
       //Nothing to do here if we're not ready to render & have no string. (Should never happen)
@@ -114,7 +123,23 @@ aethyrnet.backbone['viewport'] = new (function(){
       }
       
       this.rendering = true;
+      
+      var sameRoot = false;
+      
+      //If we're re-rendering from the same base view.
+      if(this.currentPage && this.mainView &&  this.currentPage.split('/')[0] == page.split('/')[0] && !forceRecreate)
+        sameRoot = true;
+      
+      //Our current view must also be capable of rendering special routes to allow root routing.
+      if(sameRoot && !('renderSubpage' in this.mainView))
+        sameRoot = false;
+        
+        
+      
       this.currentPage = page;
+      
+      var subpage = (page.indexOf('/') === -1 ? '' : page.substring(page.indexOf('/')));
+      
       aethyrnet.events.trigger('page-frame:unload');
       
       //Display the loading bar.
@@ -131,8 +156,8 @@ aethyrnet.backbone['viewport'] = new (function(){
         easing : 'easeInQuad',
       });
       
-      //Add removal of old view to queue.
-      if(this.mainView)
+      //Add removal of old view to queue, if we are not re-using it.
+      if(this.mainView && !sameRoot)
       {
         var mv = this.mainView;
         $('#main').queue('fx', function(next)
@@ -146,65 +171,84 @@ aethyrnet.backbone['viewport'] = new (function(){
         });
       }
       
+      //Update the user's browser history to reflect the new page.
       aethyrnet.router.navigate(page, {
         replace : noHistory
       });
       
+      //Just use a slightly prettied up version of our page URL for now.
       window.document.title = "Aethyrnet - " + aethyrnet.util.prettyName(page);
       
+      //Update progress (30% - Ready to load backbone view from server)
       this.updateStatusBar(30);
       
-      //Begin loading the view we want while the fade-out si playing.
-      getBackbone(view[0], (function renderMainView(err, context)
+      if(!sameRoot)
       {
-        //Queue us onto #main's queue to prevent DOM collisions
-        //mv.remove() is queued on 'fx' waiting on the fade-out.
-        $('#main').queue('fx', function(next)
+        //Need to get backbone from server if it's a new page.
+        getBackbone(view[0], function(err, context)
         {
-          this.updateStatusBar(70);
         
-          //Bind the render callback to the main event listener.
-          aethyrnet.events.once('page-frame:render', this.renderCallback);
+          //Blow up on error for now.
+          if(err)
+            throw(err);
           
-          //Options to pass along to the page view.
-          var opts = {
-            subpage : (page.indexOf('/') === -1 ? '' : page.substring(page.indexOf('/'))),
-          };
-          
-          //Attempt to instantiate view.
-          try 
+          //Queue onto #main to prevent DOM collisions.
+          $('#main').queue('fx', function(next)
           {
-            this.mainView = new context[view[1]](opts);
-          }
-          
-          //Because Chrome is too retarded to support if e instanceof aethyrnet.SecurityError
-          catch(e)
-          {
-            //We only want our security errors and nothing else.
-            if(!(e instanceof aethyrnet.SecurityError))
-              throw e;
-            
-            //Kill the main view.
-            this.mainView = false;
-            aethyrnet.error(e);
-            
-            //Done rendering.
-            this.hideStatusBar(false);
-            aethyrnet.events.trigger('viewport:renderComplete');
-          }
-          
-          this.rendering = false;
-          next();
+            //Attempt to instantiate view.
+            try
+            {
+              //basically just - aethyrnet.backbone.viewFile.viewName(opts).
+              this.mainView = new context[view[1]]({
+                subpage : subpage,
+              });
+            }
+            //Keep an eye out for failed view creation.
+            catch(e)
+            {
+              //Because Chrome is too retarded to support if e instanceof aethyrnet.SecurityError in the catch
+              if(!(e instanceof aethyrnet.SecurityError))
+                throw e;
+              
+              //Kill the main view.
+              this.mainView = false;
+              aethyrnet.error(e);
+              
+              //Done rendering.
+              this.hideStatusBar(false);
+              aethyrnet.events.trigger('viewport:renderComplete');
+              return next();
+            }
+            return next();
+          }.bind(this));
         }.bind(this));
-      }).bind(this));
-    },
-    
-    //Viewport secondary functions
-    goHome : function(event)
-    {
-      this.render('news');
-    },
+      }
+      //For rendering new sub-pages on the same root.
+      else
+      {
+        this.mainView.render({
+          subpage : subpage,
+        });
+      }
       
+      
+      //Queue us onto #main's queue to prevent DOM collisions
+      //If needed, the swap out for the mainView is queued on 'fx'.
+      $('#main').queue('fx', function(next)
+      {
+        this.updateStatusBar(70);
+      
+        //Bind the render callback to the main event listener.
+        aethyrnet.events.once('page-frame:render', this.renderCallback);
+        
+        this.rendering = false;
+        next();
+      }.bind(this));
+    },
+        
+    //A function that handles the fade-in of #main.
+    //Called via a one-time listen to page-frame:render on the main
+    //aethyrnet.events object.
     renderCallback : function()
     {
       aethyrnet.viewport.hideStatusBar(true);
@@ -213,7 +257,7 @@ aethyrnet.backbone['viewport'] = new (function(){
       $('#main').queue('fx', function(next)
       {
         //Attach us to the main viewport area and display.
-        if(aethyrnet.viewport.mainView)
+        if(aethyrnet.viewport.mainView.$el.parent().attr('id') != '#main');
           aethyrnet.viewport.mainView.$el.appendTo('#main');
         
         $(this).css({
@@ -221,6 +265,12 @@ aethyrnet.backbone['viewport'] = new (function(){
         });
         return next();
       });
+    },
+    
+    //Viewport secondary functions
+    goHome : function(event)
+    {
+      this.render('news');
     },
     
     startStatusBar : function(type)
@@ -291,7 +341,7 @@ aethyrnet.backbone['viewport'] = new (function(){
       
       'About' : 'about',
       
-      'Free Company Board' : 'url:http://na.beta.finalfantasyxiv.com/lodestone/',
+      'Free Company Board' : 'url:http://na.finalfantasyxiv.com/lodestone/freecompany/9232379236109516818/forum/',
       
       'Dashboard' : {
         'page' : 'dashboard',
@@ -538,13 +588,19 @@ aethyrnet.backbone['viewport'] = new (function(){
         return this.initializePage.apply(this, arguments);
     },
     
-    render : function()
+    render : function(options)
     {
       var ret = true;
       
+      options = options || {};
+      console.log(arguments);
+     
+            
       //Render the page.
-      if(this.renderPage)
-        ret = this.renderPage.apply(this, arguments);
+      if(options.subpage && this.renderSubpage)
+        ret = this.renderSubpage.apply(this, _.rest(arguments).unshift(options.subpage));
+      else if(this.renderPage)
+        ret = this.renderPage.apply(this, _.rest(arguments));
       
       //Allow custom page rendering to cancel the page-frame:render event.
       if(ret !== false)
@@ -590,9 +646,13 @@ aethyrnet.router = new (Backbone.Router.extend({
     ':page/*subpage' : 'standardPage',
   },
   
+  
   //Basic translation from client pages to viewStrings.
   standardPage : function(page, subpage)
-  {    
+  {
+    if(!subpage)
+      subpage = '';
+  
     var firstPage = false;
     if(!page)
     {
@@ -600,7 +660,7 @@ aethyrnet.router = new (Backbone.Router.extend({
       page = 'news';
       firstPage = true;
     }
-      console.log('derp '+subpage);
+    
     viewString = aethyrnet.viewMap[page];
     
     if(!viewString)
@@ -613,11 +673,10 @@ aethyrnet.router = new (Backbone.Router.extend({
       return;
     }
     
-    //Backbone.history.pushState(page);
-    
-    
     if(aethyrnet.viewport)
+    {
       aethyrnet.viewport.render(page+'/'+subpage, firstPage);
+    }
     else
     {
       //Optimization: Go ahead and retreive the backbone for the cache while we wait.
@@ -732,6 +791,7 @@ function getTemplate(file, options, callback)
     options.mainCSS = true;
   options.template = ( options.template === undefined ? true : options.template );
   
+  //Parallel loading of HTML and CSS assets.
   async.parallel(
   [
     function(callback)
@@ -850,9 +910,9 @@ if(aethyrnet.debug)
     console.log("Aethyrnet Event: " + event);
   });
   
-  aethyrnet.router.on('route', function(router, route, params)
+  aethyrnet.router.on('route', function(route, params)
   {
-    console.log("Aethyrnet Route: " + route);
+    console.log("Aethyrnet Route: " + route + "/" + params);
   });
 }
 
