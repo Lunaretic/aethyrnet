@@ -117,7 +117,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 
 		for(var idx in view.zoneViews) {
 		$('#'+view.zoneViews[idx].model.get('region').replace(' ', '_'), view.$el).append(view.zoneViews[idx].el);
-		view.zoneViews[idx].render(view.childTemplate);
+		view.zoneViews[idx].render(view.childTemplate, view.template);
 		}
 	},
 
@@ -172,33 +172,84 @@ aethyrnet.backbone['hunts'] = new (function(){
 	});
 	
 	var HuntRegionView = this.HuntRegionView = Backbone.View.extend({
-	initialize : function(options)
-	{
-			this.parent = options.parent;
-	},
+    events : {
+      'click .update' : 'updateOpen',
+    },
+  
+    initialize : function(options)
+    {
+        this.parent = options.parent;
+    },
 
-	render : function(template)
-	{
-		this.$el.html(template({ zone : this.model.attributes }));
+    render : function(template, modalTemplate)
+    {
+			//Hackhack - Find a better way to get at this; maybe in init().
+			this.modalTemplate = modalTemplate;
+      this.$el.html(template({ zone : this.model.attributes }));
+        var view = this;
+    },
+    
+    updateOpen : function(evt) {
 			var view = this;
-		$('.update', this.$el).click(function(evt) {
-		var $btn = $(evt.target);
-		var root = $btn.closest('.row');
+      var $btn = $(evt.target);
+      var root = $btn.closest('.row');
+			
+      var huntClass = 'S'
+      if(root.hasClass('hunt-a'))
+        huntClass = 'A';
+      else if(root.hasClass('hunt-b'))
+        huntClass = 'B';
+			
+			var templateData = {
+				mode : 'modal',
+				zone : this.model.get('name'),
+				name : huntClass + ': ' + this.model.get(huntClass).name,
+				tod : this.model.get(huntClass).active > 0 ? this.model.get(huntClass).tod : new Date()
+			};
+			
+			var $html = $(this.modalTemplate(templateData));
+			
+			$(document.body).append($html);
+			$html.modal({
+        show : true,
+        keyboard : true,
+      });
+      $html.on('hidden.bs.modal', function(){
+        $html.remove();
+      });
+			
+			$('.submit-btn', $html).click(function(evt) {
+				var timestring = $('#update-tod').val();
+				try
+				{
+					var hours = timestring.split(':')[0];
+					var minutes = timestring.split(':')[1];
+					
+					var dt = new Date();
+					dt.setHours(hours);
+					dt.setMinutes(minutes);
+					
+					if(dt > new Date())
+						dt.setHours(dt.getHours() - 24);
+					
+					if(isNaN(dt.getTime()))
+						return aethyrnet.error("The given time is not valid.");
+					
+					$.post('/api/hunt_update', { 
+						zone : view.model.get('name'),
+						huntClass : huntClass,
+						tod : dt
+					}, function(data, textStat) {
+						view.parent.refresh.call(view.parent);
+					}, "json");
+					$html.modal('hide');
+				} catch(e) {
+          aethyrnet.error('The time appears to be invalid or the server is down.');
+				}
 				
-				var huntClass = 'S'
-				if(root.hasClass('hunt-a'))
-					huntClass = 'A';
-				else if(root.hasClass('hunt-b'))
-					huntClass = 'B';
 				
-				$.post('/api/hunt_update', { 
-					zone : view.model.get('name'),
-					huntClass : huntClass
-				}, function(data, textStat) {
-					view.parent.refresh.call(view.parent);
-				}, "json");
-		});
-	},
+			});
+    }
 	});
 
 

@@ -896,6 +896,10 @@ aethyrnet.util.prettyName = function(username)
   return (username.charAt(0).toUpperCase() + username.slice(1)).replace("_", " ");
 }
 
+aethyrnet.util.toSaneTime = function(data)
+{
+}
+
 //=============================================//
 //                Error Objects
 //=============================================//

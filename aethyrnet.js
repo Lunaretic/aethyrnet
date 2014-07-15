@@ -60,32 +60,19 @@ function(database, callback)
   
   //Session settings.
   server.use(express.cookieParser());
-  server.configure('production', function()
+  server.configure(function()
   {
+    var cName = ( process.env.NODE_ENV == 'production' ? 'connect.sid' : 'connect.debug');
+    util.warn("Cookie Name: " + cName);
     server.use(express.session({
+      name : cName,
+      key : cName,
       secret : secrets.cookieSecret,
       cookie : 
       {
         //One year expiration
         maxAge: 365 * 24 * 60 * 60 * 1000,
         domain:'.aethyrnet.com'
-      },
-      store : new MongoStore({
-        mongoose_connection : database,
-        collection : 'sessions',
-        auto_reconnect : true
-      })
-    }));
-  });
-  server.configure('development', function()
-  {
-    server.use(express.session({
-      secret : secrets.cookieSecret,
-      cookie : 
-      {
-        //One year expiration
-        maxAge: 365 * 24 * 60 * 60 * 1000,
-        domain:'test.aethyrnet.com'
       },
       store : new MongoStore({
         mongoose_connection : database,

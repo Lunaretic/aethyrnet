@@ -121,17 +121,25 @@ module.exports = function(server)
 		//Prevent non-admin access to other users.
 		if(!req.user || req.user.adminLevel < 1)
 			util.clientErr(res, "You must be an admin to access the hunt tracker.");
+		
 
 		//Make sure it's a valid zone and hunt class.
 		if(!zone)
 			return res.end();
 		if(!zone[req.body.huntClass])
 			return res.end();
-
+		
+		var tod = new Date();
+		if(req.body.tod && typeof(req.body.tod) == 'string')
+		{
+			util.warn("Tod is string.");
+			tod = new Date(req.body.tod);
+		}
+		
 		//Create a fresh object (otherwise mongoose won't see the update).
 		zone[req.body.huntClass] = {
 			name : zone[req.body.huntClass].name,
-			tod : new Date()
+			tod : tod
 		};
 
 		zone.save(function(err){
