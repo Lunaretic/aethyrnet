@@ -24,9 +24,9 @@
 	margin-top: 2px;
 }
 
-.zone-block span.active {
+span.active {
 	color: red;
 }
-.zone-block span.tracking {
+span.tracking {
 	color:orange;
 }

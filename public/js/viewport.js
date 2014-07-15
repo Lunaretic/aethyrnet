@@ -774,7 +774,7 @@ function getBackbone(file, exec, callback){
   });
 }
 
-//Template retreival function to prevent multi-loading template files.
+//Template retrieval function to prevent multi-loading template files.
 function getTemplate(file, options, callback)
 {
   if(!callback)

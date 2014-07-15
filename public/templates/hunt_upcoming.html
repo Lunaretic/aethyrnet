@@ -1,0 +1,15 @@
+<div class="header">Upcoming Hunts</div>
+
+<% for(var idx in targets) { %>
+	<div class="row">
+		<div class="col-xs-2"><%= targets[idx].zone %></div>
+		<div class="col-xs-2 upcoming-<%= targets[idx].type %>"><%= targets[idx].type %>: <%= targets[idx].name %></div>
+		<div class="col-xs-4">
+			<% if(targets[idx].active == 2) { %>
+				<span class="active">Window closes in <%= targets[idx].estimated %> Minutes</span>
+			<% } else if (targets[idx].active == 1) { %>
+				<span class="<%= targets[idx].estimated < 30 ? "tracking" : "" %>">Window opens in <%= targets[idx].estimated %> Minutes
+			<% } %>
+		</div>
+	</div>
+<% } %>

@@ -10,23 +10,32 @@ aethyrnet.backbone['hunts'] = new (function(){
   //----------------------------------------
   //            Hunts Page
   //----------------------------------------
+	
+	//-----  Primary View -----
   this.HuntView = aethyrnet.PageView.extend({
 		initializePage : function(options)
     {
-			if(this.subviews)
-				delete this.subveiws;
-			
-      this.subviews = [];
       var view = this;
-      this.collection = new Zones();
+			this.collection = new Zones();
+			
       async.parallel([
         function(callback) {          
-          //Retrieve template files.
-          getTemplate('hunts', { css : true, view : view, mainCss : true }, function(err, context)
+          //Retrieve child template.
+          getTemplate('hunt_zones', {}, function(err, context)
           {
-            callback();
-          }.bind(this));
+						view.childTemplate = context;
+						callback();
+          });
         },
+        function(callback) {          
+          //Retrieve child template.
+          getTemplate('hunt_upcoming', {}, function(err, context)
+          {
+						view.upcomingTemplate = context;
+						callback();
+          });
+        },
+        getTemplate.bind(this, 'hunt_viewport', {css : true, view : view, mainCss : true }),
         function(callback) {
 					view.fetch(callback);
         },
@@ -39,17 +48,17 @@ aethyrnet.backbone['hunts'] = new (function(){
       });
     },
 		
+		//Fetches new data and reinitializes subviews.
 		fetch : function(callback)
 		{
-			if(this.subviews)
-			{
-				delete this.subviews;
-				this.subviews = [];
-			}
-			
 			var view = this;
-			//Retrieve JSON data.
-			view.collection.fetch({ 
+			
+			if(this.zoneViews)
+				delete this.zoneViews;
+			
+			this.zoneViews = [];
+			//Retrieve JSON data for our core listing.
+			view.collection.fetch({
 				success : function(results, response, options) {
 				//Scoping factory to spawn views.
 				function tempFact(mdl)
@@ -58,7 +67,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 						parent : view,
 						model : mdl,
 					});
-					view.subviews.push(fev);
+					view.zoneViews.push(fev);
 					return fev;
 				}
 				
@@ -67,8 +76,14 @@ aethyrnet.backbone['hunts'] = new (function(){
 				{
 					var fev = tempFact(results.models[idx]);
 				}
+				
+				view.upcomingHunts = new UpcomingHuntsView({
+					parent: view,
+					collection : view.collection,
+				})
+				
+				
 				return callback();
-					callback();
 				},
 			});
 		},
@@ -86,23 +101,33 @@ aethyrnet.backbone['hunts'] = new (function(){
 		
     renderPage : function() {
       var view = this;
-      this.$el.html('');
+      view.$el.html('');
+			
+			view.$el.append(view.upcomingHunts.el);
+			view.upcomingHunts.render(view.upcomingTemplate);
+			
 			for(var idx in regions) {
-				this.$el.append('<div id="'+regions[idx].replace(' ', '_')+'" class="content-block container"></div>');
+				view.$el.append('<div id="'+regions[idx].replace(' ', '_')+'" class="content-block container"></div>');
 			}
       
-      for(var idx in this.subviews) {
-        $('#'+this.subviews[idx].model.get('region').replace(' ', '_'), this.$el).append(this.subviews[idx].el);
-        this.subviews[idx].render(this.template);
+      for(var idx in view.zoneViews) {
+        $('#'+view.zoneViews[idx].model.get('region').replace(' ', '_'), view.$el).append(view.zoneViews[idx].el);
+        view.zoneViews[idx].render(view.childTemplate);
       }
     },
     
     remove : function() {
-      delete this.subviews;
     
       //Kill our subviews.
-      for(var idx in this.subviews)
-        this.subviews[idx].remove();
+      for(var idx in this.zoneViews)
+        this.zoneViews[idx].remove();
+			
+			delete this.zoneViews;
+			
+			if(this.upcomingHunts)
+				this.upcomingHunts.remove();
+			
+			delete this.upcomingHunts;
       
       $.removeData(this.$el);
       
@@ -111,10 +136,37 @@ aethyrnet.backbone['hunts'] = new (function(){
     },
   });
   
+	//----------------------------------
+	//          Child Views
+	//-----------------------------------
+	var UpcomingHuntsView = this.UpcomingHuntsView = Backbone.View.extend({
+    className : 'content-block container',
+		
+		initialize : function(options) {
+		},
+		
+		render : function(template) {
+			var view = this;
+			var targets = this.collection.pluck('B').concat(this.collection.pluck('A')).concat(this.collection.pluck('S'));
+			
+			targets = _.filter(targets, function(mdl) {
+				return mdl.active > 0;
+			});
+			
+			targets = _.sortBy(targets,function(mdl) {
+				return (mdl.active * -10000) + mdl.estimated;
+			});
+			
+			this.$el.html('');
+			if(targets.length > 0)
+			{
+				this.$el.html(template({ targets : targets }));
+			}
+		}
+		
+	});
+	
   var HuntRegionView = this.HuntRegionView = Backbone.View.extend({
-    
-    className : '',
-    
     initialize : function(options)
     {
 			this.parent = options.parent;
@@ -171,7 +223,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 					estimated = 9999;
 				} else if(minutesSinceSpawn >= rtime && minutesSinceSpawn <= rtimeMax){
 					active = 2;
-					estimated = 0;
+					estimated = rtimeMax - minutesSinceSpawn;
 				} else {
 					active = 1;
 					estimated = rtime - minutesSinceSpawn;
@@ -180,6 +232,8 @@ aethyrnet.backbone['hunts'] = new (function(){
 				this.attributes[types[idx]].tod = tod;
 				this.attributes[types[idx]].estimated = estimated;
 				this.attributes[types[idx]].active = active;
+				this.attributes[types[idx]].type = types[idx];
+				this.attributes[types[idx]].zone = attributes.name;
 			}
 			
 			//Group us into our appropriate Region as well.
