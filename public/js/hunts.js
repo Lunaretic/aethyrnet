@@ -92,6 +92,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 			var respawn_max = { B : 60, A : 270, S: 2880 };
 			
 			for(var idx in types) {
+				var name = this.model.get(types[idx]).name;
 				var tod = this.model.get(types[idx]).tod ? new Date(this.model.get(types[idx]).tod) : false;
 				var active = 1;
 				var rtime = respawn_time[types[idx]];
@@ -114,6 +115,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 				}
 			
 				this.model.set(types[idx], {
+					name : name,
 					tod : tod,
 					estimated : estimated,
 					active : active
