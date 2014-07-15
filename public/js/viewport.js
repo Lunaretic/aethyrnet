@@ -328,16 +328,22 @@ aethyrnet.backbone['viewport'] = new (function(){
   this.MainMenuView = Backbone.View.extend({
     
     events : {
-      'click a' : 'menuClick',
+      'click a' : 'menuClick'
     },
     
     items : {
       'News' : 'news',
-      
+
+			'Hunts' : {
+				'page' : 'hunts',
+				'loggedIn' : true
+			},
+			
       'Profile' : {
         'page' : 'profile',
-        'loggedIn' : true,
+        'loggedIn' : true
       },
+
       
       'About' : 'about',
       
@@ -346,7 +352,7 @@ aethyrnet.backbone['viewport'] = new (function(){
       'Dashboard' : {
         'page' : 'dashboard',
         'loggedIn' : true,
-        'adminLevel' : 3,
+        'adminLevel' : 3
       },
     },
     
