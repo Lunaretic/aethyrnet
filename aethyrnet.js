@@ -151,7 +151,7 @@ function(err, server)
   server.configure('production', function()
   {
     util.log('---- MODE: ' + clc.redBright('production') + ' ----');
-    server.listen(8080);
+    server.listen(8000);
     
     util.sendMail("luna@aethyrnet.com", "Aethyrnet Online", "The Aethyrnet.com server started successfully. \n - " + new Date());
   });
