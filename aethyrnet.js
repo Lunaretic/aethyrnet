@@ -6,16 +6,6 @@ var clc = require('cli-color');
 
 util.log('==== ' + clc.cyan('Beginning Aethyrnet server startup') + ' ====');
 
-//NodeTime Analytics
-if(process.env.NODE_ENV == 'production')
-{
-  util.notify("Enabling NodeTime Analytics services.");
-  require('nodetime').profile({
-      accountKey: 'b8f45e651d051cbb442cab574e7a613f6866bdd6',
-      appName: 'Aethyrnet.com' + ( process.env.NODE_ENV == 'production' ? '' : ' - development' )
-    });
-}
-
 //Packaged Libraries
 var url = require('url');
 var async = require('async');
@@ -161,7 +151,7 @@ function(err, server)
   server.configure('production', function()
   {
     util.log('---- MODE: ' + clc.redBright('production') + ' ----');
-    server.listen(8000);
+    server.listen(8080);
     
     util.sendMail("luna@aethyrnet.com", "Aethyrnet Online", "The Aethyrnet.com server started successfully. \n - " + new Date());
   });

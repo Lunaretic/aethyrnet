@@ -23,6 +23,9 @@ commit-r:
 dev:
 	cd $(DEVPATH); NODE_ENV=development nodemon aethyrnet.js
 
+fakedev:
+	cd $(DEVPATH); NODE_ENV=production nodemon aethyrnet.js
+
 test:
 	cd $(DEVPATH); NODE_ENV=test mocha --reporter $(REPORTER) --recursive
 
