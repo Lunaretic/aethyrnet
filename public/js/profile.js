@@ -2,20 +2,20 @@ aethyrnet.backbone['profile'] = new (function(){
   var jobList = {
     "Tank" : [
       "Paladin",
-      "Warrior",
-    ],
+      "Warrior"
+		],
     "Melee DPS" : [
       "Monk",
-      "Dragoon",
+      "Dragoon"
     ],
     "Ranged DPS" : [
       "Bard",
       "Black Mage",
-      "Summoner",
+      "Summoner"
     ],
     "Support" : [
       "White Mage",
-      "Scholar",
+      "Scholar"
     ]
   };
 
@@ -25,11 +25,11 @@ aethyrnet.backbone['profile'] = new (function(){
       'click #logoutButton' : 'logOut',
       //'click #bgImage-input li' : 'bgChange',
       'click li' : 'dropdownChange',
-      'change input' : 'updateServer',
+      'change input' : 'updateServer'
     },
     
     security : {
-      loggedIn : true,
+      loggedIn : true
     },
         
     initializePage : function()
@@ -38,7 +38,7 @@ aethyrnet.backbone['profile'] = new (function(){
       
       //Set up Security options
       security = {
-        loggedIn : true,
+        loggedIn : true
       };
       
       async.parallel([

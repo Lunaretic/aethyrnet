@@ -7,46 +7,51 @@ aethyrnet.backbone['hunts'] = new (function(){
 	var respawn_max = { B : 60, A : 270, S: 2880 };
 	var page = this;
 	
-  //----------------------------------------
-  //            Hunts Page
-  //----------------------------------------
+	//----------------------------------------
+	//            Hunts Page
+	//----------------------------------------
 	
 	//-----  Primary View -----
-  this.HuntView = aethyrnet.PageView.extend({
+	this.HuntView = aethyrnet.PageView.extend({
+		//Set up Security options
+		security : {
+			loggedIn : true,
+			adminLevel : 1
+		},
 		initializePage : function(options)
-    {
-      var view = this;
+		{
+		var view = this;
 			this.collection = new Zones();
 			
-      async.parallel([
-        function(callback) {          
-          //Retrieve child template.
-          getTemplate('hunt_zones', {}, function(err, context)
-          {
+		async.parallel([
+		function(callback) {
+			//Retrieve child template.
+			getTemplate('hunt_zones', {}, function(err, context)
+			{
 						view.childTemplate = context;
 						callback();
-          });
-        },
-        function(callback) {          
-          //Retrieve child template.
-          getTemplate('hunt_upcoming', {}, function(err, context)
-          {
+			});
+		},
+		function(callback) {
+			//Retrieve child template.
+			getTemplate('hunt_upcoming', {}, function(err, context)
+			{
 						view.upcomingTemplate = context;
 						callback();
-          });
-        },
-        getTemplate.bind(this, 'hunt_viewport', {css : true, view : view, mainCss : true }),
-        function(callback) {
+			});
+		},
+		getTemplate.bind(this, 'hunt_viewport', {css : true, view : view, mainCss : true }),
+		function(callback) {
 					view.fetch(callback);
-        },
-      ],
-      function(err, result)
-      {
-        view.render.call(view);
+		},
+		],
+		function(err, result)
+		{
+		view.render.call(view);
 				//Auto-refresh every 60 seconds.
 				view.refreshTimer = window.setTimeout(view.refresh.bind(view), 60000);
-      });
-    },
+		});
+	},
 		
 		//Fetches new data and reinitializes subviews.
 		fetch : function(callback)
@@ -87,7 +92,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 				},
 			});
 		},
-    
+
 		refresh : function() {
 			if(this.refreshTimer)
 				window.clearTimeout(this.refreshTimer)
@@ -99,9 +104,9 @@ aethyrnet.backbone['hunts'] = new (function(){
 			this.fetch(this.renderPage.bind(this));
 		},
 		
-    renderPage : function() {
-      var view = this;
-      view.$el.html('');
+	renderPage : function() {
+		var view = this;
+		view.$el.html('');
 			
 			view.$el.append(view.upcomingHunts.el);
 			view.upcomingHunts.render(view.upcomingTemplate);
@@ -109,18 +114,18 @@ aethyrnet.backbone['hunts'] = new (function(){
 			for(var idx in regions) {
 				view.$el.append('<div id="'+regions[idx].replace(' ', '_')+'" class="content-block container"></div>');
 			}
-      
-      for(var idx in view.zoneViews) {
-        $('#'+view.zoneViews[idx].model.get('region').replace(' ', '_'), view.$el).append(view.zoneViews[idx].el);
-        view.zoneViews[idx].render(view.childTemplate);
-      }
-    },
-    
-    remove : function() {
-    
-      //Kill our subviews.
-      for(var idx in this.zoneViews)
-        this.zoneViews[idx].remove();
+
+		for(var idx in view.zoneViews) {
+		$('#'+view.zoneViews[idx].model.get('region').replace(' ', '_'), view.$el).append(view.zoneViews[idx].el);
+		view.zoneViews[idx].render(view.childTemplate);
+		}
+	},
+
+	remove : function() {
+
+		//Kill our subviews.
+		for(var idx in this.zoneViews)
+		this.zoneViews[idx].remove();
 			
 			delete this.zoneViews;
 			
@@ -128,19 +133,19 @@ aethyrnet.backbone['hunts'] = new (function(){
 				this.upcomingHunts.remove();
 			
 			delete this.upcomingHunts;
-      
-      $.removeData(this.$el);
-      
-      //Summon base backbone removal.
-      Backbone.View.prototype.remove.call(this);
-    },
-  });
-  
+
+		$.removeData(this.$el);
+
+		//Summon base backbone removal.
+		Backbone.View.prototype.remove.call(this);
+	},
+	});
+
 	//----------------------------------
 	//          Child Views
 	//-----------------------------------
 	var UpcomingHuntsView = this.UpcomingHuntsView = Backbone.View.extend({
-    className : 'content-block container',
+	className : 'content-block container',
 		
 		initialize : function(options) {
 		},
@@ -166,19 +171,19 @@ aethyrnet.backbone['hunts'] = new (function(){
 		
 	});
 	
-  var HuntRegionView = this.HuntRegionView = Backbone.View.extend({
-    initialize : function(options)
-    {
+	var HuntRegionView = this.HuntRegionView = Backbone.View.extend({
+	initialize : function(options)
+	{
 			this.parent = options.parent;
-    },
-    
-    render : function(template)
-    {
-      this.$el.html(template({ zone : this.model.attributes }));
+	},
+
+	render : function(template)
+	{
+		this.$el.html(template({ zone : this.model.attributes }));
 			var view = this;
-      $('.update', this.$el).click(function(evt) {
-        var $btn = $(evt.target);
-        var root = $btn.closest('.row');
+		$('.update', this.$el).click(function(evt) {
+		var $btn = $(evt.target);
+		var root = $btn.closest('.row');
 				
 				var huntClass = 'S'
 				if(root.hasClass('hunt-a'))
@@ -192,19 +197,19 @@ aethyrnet.backbone['hunts'] = new (function(){
 				}, function(data, textStat) {
 					view.parent.refresh.call(view.parent);
 				}, "json");
-      });
-    },
-  });
-  
-  
-  //----------------------------------------
-  //                Models
-  //----------------------------------------
-  var Zone = this.Zone= Backbone.Model.extend({
-    
-    idAttribute: "_id",
-    initialize : function(attributes, options)
-    {
+		});
+	},
+	});
+
+
+	//----------------------------------------
+	//                Models
+	//----------------------------------------
+	var Zone = this.Zone= Backbone.Model.extend({
+
+	idAttribute: "_id",
+	initialize : function(attributes, options)
+	{
 			//Set up the extra hunt-spawning related data.
 			for(var idx in types) {
 				var name = attributes[types[idx]].name;
@@ -221,6 +226,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 				if(minutesSinceSpawn > rtimeMax) {
 					active = 0;
 					estimated = 9999;
+					tod = false;
 				} else if(minutesSinceSpawn >= rtime && minutesSinceSpawn <= rtimeMax){
 					active = 2;
 					estimated = rtimeMax - minutesSinceSpawn;
@@ -243,18 +249,18 @@ aethyrnet.backbone['hunts'] = new (function(){
 			}
 			if(!this.attributes.region)
 				this.attributes.region = 'Other';
-    },
-  });
+	},
+	});
 
-  //----------------------------------------
-  //              Collections
-  //----------------------------------------
-  var Zones = this.Zones = Backbone.Collection.extend({
-    
-    model : Zone,
-    url : "/api/hunts",
-    
-  });
-  
-  
+	//----------------------------------------
+	//              Collections
+	//----------------------------------------
+	var Zones = this.Zones = Backbone.Collection.extend({
+
+	model : Zone,
+	url : "/api/hunts",
+
+	});
+
+
 })();

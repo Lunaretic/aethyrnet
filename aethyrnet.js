@@ -83,8 +83,8 @@ function(database, callback)
       store : new MongoStore({
         mongoose_connection : database,
         collection : 'sessions',
-        auto_reconnect : true,
-      }),
+        auto_reconnect : true
+      })
     }));
   });
   server.configure('development', function()
@@ -100,8 +100,8 @@ function(database, callback)
       store : new MongoStore({
         mongoose_connection : database,
         collection : 'sessions',
-        auto_reconnect : true,
-      }),
+        auto_reconnect : true
+      })
     }));
   });
   

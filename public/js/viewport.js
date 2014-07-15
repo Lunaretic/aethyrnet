@@ -200,7 +200,7 @@ aethyrnet.backbone['viewport'] = new (function(){
             {
               //basically just - aethyrnet.backbone.viewFile.viewName(opts).
               this.mainView = new context[view[1]]({
-                subpage : subpage,
+                subpage : subpage
               });
             }
             //Keep an eye out for failed view creation.
