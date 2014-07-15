@@ -118,8 +118,8 @@ database.model('hunt_zone').findOne({ name : 'Coerthas'}, function(err, doc) {
 			var aName = regions[region][zone]['A'];
 			var sName = regions[region][zone]['S'];
 			
-			regions[region][zone]['A'] = { name : bName };
-			regions[region][zone]['B'] = { name : aName };
+			regions[region][zone]['B'] = { name : bName };
+			regions[region][zone]['A'] = { name : aName };
 			regions[region][zone]['S'] = { name : sName };
 			
 			var zName = zone + ( region != 'Other' ? ' ' + region : '' );

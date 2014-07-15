@@ -26,32 +26,48 @@ if(process.env.NODE_ENV == 'production')
 
 module.exports.log = function log(msg)
 {
-	if(msg === null)
+	if(msg == null)
 		msg = "null";
+	else if(msg == undefined)
+		msg = "undefined"
+	else if(msg == NaN)
+		msg = "NaN"
   var dt = new Date()
   console.log("[ " + dt.getHours() + ":" + padLeft(dt.getMinutes(), '00') + ":" + padLeft(dt.getSeconds(), '00') + " ] [ " + clc.white('LOG') + " ] " + msg.toString());
 };
 
 module.exports.warn = function logWarning(msg)
 {
-	if(msg === null)
+	if(msg == null)
 		msg = "null";
+	else if(msg == undefined)
+		msg = "undefined"
+	else if(msg == NaN)
+		msg = "NaN"
   var dt = new Date()
   console.log("[ " + dt.getHours() + ":" + padLeft(dt.getMinutes(), '00') + ":" + padLeft(dt.getSeconds(), '00') + " ] [ "+ clc.yellow('WARN') +" ] " + msg.toString());
 }
 
 module.exports.notify = function logNotify(msg)
 {
-	if(msg === null)
+	if(msg == null)
 		msg = "null";
+	else if(msg == undefined)
+		msg = "undefined"
+	else if(msg == NaN)
+		msg = "NaN"
   var dt = new Date()
   console.log("[ " + dt.getHours() + ":" + padLeft(dt.getMinutes(), '00') + ":" + padLeft(dt.getSeconds(), '00') + " ] [ "+ clc.cyan('NOTIFY') +" ] " + msg.toString());
 }
 
 module.exports.error = module.exports.err = function logError(msg, kill)
 {
-	if(msg === null)
+	if(msg == null)
 		msg = "null";
+	else if(msg == undefined)
+		msg = "undefined"
+	else if(msg == NaN)
+		msg = "NaN"
   var dt = new Date()
   console.log("[ " + dt.getHours() + ":" + padLeft(dt.getMinutes(), '00') + ":" + padLeft(dt.getSeconds(), '00') + " ] [ "+ clc.redBright('ERROR') +" ] " + msg.toString());
   if(kill)

@@ -94,7 +94,7 @@ module.exports = function(server)
   
   //Basic hunts info.
   server.get('/api/hunts', function(req, res){
-    database.model('hunt_zone').find({}).sort('+name').exec(function(err, docs)
+    database.model('hunt_zone').find().sort("-name").exec(function(err, docs)
     {
       var data = [];
       if(err)
@@ -107,6 +107,27 @@ module.exports = function(server)
       }
       
       res.end(JSON.stringify(data));
+    });
+  });
+	
+  server.post('/api/hunt_update', function(req, res){
+    database.model('hunt_zone').findOne({ name : req.body.zone }).exec(function(err, zone)
+    {
+			//Make sure it's a valid zone and hunt class.
+			if(!zone)
+				return res.end();
+			if(!zone[req.body.huntClass])
+				return res.end();
+			
+			//Create a fresh object (otherwise mongoose won't see the update).
+			zone[req.body.huntClass] = {
+				name : zone[req.body.huntClass].name,
+				tod : new Date()
+			};
+			
+			zone.save(function(err){
+				return res.end(JSON.stringify({ success: true }));
+			});
     });
   });
   

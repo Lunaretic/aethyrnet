@@ -13,9 +13,20 @@
 	margin: 4px 8px;
 }
 
+.zone-block .row div {
+	text-align: left;
+}
+
 .zone-block .telepoint-text {
 	float: right;
 	font-size: 12px;
 	font-weight: 400;
 	margin-top: 2px;
+}
+
+.zone-block span.active {
+	color: red;
+}
+.zone-block span.tracking {
+	color:orange;
 }

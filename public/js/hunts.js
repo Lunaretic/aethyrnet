@@ -1,12 +1,21 @@
 aethyrnet.backbone['hunts'] = new (function(){
+
+	//Regions constant.
+	var regions = ['Thanalan', 'Shroud', 'La Norscea', 'Other'];
+	var types = ['B','A','S'];
+	var respawn_time = { B : 30, A : 210, S : 1440 };
+	var respawn_max = { B : 60, A : 270, S: 2880 };
+	var page = this;
+	
   //----------------------------------------
   //            Hunts Page
   //----------------------------------------
   this.HuntView = aethyrnet.PageView.extend({
-  
-    
-    initializePage : function(options)
+		initializePage : function(options)
     {
+			if(this.subviews)
+				delete this.subveiws;
+			
       this.subviews = [];
       var view = this;
       this.collection = new Zones();
@@ -19,28 +28,7 @@ aethyrnet.backbone['hunts'] = new (function(){
           }.bind(this));
         },
         function(callback) {
-          //Retrieve JSON data.
-          view.collection.fetch({ 
-            success : function(results, response, options) {
-            //Scoping factory to spawn views.
-            function tempFact(mdl)
-            {
-              var fev = new HuntRegionView({
-                model : mdl,
-              });
-              view.subviews.push(fev);
-              return fev;
-            }
-            
-            //Create subviews for each model we get from the server.
-            for(var idx in results.models)
-            {
-              var fev = tempFact(results.models[idx]);
-            }
-            return callback();
-              callback();
-            },
-          });
+					view.fetch(callback);
         },
       ],
       function(err, result)
@@ -48,21 +36,58 @@ aethyrnet.backbone['hunts'] = new (function(){
         view.render.call(view);
       });
     },
+		
+		fetch : function(callback)
+		{
+			if(this.subviews)
+			{
+				delete this.subviews;
+				this.subviews = [];
+			}
+			
+			var view = this;
+			//Retrieve JSON data.
+			view.collection.fetch({ 
+				success : function(results, response, options) {
+				//Scoping factory to spawn views.
+				function tempFact(mdl)
+				{
+					var fev = new HuntRegionView({
+						parent : view,
+						model : mdl,
+					});
+					view.subviews.push(fev);
+					return fev;
+				}
+				
+				//Create subviews for each model we get from the server.
+				for(var idx in results.models)
+				{
+					var fev = tempFact(results.models[idx]);
+				}
+				return callback();
+					callback();
+				},
+			});
+		},
     
-    renderPage : function(args) {
+		refresh : function() {
+			//Re-render after a clean fetch.
+			this.fetch(this.renderPage.bind(this));
+			
+		},
+		
+    renderPage : function() {
       var view = this;
       this.$el.html('');
+			for(var idx in regions) {
+				this.$el.append('<div id="'+regions[idx].replace(' ', '_')+'" class="content-block container"></div>');
+			}
       
       for(var idx in this.subviews) {
-        this.$el.append(this.subviews[idx].el);
+        $('#'+this.subviews[idx].model.get('region').replace(' ', '_'), this.$el).append(this.subviews[idx].el);
         this.subviews[idx].render(this.template);
       }
-      
-      $('.update', this.$el).click(function(evt) {
-        var $btn = $(evt.target);
-        var root = $btn.nearest('.row');
-        
-      });
     },
     
     remove : function() {
@@ -83,51 +108,32 @@ aethyrnet.backbone['hunts'] = new (function(){
     
     className : '',
     
-    initialize : function()
+    initialize : function(options)
     {
-			//Update the underlying hunt data with data
-			//we want to use in the template.
-			var types = ['B','A','S'];
-			var respawn_time = { B : 30, A : 210, S : 1440 };
-			var respawn_max = { B : 60, A : 270, S: 2880 };
-			
-			for(var idx in types) {
-				var name = this.model.get(types[idx]).name;
-				var tod = this.model.get(types[idx]).tod ? new Date(this.model.get(types[idx]).tod) : false;
-				var active = 1;
-				var rtime = respawn_time[types[idx]];
-				var rtimeMax = respawn_max[types[idx]];
-				
-				//Differential in minutes between last ToD and now.
-				var estimated = 9999;
-				var minutesSinceSpawn = Math.floor(this.model.get(types[idx]).tod ? ((new Date() - new Date(this.model.get(types[idx]).tod)) / 1000 / 60): 9999);
-				
-				//If we're out of our valid range on either side.
-				if(minutesSinceSpawn > rtimeMax) {
-					active = 0;
-					estimated = 9999;
-				} else if(minutesSinceSpawn >= rtime && minutesSinceSpawn <= rtimeMax){
-					active = 2;
-					estimated = 0;
-				} else {
-					active = 1;
-					estimated = minutesSinceSpawn - rtime;
-				}
-			
-				this.model.set(types[idx], {
-					name : name,
-					tod : tod,
-					estimated : estimated,
-					active : active
-				});
-			}
-			console.log(this.model.attributes);
+			this.parent = options.parent;
     },
     
     render : function(template)
     {
       this.$el.html(template({ zone : this.model.attributes }));
-      
+			var view = this;
+      $('.update', this.$el).click(function(evt) {
+        var $btn = $(evt.target);
+        var root = $btn.closest('.row');
+				
+				var huntClass = 'S'
+				if(root.hasClass('hunt-a'))
+					huntClass = 'A';
+				else if(root.hasClass('hunt-b'))
+					huntClass = 'B';
+				
+				$.post('/api/hunt_update', { 
+					zone : view.model.get('name'),
+					huntClass : huntClass
+				}, function(data, textStat) {
+					view.parent.refresh.call(view.parent);
+				}, "json");
+      });
     },
   });
   
@@ -140,8 +146,43 @@ aethyrnet.backbone['hunts'] = new (function(){
     idAttribute: "_id",
     initialize : function(attributes, options)
     {
+			//Set up the extra hunt-spawning related data.
+			for(var idx in types) {
+				var name = attributes[types[idx]].name;
+				var tod = attributes[types[idx]].tod ? new Date(attributes[types[idx]].tod) : false;
+				var active = 1;
+				var rtime = respawn_time[types[idx]];
+				var rtimeMax = respawn_max[types[idx]];
+				
+				//Differential in minutes between last ToD and now.
+				var estimated = 9999;
+				var minutesSinceSpawn = Math.floor(attributes[types[idx]].tod ? ((new Date() - new Date(attributes[types[idx]].tod)) / 1000 / 60): 9999);
+				
+				//If we're out of our valid range on either side.
+				if(minutesSinceSpawn > rtimeMax) {
+					active = 0;
+					estimated = 9999;
+				} else if(minutesSinceSpawn >= rtime && minutesSinceSpawn <= rtimeMax){
+					active = 2;
+					estimated = 0;
+				} else {
+					active = 1;
+					estimated = rtime - minutesSinceSpawn;
+				}
+				
+				this.attributes[types[idx]].tod = tod;
+				this.attributes[types[idx]].estimated = estimated;
+				this.attributes[types[idx]].active = active;
+			}
+			
+			//Group us into our appropriate Region as well.
+			for(var idx in regions) {
+				if(this.attributes.name.indexOf(regions[idx]) != -1)
+					this.attributes.region = regions[idx];
+			}
+			if(!this.attributes.region)
+				this.attributes.region = 'Other';
     },
-    
   });
 
   //----------------------------------------
