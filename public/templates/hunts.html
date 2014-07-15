@@ -1,0 +1,42 @@
+<div class="content-block container zone-block">
+    <div class="subheader">
+      <span><%= zone.name %></span>
+      
+      <span class="telepoint-text">Telepoint: <%= zone.telepoint %></span>
+    </div>
+    <div class="row hunt-b">
+      <div class="col-xs-1"><button class="update btn btn-xs btn-default">Update</button></div>
+      <div class="col-xs-1 tableheader">B</div>
+      <div class="col-xs-3 name"><%= zone.B.name %></div>
+      <div class="col-xs-4 tableheader tod">ToD: <%= (zone.B.tod ? new Date(zone.B.tod).toLocaleTimeString() : "Unknown")  %></div>
+      <div class="col-xs-3 tableheader respawn">
+			<% if(zone.B.active) { %>
+				<span class="active">Window Closes in: <%= zone.B.estimated %></span>
+			<% } else if (zone.B.estimated != 9999) { %>
+				<span class="tracking">Window Up in: <%= zone.B.estimated %>
+			<% } %>
+			</div>
+    </div>
+    <div class="row hunt-a">
+      <div class="col-xs-1"><button class="update btn btn-xs btn-default">Update</button></div>
+      <div class="col-xs-1 tableheader">A</div>
+      <div class="col-xs-3 name"><%= zone.A.name %></div>
+      <div class="col-xs-4 tableheader tod">ToD: <%= (zone.A.tod ? new Date(zone.A.tod).toLocaleTimeString() : "Unknown")  %></div>
+			<% if(zone.A.active) { %>
+				<span class="active">Window Closes in: <%= zone.A.estimated %></span>
+			<% } else if (zone.A.estimated != 9999) { %>
+				<span class="tracking">Window Up in: <%= zone.A.estimated %>
+			<% } %>
+    </div>
+    <div class="row hunt-s">
+      <div class="col-xs-1"><button class="update btn btn-xs btn-default">Update</button></div>
+      <div class="col-xs-1 tableheader">S</div>
+      <div class="col-xs-3 name"><%= zone.S.name  %></div>
+      <div class="col-xs-4 tableheader tod">ToD: <%= (zone.S.tod ? new Date(zone.S.tod).toLocaleTimeString() : "Unknown")  %></div>
+			<% if(zone.S.active) { %>
+				<span class="active">Window Closes in: <%= zone.S.estimated %></span>
+			<% } else if (zone.S.estimated != 9999) { %>
+				<span class="tracking">Window Up in: <%= zone.S.estimated %>
+			<% } %>
+    </div>
+</div>

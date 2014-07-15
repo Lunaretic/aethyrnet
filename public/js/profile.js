@@ -66,7 +66,7 @@ aethyrnet.backbone['profile'] = new (function(){
         username : aethyrnet.util.prettyName(aethyrnet.user.get('username')),
         avatar : aethyrnet.user.get('avatar'),
         
-        //Sections
+        //sections
         sections : {
           "User Info" : {
             "email" : {

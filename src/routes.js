@@ -92,6 +92,24 @@ module.exports = function(server)
     });
   });
   
+  //Basic hunts info.
+  server.get('/api/hunts', function(req, res){
+    database.model('hunt_zone').find({}).sort('+name').exec(function(err, docs)
+    {
+      var data = [];
+      if(err)
+        util.log(err);
+      else if((!docs) || docs.length == 0)
+        util.warn("No hunt zones found.");
+      else
+      {
+        data = docs;
+      }
+      
+      res.end(JSON.stringify(data));
+    });
+  });
+  
   server.get(/\/api\/profile\/?(.*)/, function(req,res){
     
     //Assign ID if we don't have one.
@@ -164,7 +182,7 @@ module.exports = function(server)
   //              Authentication
   //==========================================
   
-  //Cookie User-Info retreival
+  //Cookie User-Info retrieval
   server.get('/api/login', function(req, res)
   {
     return res.end(getUserInfo(req.user));

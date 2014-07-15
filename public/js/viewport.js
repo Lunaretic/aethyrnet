@@ -634,6 +634,7 @@ aethyrnet.viewMap = {
   'news' : 'feed.FeedView',
   'profile' : 'profile.ProfileView',
   'about' : 'about.AboutView',
+  'hunts' : 'hunts.HuntView',
   'recruitment' : 'about.RecruitmentView',
   'dashboard' : 'admin.DashboardView',
 };

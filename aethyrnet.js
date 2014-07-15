@@ -123,17 +123,17 @@ function(database, callback)
   
   //Set up server routing.
   require('./src/routes.js')(server);
+	require('./src/dbSetup.js');
 
   util.log("Setting up External Query Loop..");
   
   //Load the main query manager.
   var query_manager = require('./src/query_manager.js');
-  query_manager.register(query_manager.query_lodestone);
+  //query_manager.register(query_manager.query_lodestone);
   query_manager.register(query_manager.query_ffxiv_blog);
   query_manager.register(query_manager.query_reddit);
   query_manager.register(query_manager.query_dev_tracker);
   query_manager.start();
-
 
   return callback(null, server);
 }],
@@ -170,5 +170,7 @@ function(err, server)
     util.log('NODE_ENV: ' + clc.cyan('development'));
     server.listen(8080);
   });
+	
+	
   
 });

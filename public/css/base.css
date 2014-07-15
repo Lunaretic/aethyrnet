@@ -235,7 +235,7 @@ a
   }
 }
 
-#page-frame .subheader
+.container .subheader
 {
   font-style: italic;
   font-size: 12px;
@@ -244,6 +244,13 @@ a
   margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.container .tableheader
+{
+	font-weight: bold;
+	font-size: 12px;
+	letter-spacing: 1px;
 }
 
 

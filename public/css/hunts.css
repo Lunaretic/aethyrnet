@@ -1,0 +1,21 @@
+.zone-block {
+	margin: 8px;
+}
+
+.zone-block div.subheader {
+	font-size: 14px;
+	font-weight: bold;
+	
+	border-bottom: 1px solid white;
+}
+
+.zone-block .row {
+	margin: 4px 8px;
+}
+
+.zone-block .telepoint-text {
+	float: right;
+	font-size: 12px;
+	font-weight: 400;
+	margin-top: 2px;
+}
