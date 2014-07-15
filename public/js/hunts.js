@@ -34,6 +34,8 @@ aethyrnet.backbone['hunts'] = new (function(){
       function(err, result)
       {
         view.render.call(view);
+				//Auto-refresh every 60 seconds.
+				view.refreshTimer = window.setTimeout(view.refresh.bind(view), 60000);
       });
     },
 		
@@ -72,9 +74,14 @@ aethyrnet.backbone['hunts'] = new (function(){
 		},
     
 		refresh : function() {
+			if(this.refreshTimer)
+				window.clearTimeout(this.refreshTimer)
+			
+			//Auto-refresh every 60 seconds.
+			this.refreshTimer = window.setTimeout(this.refresh.bind(this), 60000);
+		
 			//Re-render after a clean fetch.
 			this.fetch(this.renderPage.bind(this));
-			
 		},
 		
     renderPage : function() {
