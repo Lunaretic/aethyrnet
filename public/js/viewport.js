@@ -338,7 +338,7 @@ aethyrnet.backbone['viewport'] = new (function(){
 				'page' : 'hunts',
 				'loggedIn' : true
 			},
-			
+
       'Profile' : {
         'page' : 'profile',
         'loggedIn' : true
