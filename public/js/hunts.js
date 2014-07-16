@@ -204,7 +204,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 				mode : 'modal',
 				zone : this.model.get('name'),
 				name : huntClass + ': ' + this.model.get(huntClass).name,
-				tod : this.model.get(huntClass).active != 1 ? this.model.get(huntClass).tod : new Date()
+				tod : this.model.get(huntClass).active == ? this.model.get(huntClass).tod : new Date()
 			};
 			
 			var $html = $(this.modalTemplate(templateData));

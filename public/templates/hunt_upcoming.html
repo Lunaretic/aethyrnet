@@ -3,7 +3,7 @@
 <% for(var idx in targets) { %>
 	<div class="row">
 		<div class="col-xs-2"><%= targets[idx].zone %></div>
-		<div class="col-xs-2 upcoming-<%= targets[idx].type %>"><%= targets[idx].type %>: <%= targets[idx].name %></div>
+		<div class="col-xs-3 upcoming-<%= targets[idx].type %>"><%= targets[idx].type %>: <%= targets[idx].name %></div>
 		<div class="col-xs-4">
 			<% if(targets[idx].active == 2) { %>
 				<span class="active">Window closes in <%= targets[idx].estimated %> Minutes</span>
