@@ -234,9 +234,9 @@ aethyrnet.backbone['hunts'] = new (function(){
       var root = $btn.closest('.row');
 			
       var huntClass = 'S'
-      if(root.hasClass('hunt-a'))
+      if(root.hasClass('hunt-A'))
         huntClass = 'A';
-      else if(root.hasClass('hunt-b'))
+      else if(root.hasClass('hunt-B'))
         huntClass = 'B';
 			
 			openModal(this.model.get(huntClass));
