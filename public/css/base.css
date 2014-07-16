@@ -115,6 +115,15 @@ a
   margin-right: 40px;
 }
 
+body.modal-open
+{
+	margin-right: 0px !important;
+}
+#header
+{
+	margin-right: 0px !important;
+}
+
 
 
 #main
