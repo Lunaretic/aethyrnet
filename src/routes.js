@@ -78,17 +78,14 @@ module.exports = function(server)
   server.get('/api/feed', function(req, res){
 	database.model('feedEntry').find().sort('-date').limit(10).exec(function(err, docs)
 	{
-	  var data = [];
-	  if(err)
-		util.log(err);
-	  else if((!docs) || docs.length == 0)
-		util.log("No feed entries found.");
-	  else
-	  {
-		data = docs;
-	  }
-
-	  res.end(JSON.stringify(data));
+		var data = [];
+		if(err)
+			util.log(err);
+		else if((!docs) || docs.length == 0)
+			util.log("No feed entries found.");
+		else
+			data = docs;
+		res.end(JSON.stringify(data));
 	});
   });
   
@@ -138,7 +135,8 @@ module.exports = function(server)
 		//Create a fresh object (otherwise mongoose won't see the update).
 		zone[req.body.huntClass] = {
 			name : zone[req.body.huntClass].name,
-			tod : tod
+			tod : tod,
+			reporter : req.user.username
 		};
 
 		zone.save(function(err){

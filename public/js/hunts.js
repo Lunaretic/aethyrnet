@@ -260,12 +260,6 @@ aethyrnet.backbone['hunts'] = new (function(){
 		$html.on('hidden.bs.modal', function(){
 			$html.remove();
 		});
-		$('.submit-btn', $html).on('click',submitModal);
-		$('#update-tod', $html).on('keyup', function(evt){
-      if(event.keyCode == 13) {
-				return submitModal.call(this, evt);
-			}
-		});
 		
 		var submitModal = function(evt) {
 			var timestring = $('#update-tod').val();
@@ -295,7 +289,14 @@ aethyrnet.backbone['hunts'] = new (function(){
 			} catch(e) {
 				aethyrnet.error('The time appears to be invalid or the server is down.');
 			}
-		}
+		};
+		
+		$('.submit-btn', $html).on('click',submitModal);
+		$('#update-tod', $html).on('keyup', function(evt){
+      if(event.keyCode == 13) {
+				return submitModal.call(this, evt);
+			}
+		});
 	};
 	
 
