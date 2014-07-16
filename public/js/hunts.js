@@ -1,7 +1,7 @@
 aethyrnet.backbone['hunts'] = new (function(){
 
 	//Regions constant.
-	var regions = ['Thanalan', 'Shroud', 'La Norscea', 'Other'];
+	var regions = ['Thanalan', 'Shroud', 'La Noscea', 'Other'];
 	var types = ['B','A','S'];
 	var respawn_time = { B : 30, A : 210, S : 1440 };
 	var respawn_max = { B : 60, A : 270, S: 2880 };
