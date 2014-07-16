@@ -884,7 +884,7 @@ jQuery.fn.animateAuto = function(prop, speed, callback){
         else if(prop === "both")
             el.animate({"width":width,"height":height}, speed, callback);
     });  
-}
+};
 
 //Pretty Print Names
 aethyrnet.util.prettyName = function(username)
@@ -894,11 +894,14 @@ aethyrnet.util.prettyName = function(username)
   
   //Capitalize first letter
   return (username.charAt(0).toUpperCase() + username.slice(1)).replace("_", " ");
-}
+};
 
-aethyrnet.util.toSaneTime = function(data)
-{
-}
+aethyrnet.util.pad = function(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+};
+
 
 //=============================================//
 //                Error Objects

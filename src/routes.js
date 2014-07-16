@@ -132,7 +132,6 @@ module.exports = function(server)
 		var tod = new Date();
 		if(req.body.tod && typeof(req.body.tod) == 'string')
 		{
-			util.warn("Tod is string.");
 			tod = new Date(req.body.tod);
 		}
 		

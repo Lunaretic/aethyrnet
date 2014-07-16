@@ -20,7 +20,7 @@
 			
       <div class="input-group" style="margin-bottom: 8px; width: 100%">
         <span class="input-group-addon" style="width: 30%">Time of Death</span>
-        <input id="update-tod" type="text" class="form-control" placeholder="12:00 PM" value="<%= tod.getHours() + ":" + tod.getMinutes() %>">
+        <input id="update-tod" type="text" class="form-control" placeholder="12:00 PM" value="<%= aethyrnet.util.pad(tod.getHours(), 2) + ":" + aethyrnet.util.pad(tod.getMinutes(), 2) %>">
       </div>
         
         
