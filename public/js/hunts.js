@@ -203,9 +203,9 @@ aethyrnet.backbone['hunts'] = new (function(){
 			
 			this.$el.html(template({
 				targetTypes : {
-					'B' : _.first(bTargets, 4),
-					'A' : _.first(aTargets, 4),
-					'S' : _.first(sTargets, 4)
+					'B' : _.first(bTargets, 6),
+					'A' : _.first(aTargets, 6),
+					'S' : _.first(sTargets, 6)
 				}
 			}));
 		}
