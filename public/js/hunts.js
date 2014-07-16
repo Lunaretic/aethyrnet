@@ -16,7 +16,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 		//Set up Security options
 		security : {
 			loggedIn : true,
-			adminLevel : 1
+			adminLevel : 2
 		},
 		initializePage : function(options)
 		{
@@ -28,28 +28,29 @@ aethyrnet.backbone['hunts'] = new (function(){
 			//Retrieve child template.
 			getTemplate('hunt_zones', {}, function(err, context)
 			{
-						view.childTemplate = context;
-						callback();
+				view.childTemplate = context;
+				callback();
 			});
 		},
 		function(callback) {
 			//Retrieve child template.
 			getTemplate('hunt_upcoming', {}, function(err, context)
 			{
-						view.upcomingTemplate = context;
-						callback();
+				view.upcomingTemplate = context;
+				callback();
 			});
 		},
 		getTemplate.bind(this, 'hunt_viewport', {css : true, view : view, mainCss : true }),
 		function(callback) {
-					view.fetch(callback);
+			view.fetch(callback);
 		},
 		],
 		function(err, result)
 		{
-		view.render.call(view);
-				//Auto-refresh every 60 seconds.
-				view.refreshTimer = window.setTimeout(view.refresh.bind(view), 60000);
+			page.modalTemplate = view.template;
+			view.render.call(view);
+			//Auto-refresh every 60 seconds.
+			view.refreshTimer = window.setTimeout(view.refresh.bind(view), 60000);
 		});
 	},
 		
@@ -117,7 +118,7 @@ aethyrnet.backbone['hunts'] = new (function(){
 
 		for(var idx in view.zoneViews) {
 		$('#'+view.zoneViews[idx].model.get('region').replace(' ', '_'), view.$el).append(view.zoneViews[idx].el);
-		view.zoneViews[idx].render(view.childTemplate, view.template);
+		view.zoneViews[idx].render(view.childTemplate);
 		}
 	},
 
@@ -145,28 +146,68 @@ aethyrnet.backbone['hunts'] = new (function(){
 	//          Child Views
 	//-----------------------------------
 	var UpcomingHuntsView = this.UpcomingHuntsView = Backbone.View.extend({
-	className : 'content-block container',
+		className : 'upcoming-hunts-container',
+		
+		events : {
+			'click .upcoming-target' : 'showDialog'
+		},
 		
 		initialize : function(options) {
+			this.parent = options.parent;
+		},
+		
+		showDialog : function(evt)
+		{
+			//Find the hunt target in the original collection.
+			var elem = $(evt.currentTarget);
+			
+			var zone = this.parent.collection.find(function(z) {
+				return z.get('name') == elem.attr('data-zone');
+			});
+			
+			if(!zone)
+				return console.log('Failed to find zone.');
+			
+			var target = zone.get(elem.attr('data-hunttype'));
+			
+			openModal(target);
+			
 		},
 		
 		render : function(template) {
 			var view = this;
-			var targets = this.collection.pluck('B').concat(this.collection.pluck('A')).concat(this.collection.pluck('S'));
+			var bTargets = this.collection.pluck('B');
+			var aTargets = this.collection.pluck('A');
+			var sTargets = this.collection.pluck('S');
 			
-			targets = _.filter(targets, function(mdl) {
-				return mdl.active > 0;
+			var filter = function(mdl) {
+				if(mdl.active == 0)
+					return false;
+				
+				return true;
+			};
+			
+			bTargets = _.filter(bTargets, filter);
+			aTargets = _.filter(aTargets, filter);
+			sTargets = _.filter(sTargets, filter);
+			
+			bTargets = _.sortBy(bTargets,function(mdl) {
+				return (mdl.active * -10000) + mdl.estimated;
 			});
-			
-			targets = _.sortBy(targets,function(mdl) {
+			aTargets = _.sortBy(aTargets,function(mdl) {
+				return (mdl.active * -10000) + mdl.estimated;
+			});
+			sTargets = _.sortBy(sTargets,function(mdl) {
 				return (mdl.active * -10000) + mdl.estimated;
 			});
 			
-			this.$el.html('');
-			if(targets.length > 0)
-			{
-				this.$el.html(template({ targets : targets }));
-			}
+			this.$el.html(template({
+				targetTypes : {
+					'B' : _.first(bTargets, 4),
+					'A' : _.first(aTargets, 4),
+					'S' : _.first(sTargets, 4)
+				}
+			}));
 		}
 		
 	});
@@ -181,10 +222,8 @@ aethyrnet.backbone['hunts'] = new (function(){
         this.parent = options.parent;
     },
 
-    render : function(template, modalTemplate)
+    render : function(template)
     {
-			//Hackhack - Find a better way to get at this; maybe in init().
-			this.modalTemplate = modalTemplate;
       this.$el.html(template({ zone : this.model.attributes }));
         var view = this;
     },
@@ -200,58 +239,65 @@ aethyrnet.backbone['hunts'] = new (function(){
       else if(root.hasClass('hunt-b'))
         huntClass = 'B';
 			
-			var templateData = {
-				mode : 'modal',
-				zone : this.model.get('name'),
-				name : huntClass + ': ' + this.model.get(huntClass).name,
-				tod : this.model.get(huntClass).active == 1 ? this.model.get(huntClass).tod : new Date()
-			};
-			
-			var $html = $(this.modalTemplate(templateData));
-			
-			$(document.body).append($html);
-			$html.modal({
-        show : true,
-        keyboard : true,
-      });
-      $html.on('hidden.bs.modal', function(){
-        $html.remove();
-      });
-			
-			$('.submit-btn', $html).click(function(evt) {
-				var timestring = $('#update-tod').val();
-				try
-				{
-					var hours = timestring.split(':')[0];
-					var minutes = timestring.split(':')[1];
-					
-					var dt = new Date();
-					dt.setHours(hours);
-					dt.setMinutes(minutes);
-					
-					if(dt > new Date())
-						dt.setHours(dt.getHours() - 24);
-					
-					if(isNaN(dt.getTime()))
-						return aethyrnet.error("The given time is not valid.");
-					
-					$.post('/api/hunt_update', { 
-						zone : view.model.get('name'),
-						huntClass : huntClass,
-						tod : dt
-					}, function(data, textStat) {
-						view.parent.refresh.call(view.parent);
-					}, "json");
-					$html.modal('hide');
-				} catch(e) {
-          aethyrnet.error('The time appears to be invalid or the server is down.');
-				}
-				
-				
-			});
+			openModal(this.model.get(huntClass));
     }
 	});
 
+	var openModal = this.openModal = function openModal(attributes)
+	{
+		var $html = $(page.modalTemplate(attributes));
+		
+		$(document.body).append($html);
+		$html.modal({
+			show : true,
+			keyboard : true,
+		});
+		$html.delay(200).queue('fx', function(next)
+		{
+			$('#update-tod', $html).focus();
+			next();
+		});
+		$html.on('hidden.bs.modal', function(){
+			$html.remove();
+		});
+		$('.submit-btn', $html).on('click',submitModal);
+		$('#update-tod', $html).on('keyup', function(evt){
+      if(event.keyCode == 13) {
+				return submitModal.call(this, evt);
+			}
+		});
+		
+		var submitModal = function(evt) {
+			var timestring = $('#update-tod').val();
+			try
+			{
+				var hours = timestring.split(':')[0];
+				var minutes = timestring.split(':')[1];
+				
+				var dt = new Date();
+				dt.setHours(hours);
+				dt.setMinutes(minutes);
+				
+				if(dt > new Date())
+					dt.setHours(dt.getHours() - 24);
+				
+				if(isNaN(dt.getTime()))
+					return aethyrnet.error("The given time is not valid.");
+				
+				$.post('/api/hunt_update', { 
+					zone : attributes.zone,
+					huntClass : attributes.type,
+					tod : dt
+				}, function(data, textStat) {
+					aethyrnet.viewport.mainView.refresh();
+				}, "json");
+				$html.modal('hide');
+			} catch(e) {
+				aethyrnet.error('The time appears to be invalid or the server is down.');
+			}
+		}
+	};
+	
 
 	//----------------------------------------
 	//                Models

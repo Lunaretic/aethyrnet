@@ -1,4 +1,3 @@
-<% if(mode == "modal") { %>
 <div class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -15,15 +14,18 @@
       
       <div class="input-group" style="margin-bottom: 8px; width: 100%">
         <span class="input-group-addon" style="width: 30%">Mark</span>
-        <input id="update-name" type="text" class="disabled form-control" disabled="disabled" placeholder="Monster" value="<%= name %>">
+        <input id="update-name" type="text" class="disabled form-control" disabled="disabled" placeholder="Monster" value="<%= type %>: <%= name %>">
       </div>
 			
       <div class="input-group" style="margin-bottom: 8px; width: 100%">
-        <span class="input-group-addon" style="width: 30%">Time of Death</span>
-        <input id="update-tod" type="text" class="form-control" placeholder="12:00 PM" value="<%= aethyrnet.util.pad(tod.getHours(), 2) + ":" + aethyrnet.util.pad(tod.getMinutes(), 2) %>">
+        <span class="input-group-addon" style="width: 30%">Last Time of Death</span>
+        <input id="update-tod-old" type="text" class="form-control disabled" disabled="disabled" placeholder="Unknown" value="<%= (tod ? aethyrnet.util.pad(tod.getHours(), 2) + ":" + aethyrnet.util.pad(tod.getMinutes(), 2) : "") %>">
       </div>
-        
-        
+			
+      <div class="input-group" style="margin-bottom: 8px; width: 100%">
+        <span class="input-group-addon" style="width: 30%">New Time of Death</span>
+        <input id="update-tod" type="text" class="form-control" placeholder="00:00" value="<%= aethyrnet.util.pad((new Date()).getHours(), 2) + ":" + aethyrnet.util.pad((new Date()).getMinutes(), 2) %>">
+      </div>
         
       </div>
       <div class="modal-footer">
@@ -33,4 +35,3 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>
-<% } %>

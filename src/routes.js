@@ -96,8 +96,8 @@ module.exports = function(server)
   server.get('/api/hunts', function(req, res){
 
 	//Prevent non-admin access to other users.
-	if(!req.user || req.user.adminLevel < 1)
-	  util.clientErr(res, "You must be an admin to access the hunt tracker.");
+	if(!req.user || req.user.adminLevel < 2)
+	  return util.clientErr(res, "You must be an admin to access the hunt tracker.");
 
 	database.model('hunt_zone').find().sort("-name").exec(function(err, docs)
 	{
@@ -119,8 +119,8 @@ module.exports = function(server)
 	database.model('hunt_zone').findOne({ name : req.body.zone }).exec(function(err, zone)
 	{
 		//Prevent non-admin access to other users.
-		if(!req.user || req.user.adminLevel < 1)
-			util.clientErr(res, "You must be an admin to access the hunt tracker.");
+		if(!req.user || req.user.adminLevel < 2)
+			return util.clientErr(res, "You must be an admin to access the hunt tracker.");
 		
 
 		//Make sure it's a valid zone and hunt class.

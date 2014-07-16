@@ -30,3 +30,35 @@ span.active {
 span.tracking {
 	color:orange;
 }
+
+.upcoming-hunts-container
+{
+	text-align: center;
+}
+
+.upcoming-subblock {
+	box-sizing: border-box;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.upcoming-subblock:last-child {
+}
+
+.upcoming-target {
+	border: 1px dotted white;
+	border-radius: 6px;
+	box-sizing: border-box;
+	padding: 6px;
+	margin-bottom: 4px;
+}
+
+.upcoming-target:hover {
+	cursor: pointer;
+	background: rgba(255, 255, 255, 0.2);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}

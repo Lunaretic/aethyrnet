@@ -1,15 +1,36 @@
-<div class="header">Upcoming Hunts</div>
 
-<% for(var idx in targets) { %>
-	<div class="row">
-		<div class="col-xs-2"><%= targets[idx].zone %></div>
-		<div class="col-xs-3 upcoming-<%= targets[idx].type %>"><%= targets[idx].type %>: <%= targets[idx].name %></div>
-		<div class="col-xs-4">
-			<% if(targets[idx].active == 2) { %>
-				<span class="active">Window closes in <%= targets[idx].estimated %> Minutes</span>
-			<% } else if (targets[idx].active == 1) { %>
-				<span class="<%= targets[idx].estimated < 30 ? "tracking" : "" %>">Window opens in <%= targets[idx].estimated %> Minutes
-			<% } %>
-		</div>
+<div class="row">
+
+<% for(var idx in targetTypes) { 
+	var targets = targetTypes[idx];
+%>
+
+	<div class="upcoming-subblock col-xs-4">
+	<div class="content-block container">
+		<div class="header">Upcoming <%= idx %> Rank Hunts</div>
+		<% if(targets.length == 0) { %>
+			<div class="upcoming-target">
+				No known ToDs.
+			</div>
+		<% } %>
+		
+		<% for(var idx in targets) { %>
+			<div class="upcoming-target" data-zone="<%= targets[idx].zone %>" data-hunttype="<%= targets[idx].type %>">
+				<div class="row">
+					<div class="col-xs-12 upcoming-<%= targets[idx].type %>"><%= targets[idx].zone %> - <%= targets[idx].name %></div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<% if(targets[idx].active == 2) { %>
+							<span class="active">Window closes in <%= targets[idx].estimated %> Minutes</span>
+						<% } else if (targets[idx].active == 1) { %>
+							<span class="<%= targets[idx].estimated < 30 ? "tracking" : "" %>">Window opens in <%= targets[idx].estimated %> Minutes
+						<% } %>
+					</div>
+				</div>
+			</div>
+		<% } %>
+	</div>
 	</div>
 <% } %>
+</div>
