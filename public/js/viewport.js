@@ -860,7 +860,7 @@ function getTemplate(file, options, callback)
         return callback(false);
       }).fail(function()
       {
-        console.log("Failed to retreive CSS: " + file);
+        console.log("Failed to retrieve CSS: " + file);
         return callback(true);
       });
     },

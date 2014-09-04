@@ -11,4 +11,7 @@ module.exports.lcs_player = new mongoose.Schema({
   lp : { type : Number, trim : true },
 	wins : { type : Number, trim : true },
 	losses : { type : Number, trim : true },
+	rank : { type : Number, default : 10000 },
 });
+
+module.exports.lcs_player.index({ rank : 0 });

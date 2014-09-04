@@ -10,7 +10,7 @@ aethyrnet.backbone['lcs'] = new (function(){
 			var myView = this;
       async.parallel([
         //Get template.
-        getTemplate.bind(myView, 'lcs', { css : false, view : this, mainCss : true }),
+        getTemplate.bind(myView, 'lcs', { css : true, view : this, mainCss : true }),
 				function(callback){
 					$.get('/api/lcs', function(data){
 						myView.players = data;
@@ -28,6 +28,12 @@ aethyrnet.backbone['lcs'] = new (function(){
 			this.$el.html(this.template({
 				players : this.players
 			}));
+			$('#lcsTable', this.$el).tablesorter({
+				cssHeader : "sort-header",
+				sortList : [
+					[4,0],
+				],
+			}); 
     },
   });
 })();

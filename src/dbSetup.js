@@ -173,7 +173,7 @@ database.model('hunt_zone').findOne({ name : 'Eastern La Noscea'}, function(err,
 
 
 util.log("Testing LCS data..");
-database.model('lcs_player').findOne({ name : 'Rekkles' }, function(err, doc) {
+database.model('lcs_player').findOne({ name : 'Dyrus' }, function(err, doc) {
 	if(!err && doc)
 		return;
 	util.warn("No LCS data found in DB.  Updating.");
@@ -268,6 +268,36 @@ database.model('lcs_player').findOne({ name : 'Rekkles' }, function(err, doc) {
 			team : 'Cloud 9',
 			summonerName : 'ice cold water',
 			summonerId : '29890131'
+		},
+		{
+			name : 'Dyrus',
+			team : 'TSM',
+			summonerName : 'suryd',
+			summonerId : '29890126'
+		},
+		{
+			name : 'Bjergsen',
+			team : 'TSM',
+			summonerName : 'Maaamba',
+			summonerId : '29890127'
+		},
+		{
+			name : 'Amazing',
+			team : 'TSM',
+			summonerName : 'Nesgrejb',
+			summonerId : '29880137'
+		},
+		{
+			name : 'Lustboy',
+			team : 'TSM',
+			summonerName : 'GET OUTTA MY BOT',
+			summonerId : '29900134'
+		},
+		{
+			name : 'WildTurtle',
+			team : 'TSM',
+			summonerName : 'American IMP',
+			summonerId : '29890128'
 		},
 	];
 	async.each(players, function(player, callback) {

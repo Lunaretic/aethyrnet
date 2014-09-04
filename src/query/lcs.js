@@ -53,21 +53,51 @@ module.exports = {
 						if(item[idx].queue === 'RANKED_SOLO_5x5')
 						{
 							//Perform data mapping.
-							var retval = {
+							var player = {
 								summonerId : item[idx].entries[0].playerOrTeamId,
 								league : item[idx].tier,
 								division : item[idx].entries[0].division,
 								lp : item[idx].entries[0].leaguePoints,
-								wins : item[idx].entries[0].wins
+								wins : item[idx].entries[0].wins,
 							};
-							return retval;
+							var rank = 10000;
+							
+							if(player.league == 'CHALLENGER')
+								rank = 0;
+							else if(player.league == 'MASTER')
+								rank = 1000;
+							else if(player.league == 'DIAMOND')
+								rank = 2000;
+							else if(player.league == 'PLATINUM')
+								rank = 3000;
+							else if(player.league == 'GOLD')
+								rank = 4000;
+							else if(player.league == 'SILVER')
+								rank = 5000;
+							else if(player.league == 'BRONZE')
+								rank = 6000;
+							
+							if(player.division == 'I')
+								rank += 100
+							else if(player.division == 'II')
+								rank += 200
+							else if(player.division == 'III')
+								rank += 300
+							else if(player.division == 'IV')
+								rank += 400
+							else if(player.division == 'V')
+								rank += 500
+							
+							rank -= player.lp ? player.lp : 10000;
+							player.rank = rank;
+							return player;
 						}
 					}
 					return false;
 				}).filter(function(item) {
 					//Filter out bad results (anyone who hasn't finished their placements yet on their account).
 					return item;
-				});
+				})
 				
 				util.warn("Total LCS Count: " + data.length);
 				return callback(null, data);
@@ -88,6 +118,7 @@ module.exports = {
 						doc.wins = player.wins;
 						doc.lp = player.lp;
 						doc.league = player.league;
+						doc.rank = player.rank;
 						doc.division = player.division;
 						
 						doc.save();
