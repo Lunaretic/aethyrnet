@@ -110,6 +110,7 @@ function(database, callback)
   query_manager.register(query_manager.query_ffxiv_blog);
   query_manager.register(query_manager.query_reddit);
   query_manager.register(query_manager.query_dev_tracker);
+  query_manager.register(query_manager.query_lcs);
   query_manager.start();
 
   return callback(null, server);

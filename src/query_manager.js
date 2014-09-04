@@ -55,6 +55,7 @@ module.exports.query_user_avatars = require('./query/user_avatars.js').query;
 module.exports.query_ffxiv_blog = require('./query/lodestone_blog.js').query;
 module.exports.query_reddit = require('./query/reddit.js').query;
 module.exports.query_dev_tracker = require('./query/dev_tracker.js').query;
+module.exports.query_lcs = require('./query/lcs.js').query;
 
 
 

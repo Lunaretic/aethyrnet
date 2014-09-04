@@ -72,6 +72,55 @@ module.exports = function(server)
 	});
   });
   
+  //Basic LCS feed.
+  server.get('/api/lcs', function(req, res){
+	database.model('lcs_player').find().exec(function(err, docs)
+	{
+		var data = [];
+		if(err)
+			util.log(err);
+		else if((!docs) || docs.length == 0)
+			util.log("No LCS player entries found.");
+		else
+			data = docs;
+		
+		data = _.sortBy(data, function(player)
+		{
+			var rank = 10000;
+			
+			if(player.league == 'CHALLENGER')
+				rank = 1000;
+			else if(player.league == 'MASTER')
+				rank = 2000;
+			else if(player.league == 'DIAMOND')
+				rank = 3000;
+			else if(player.league == 'PLATINUM')
+				rank = 4000;
+			else if(player.league == 'GOLD')
+				rank = 5000;
+			else if(player.league == 'SILVER')
+				rank = 6000;
+			else if(player.league == 'BRONZE')
+				rank = 7000;
+			
+			if(player.division == 'I')
+				rank += 100
+			else if(player.division == 'II')
+				rank += 200
+			else if(player.division == 'III')
+				rank += 300
+			else if(player.division == 'IV')
+				rank += 400
+			else if(player.division == 'V')
+				rank += 500
+			
+			rank -= player.lp ? player.lp : 0;
+			return rank;
+		});
+		
+		res.end(JSON.stringify(data));
+	});
+  });
 
 
   //Basic news feed.

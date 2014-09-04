@@ -170,3 +170,124 @@ database.model('hunt_zone').findOne({ name : 'Eastern La Noscea'}, function(err,
 	})
 	
 });
+
+
+util.log("Testing LCS data..");
+database.model('lcs_player').findOne({ name : 'Rekkles' }, function(err, doc) {
+	if(!err && doc)
+		return;
+	util.warn("No LCS data found in DB.  Updating.");
+	
+	var players = [
+		{
+			name : 'Soaz',
+			team : 'Fnatic',
+			summonerName : 'flyingpoop',
+			summonerId : '29900129'
+		},
+		{
+			name : 'Cyanide',
+			team : 'Fnatic',
+			summonerName : 'Ding12',
+			summonerId : '29880126'
+		},
+		{
+			name : 'xPeke',
+			team : 'Fnatic',
+			summonerName : '짱짱 잘 생긴 게',
+			summonerId : '29900130'
+		},
+		{
+			name : 'Rekkles',
+			team : 'Fnatic',
+			summonerName : 'European Deft',
+			summonerId : '29880127'
+		},
+		{
+			name : 'Yellowstar',
+			team : 'Fnatic',
+			summonerName : 'roro1',
+			summonerId : '29900131'
+		},
+		{
+			name : 'Froggen',
+			team : 'Alliance',
+			summonerName : 'Alliance Froggen',
+			summonerId : '29900124'
+		},
+		{
+			name : 'Tabbz',
+			team : 'Alliance',
+			summonerName : 'Alliance Tabzz',
+			summonerId : '29890124'
+		},
+		{
+			name : 'Nyph',
+			team : 'Alliance',
+			summonerName : 'A Nyph',
+			summonerId : '29880125'
+		},
+		{
+			name : 'Shook',
+			team : 'Alliance',
+			summonerName : 'Alliance Shook',
+			summonerId : '29900125'
+		},
+		{
+			name : 'Wickd',
+			team : 'Alliance',
+			summonerName : 'Alliance Wickd',
+			summonerId : '29900126'
+		},
+		{
+			name : 'Hai',
+			team : 'Cloud 9',
+			summonerName : 'KvotheKelsier',
+			summonerId : '29890130'
+		},
+		{
+			name : 'Balls',
+			team : 'Cloud 9',
+			summonerName : 'EunjiSuzy',
+			summonerId : '29900136'
+		},
+		{
+			name : 'LemonNation',
+			team : 'Cloud 9',
+			summonerName : '넌나한태오빠야',
+			summonerId : '29880134'
+		},
+		{
+			name : 'Sneaky',
+			team : 'Cloud 9',
+			summonerName : 'C9 Sneaker',
+			summonerId : '29880135'
+		},
+		{
+			name : 'Meteos',
+			team : 'Cloud 9',
+			summonerName : 'ice cold water',
+			summonerId : '29890131'
+		},
+	];
+	async.each(players, function(player, callback) {
+		
+		var doc = database.model('lcs_player').findOne({ name: player.name }, function(err, doc){
+			if(err ||  !doc)
+				doc = new (database.model('lcs_player'))();
+			
+			doc.name = player.name;
+			doc.team = player.team;
+			doc.summonerId = player.summonerId;
+			doc.sommonerName = player.summonerName;
+			
+			doc.save();
+			return callback();
+		});
+	}, function(err)
+	{
+		util.log("LCS data updated.");
+	});
+	
+	
+});
