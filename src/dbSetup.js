@@ -174,7 +174,7 @@ database.model('hunt_zone').findOne({ name : 'Eastern La Noscea'}, function(err,
 
 util.log("Testing LCS data..");
 database.model('lcs_player').findOne({ name : 'Dyrus' }, function(err, doc) {
-	if(!err && doc)
+	if(!err && doc && doc.link)
 		return;
 	util.warn("No LCS data found in DB.  Updating.");
 	
@@ -183,121 +183,141 @@ database.model('lcs_player').findOne({ name : 'Dyrus' }, function(err, doc) {
 			name : 'Soaz',
 			team : 'Fnatic',
 			summonerName : 'flyingpoop',
-			summonerId : '29900129'
+			summonerId : '29900129',
+			link : 'http://www.op.gg/summoner/userName=flyingpoop'
 		},
 		{
 			name : 'Cyanide',
 			team : 'Fnatic',
 			summonerName : 'Ding12',
-			summonerId : '29880126'
+			summonerId : '29880126',
+			link : 'http://www.op.gg/summoner/userName=Ding12'
 		},
 		{
 			name : 'xPeke',
 			team : 'Fnatic',
 			summonerName : '짱짱 잘 생긴 게',
-			summonerId : '29900130'
+			summonerId : '29900130',
+			link : 'http://www.op.gg/summoner/userName=%EC%A7%B1%EC%A7%B1%20%EC%9E%98%20%EC%83%9D%EA%B8%B4%20%EA%B2%8C'
 		},
 		{
 			name : 'Rekkles',
 			team : 'Fnatic',
 			summonerName : 'European Deft',
-			summonerId : '29880127'
+			summonerId : '29880127',
+			link : 'http://www.op.gg/summoner/userName=European%20Deft'
 		},
 		{
 			name : 'Yellowstar',
 			team : 'Fnatic',
 			summonerName : 'roro1',
-			summonerId : '29900131'
+			summonerId : '29900131',
+			link : 'http://www.op.gg/summoner/userName=roro1'
 		},
 		{
 			name : 'Froggen',
 			team : 'Alliance',
 			summonerName : 'Alliance Froggen',
-			summonerId : '29900124'
+			summonerId : '29900124',
+			link : 'http://www.op.gg/summoner/userName=Alliance%20Froggen'
 		},
 		{
 			name : 'Tabbz',
 			team : 'Alliance',
 			summonerName : 'Alliance Tabzz',
-			summonerId : '29890124'
+			summonerId : '29890124',
+			link : 'http://www.op.gg/summoner/userName=Alliance%20Tabzz'
 		},
 		{
 			name : 'Nyph',
 			team : 'Alliance',
 			summonerName : 'A Nyph',
-			summonerId : '29880125'
+			summonerId : '29880125',
+			link : 'http://www.op.gg/summoner/userName=A%20Nyph'
 		},
 		{
 			name : 'Shook',
 			team : 'Alliance',
 			summonerName : 'Alliance Shook',
-			summonerId : '29900125'
+			summonerId : '29900125',
+			link : 'http://www.op.gg/summoner/userName=Alliance%20Shook'
 		},
 		{
 			name : 'Wickd',
 			team : 'Alliance',
 			summonerName : 'Alliance Wickd',
-			summonerId : '29900126'
+			summonerId : '29900126',
+			link : 'http://www.op.gg/summoner/userName=Alliance%20Wickd'
 		},
 		{
 			name : 'Hai',
 			team : 'Cloud 9',
 			summonerName : 'KvotheKelsier',
-			summonerId : '29890130'
+			summonerId : '29890130',
+			link : 'http://www.op.gg/summoner/userName=KvotheKelsier'
 		},
 		{
 			name : 'Balls',
 			team : 'Cloud 9',
 			summonerName : 'EunjiSuzy',
-			summonerId : '29900136'
+			summonerId : '29900136',
+			link : 'http://www.op.gg/summoner/userName=EunjiSuzy'
 		},
 		{
 			name : 'LemonNation',
 			team : 'Cloud 9',
 			summonerName : '넌나한태오빠야',
-			summonerId : '29880134'
+			summonerId : '29880134',
+			link : 'http://www.op.gg/summoner/userName=%EB%84%8C%EB%82%98%ED%95%9C%ED%83%9C%EC%98%A4%EB%B9%A0%EC%95%BC'
 		},
 		{
 			name : 'Sneaky',
 			team : 'Cloud 9',
 			summonerName : 'C9 Sneaker',
-			summonerId : '29880135'
+			summonerId : '29880135',
+			link : 'http://www.op.gg/summoner/userName=C9%20Sneaker'
 		},
 		{
 			name : 'Meteos',
 			team : 'Cloud 9',
 			summonerName : 'ice cold water',
-			summonerId : '29890131'
+			summonerId : '29890131',
+			link : 'http://www.op.gg/summoner/userName=ice%20cold%20water'
 		},
 		{
 			name : 'Dyrus',
 			team : 'TSM',
 			summonerName : 'suryd',
-			summonerId : '29890126'
+			summonerId : '29890126',
+			link : 'http://www.op.gg/summoner/userName=suryd'
 		},
 		{
 			name : 'Bjergsen',
 			team : 'TSM',
 			summonerName : 'Maaamba',
-			summonerId : '29890127'
+			summonerId : '29890127',
+			link : 'http://www.op.gg/summoner/userName=Maaamba'
 		},
 		{
 			name : 'Amazing',
 			team : 'TSM',
 			summonerName : 'Nesgrejb',
-			summonerId : '29880137'
+			summonerId : '29880137',
+			link : 'http://www.op.gg/summoner/userName=Nesgrejb'
 		},
 		{
 			name : 'Lustboy',
 			team : 'TSM',
 			summonerName : 'GET OUTTA MY BOT',
-			summonerId : '29900134'
+			summonerId : '29900134',
+			link : 'http://www.op.gg/summoner/userName=GET%20OUTTA%20MY%20BOT'
 		},
 		{
 			name : 'WildTurtle',
 			team : 'TSM',
 			summonerName : 'American IMP',
-			summonerId : '29890128'
+			summonerId : '29890128',
+			link : 'http://www.op.gg/summoner/userName=American%20IMP'
 		},
 	];
 	async.each(players, function(player, callback) {
@@ -310,6 +330,7 @@ database.model('lcs_player').findOne({ name : 'Dyrus' }, function(err, doc) {
 			doc.team = player.team;
 			doc.summonerId = player.summonerId;
 			doc.sommonerName = player.summonerName;
+			doc.link = player.link;
 			
 			doc.save();
 			return callback();

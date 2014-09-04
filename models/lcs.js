@@ -6,6 +6,7 @@ module.exports.lcs_player = new mongoose.Schema({
 	team : { type : String, trim : true },
 	summonerName : { type : String, trim: true, unique : true},
   summonerId : { type : String, trim : true, unique : true},
+	link : { type : String, trim : true },
   league : { type : String, trim : true },
   division : { type : String, trim : true },
   lp : { type : Number, trim : true },

@@ -38,21 +38,26 @@ table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSo
 background-color: #8dbdd8;
 }
 
-.teamcolor {
+#lcsTable .teamcolor a,
+#lcsTable .teamcolor {
 	font-weight: bold;
 }
 
-.teamcolor.tsm {
+#lcsTable .teamcolor.tsm a,
+#lcsTable .teamcolor.tsm {
 	color: #000;
 }
 
-.teamcolor.alliance { 
+#lcsTable .teamcolor.alliance a,
+#lcsTable .teamcolor.alliance { 
 	color : #666;
 }
 
-.teamcolor.cloud_9 {
+#lcsTable .teamcolor.cloud_9 a,
+#lcsTable .teamcolor.cloud_9 {
 	color : #3399FF;
 }
-.teamcolor.fnatic {
+#lcsTable .teamcolor.fnatic a,
+#lcsTable .teamcolor.fnatic {
 	color : #FF9900;
 }
