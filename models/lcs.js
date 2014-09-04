@@ -14,7 +14,7 @@ module.exports.lcs_player = new mongoose.Schema({
 	losses : { type : Number, default : 0 },
 	played : { type : Number, default : 0 },
 	winRatio: { type : Number, default : 0 },
-	rank : { type : Number, default : 10000 },
+	rank : { type : Number },
 });
 
 module.exports.lcs_player.index({ rank : -1 });
