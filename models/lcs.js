@@ -17,4 +17,4 @@ module.exports.lcs_player = new mongoose.Schema({
 	rank : { type : Number, default : 10000 },
 });
 
-module.exports.lcs_player.index({ rank : 0 });
+module.exports.lcs_player.index({ rank : -1 });

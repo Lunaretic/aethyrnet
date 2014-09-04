@@ -74,7 +74,7 @@ module.exports = function(server)
   
   //Basic LCS feed.
   server.get('/api/lcs', function(req, res){
-	database.model('lcs_player').find().exec(function(err, docs)
+	database.model('lcs_player').find().sort('-rank').exec(function(err, docs)
 	{
 		res.setHeader('Content-Type', 'application/json');
 		res.setHeader('Access-Control-Allow-Origin', '*');
