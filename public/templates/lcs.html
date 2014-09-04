@@ -2,25 +2,25 @@
 	<table id="lcsTable" class="tablesorter">
 		<thead>
 		<tr>
+			<th>Rank</th>
 			<th>Player (OP.GG Link)</th>
 			<th>Team</th>
 			<th>Ladder Rank</th>
 			<th>Wins</th>
 			<th>Losses</th>
 			<th>Win Ratio</th>
-			<th>Sorting Rank</th>
 		</tr>
 		</thead>
 		<tbody>
 	<% for(var playerIdx in players) { player = players[playerIdx]; %>
 		<tr>
+			<td><%= (Number(playerIdx)+1) %></td>
 			<td class="teamcolor <%= player.team.toLowerCase().replace(" ","_") %>"><a href="<%= player.link %>"><%= player.name %></a></td>
 			<td class="teamcolor <%= player.team.toLowerCase().replace(" ","_") %>"><%= player.team %></td>
 			<td><%= player.league ? player.league : "UNRANKED" %> <%= player.division %> : <%= player.lp ? player.lp : 0 %> LP</td>
 			<td><%= player.wins ? player.wins : 0 %> Wins </td>
 			<td><%= player.losses ? player.losses : 0 %> Losses </td>
 			<td><%= player.winRatio ? player.winRatio : 0 %>%</td>
-			<td><%= player.rank %></td>
 		</tr>
 	<% } %>
 	</tbody>
