@@ -88,7 +88,6 @@ module.exports = {
 							else if(player.division == 'V')
 								rank += 500
 							
-							if(player.league == 'CHALLENGER')
 							rank -= player.lp ? player.lp : 10000;
 							player.rank = rank;
 							return player;
