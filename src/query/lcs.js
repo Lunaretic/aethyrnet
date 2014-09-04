@@ -90,6 +90,7 @@ module.exports = {
 								rank += 500
 							
 							rank -= player.lp ? player.lp : 10000;
+							
 							player.rank = rank;
 							return player;
 						}
@@ -190,6 +191,10 @@ module.exports = {
 								doc.losses = data.losses;
 								doc.played = data.played;
 								doc.winRatio = data.winRatio;
+								
+								//Rank unranked players based on their games won
+								if(doc.rank == 10000)
+									doc.rank -= (data.wins * 10);
 								
 								doc.save();
 								
