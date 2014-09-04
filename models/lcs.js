@@ -9,8 +9,10 @@ module.exports.lcs_player = new mongoose.Schema({
   league : { type : String, trim : true },
   division : { type : String, trim : true },
   lp : { type : Number, trim : true },
-	wins : { type : Number, trim : true },
-	losses : { type : Number, trim : true },
+	wins : { type : Number, trim : true, default : 0 },
+	losses : { type : Number, default : 0 },
+	played : { type : Number, default : 0 },
+	winRatio: { type : Number, default : 0 },
 	rank : { type : Number, default : 10000 },
 });
 

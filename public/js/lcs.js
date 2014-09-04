@@ -31,7 +31,7 @@ aethyrnet.backbone['lcs'] = new (function(){
 			$('#lcsTable', this.$el).tablesorter({
 				cssHeader : "sort-header",
 				sortList : [
-					[4,0],
+					[5,0],
 				],
 			}); 
     },

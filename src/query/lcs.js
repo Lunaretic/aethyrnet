@@ -63,19 +63,19 @@ module.exports = {
 							var rank = 10000;
 							
 							if(player.league == 'CHALLENGER')
-								rank = 0;
-							else if(player.league == 'MASTER')
-								rank = 1000;
-							else if(player.league == 'DIAMOND')
-								rank = 2000;
-							else if(player.league == 'PLATINUM')
 								rank = 3000;
-							else if(player.league == 'GOLD')
+							else if(player.league == 'MASTER')
 								rank = 4000;
-							else if(player.league == 'SILVER')
+							else if(player.league == 'DIAMOND')
 								rank = 5000;
-							else if(player.league == 'BRONZE')
+							else if(player.league == 'PLATINUM')
 								rank = 6000;
+							else if(player.league == 'GOLD')
+								rank = 7000;
+							else if(player.league == 'SILVER')
+								rank = 8000;
+							else if(player.league == 'BRONZE')
+								rank = 9000;
 							
 							if(player.division == 'I')
 								rank += 100
@@ -88,6 +88,7 @@ module.exports = {
 							else if(player.division == 'V')
 								rank += 500
 							
+							if(player.league == 'CHALLENGER')
 							rank -= player.lp ? player.lp : 10000;
 							player.rank = rank;
 							return player;
@@ -102,7 +103,7 @@ module.exports = {
 				util.warn("Total LCS Count: " + data.length);
 				return callback(null, data);
 			},
-			//Update Database.
+			//Update Database with basic data.
 			function(players, callback)
 			{
 				
@@ -126,8 +127,87 @@ module.exports = {
 					});
 				}, function(err)
 				{
-					return callback(null);
+					return callback(err, players);
 				});
+			},
+			
+			//Call to Riot DB per-player basis for their wins/losses.
+			function(players, callback)
+			{
+				//For each player; in order, with a rate limit.
+				async.eachSeries(players, function(player, callback)
+				{
+					//Perform some actions
+					async.waterfall([
+						//Starting with an API request to riot.
+						function(callback)
+						{
+							var path = '/api/lol/kr/v1.3/stats/by-summoner/' + player.summonerId + '/ranked?season=SEASON4&api_key=' + secrets.riot_api_key;
+							
+							util.webGet({
+								hostname : 'kr.api.pvp.net',
+								path : path,
+								type : 'json',
+							}, function(err, data, res)
+							{
+								if(err)
+									return callback(err);
+								
+								return callback(null, data);
+							});
+						},
+						//Manipulate the data returned from the server.
+						function(data, callback)
+						{
+							var data = _.filter(data.champions, function(champ)
+							{
+								return champ.id == 0;
+							});
+							
+							data = data[0].stats;
+							
+							var mapped = {
+								wins : data.totalSessionsWon,
+								played : data.totalSessionsPlayed,
+								losses : data.totalSessionsLost,
+								winRatio : Math.floor(data.totalSessionsWon/data.totalSessionsPlayed * 100)
+							};
+							
+							return callback(null, mapped);
+						}, 
+						//Update the database with our new win/loss data.
+						function(data, callback)
+						{
+							var doc = db.model('lcs_player').findOne({ summonerId : player.summonerId }, function(err, doc){
+								if(err ||  !doc)
+								{
+									if(!doc)
+										util.warn("Win/Loss update failed for LCS Player ID: " + player.summonerId);
+									return callback(err);
+								}
+								
+								doc.wins = data.wins;
+								doc.losses = data.losses;
+								doc.played = data.played;
+								doc.winRatio = data.winRatio;
+								
+								doc.save();
+								
+								//Sleep for an extra second before we move onto the next player.
+								//This is to make sure we don't hit RIOT's rate limiter.
+								setTimeout(callback, 1000);
+							});
+						},
+					],function(err)
+					{
+						callback(err);
+					});
+				},
+				function(err)
+				{
+					return callback(err);
+				});
+			
 			}
     ], function(err, results)
     {

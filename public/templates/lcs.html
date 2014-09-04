@@ -5,7 +5,8 @@
 			<th>Player</th>
 			<th>Team</th>
 			<th>Ladder Rank</th>
-			<th>Wins</th>
+			<th>Wins / Losses</th>
+			<th>Win Ratio</th>
 			<th>Sorting Rank</th>
 		</tr>
 		</thead>
@@ -15,7 +16,8 @@
 			<td class="teamcolor <%= player.team.toLowerCase().replace(" ","_") %>"><%= player.name %></td>
 			<td class="teamcolor <%= player.team.toLowerCase().replace(" ","_") %>"><%= player.team %></td>
 			<td><%= player.league ? player.league : "UNRANKED" %> <%= player.division %> : <%= player.lp ? player.lp : 0 %> LP</td>
-			<td><%= player.wins ? player.wins : 0 %> Wins</td>
+			<td><%= player.wins ? player.wins : 0 %> Wins / <%= player.losses ? player.losses : 0 %> Losses </td>
+			<td><%= player.winRatio ? player.winRatio : 0 %>%</td>
 			<td><%= player.rank %></td>
 		</tr>
 	<% } %>
