@@ -1,0 +1,7 @@
+<div class="content-block" style="min-height: 400px;">
+	<% for(var playerIdx in players) { player = players[playerIdx]; %>
+		<div class="col-xs-4"><%= player.name %></div>
+		<div class="col-xs-4"><%= player.league ? player.league : "UNRANKED" %> <%= player.division %> : <%= player.lp ? player.lp : 0 %> LP</div>
+		<div class="col-xs-4"><%= player.wins ? player.wins : 0 %> Wins</div>
+	<% } %>
+</div>

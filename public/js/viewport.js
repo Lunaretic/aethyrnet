@@ -640,6 +640,7 @@ aethyrnet.PageView = aethyrnet.backbone['viewport'].PageView;
 aethyrnet.viewMap = {
   'news' : 'feed.FeedView',
   'profile' : 'profile.ProfileView',
+	'lcs' : 'lcs.LcsView',
   'about' : 'about.AboutView',
   'hunts' : 'hunts.HuntView',
   'recruitment' : 'about.RecruitmentView',
@@ -759,6 +760,11 @@ function getBackbone(file, exec, callback){
         //Script should evaluate and add itself into the aethyrnet.
         $.getScript( '/public/js/' + file + '.js', function(data)
         {
+					if(aethyrnet.backbone[file] instanceof CacheQueue)
+					{
+						console.log("Failed to load backbone script: " + file);
+						return;
+					}
           //Proc any other calls to this backbone that were cached.
           return queue.proc();
         });
