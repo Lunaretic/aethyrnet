@@ -76,8 +76,8 @@ module.exports = function(server)
   server.get('/api/lcs', function(req, res){
 	database.model('lcs_player').find().exec(function(err, docs)
 	{
-	
-		res.setHeader('Content-Type', 'text/javascript');
+		res.setHeader('Content-Type', 'application/json');
+		res.setHeader('Access-Control-Allow-Origin', '*');
 		
 		var data = [];
 		if(err)
