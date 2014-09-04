@@ -39,16 +39,17 @@ module.exports = {
 					if(err)
 						return callback(err);
 					
-					return callback(null, data);
+					return callback(null, data, summonerIds);
 				});
       },
 			//Slice data up
-			function(data, callback)
+			function(data, summonerIds, callback)
 			{
 				//Map down to just the data we actually want solo queue ratings.
-				data = _.map(data, function(item){
+				data = _.map(data, function(item) {
 					//Scan all their queue types.
-					for(var idx in item){
+					for(var idx in item)
+					{
 						//We just want solo-queue.
 						if(item[idx].queue === 'RANKED_SOLO_5x5')
 						{
@@ -99,11 +100,10 @@ module.exports = {
 					return item;
 				})
 				
-				util.warn("Total LCS Count: " + data.length);
-				return callback(null, data);
+				return callback(null, data, summonerIds);
 			},
 			//Update Database with basic data.
-			function(players, callback)
+			function(players, summonerIds, callback)
 			{
 				
 				async.each(players, function(player, callback) {
@@ -126,22 +126,23 @@ module.exports = {
 					});
 				}, function(err)
 				{
-					return callback(err, players);
+					return callback(err, summonerIds);
 				});
 			},
 			
 			//Call to Riot DB per-player basis for their wins/losses.
-			function(players, callback)
+			function(summonerIds, callback)
 			{
+				var summonerIds = summonerIds.split(',');
 				//For each player; in order, with a rate limit.
-				async.eachSeries(players, function(player, callback)
+				async.eachSeries(summonerIds, function(summonerId, callback)
 				{
 					//Perform some actions
 					async.waterfall([
 						//Starting with an API request to riot.
 						function(callback)
 						{
-							var path = '/api/lol/kr/v1.3/stats/by-summoner/' + player.summonerId + '/ranked?season=SEASON4&api_key=' + secrets.riot_api_key;
+							var path = '/api/lol/kr/v1.3/stats/by-summoner/' + summonerId + '/ranked?season=SEASON4&api_key=' + secrets.riot_api_key;
 							
 							util.webGet({
 								hostname : 'kr.api.pvp.net',
@@ -177,11 +178,11 @@ module.exports = {
 						//Update the database with our new win/loss data.
 						function(data, callback)
 						{
-							var doc = db.model('lcs_player').findOne({ summonerId : player.summonerId }, function(err, doc){
+							var doc = db.model('lcs_player').findOne({ summonerId : summonerId }, function(err, doc){
 								if(err ||  !doc)
 								{
 									if(!doc)
-										util.warn("Win/Loss update failed for LCS Player ID: " + player.summonerId);
+										util.warn("Win/Loss update failed for LCS Player ID: " + summonerId);
 									return callback(err);
 								}
 								
@@ -199,7 +200,8 @@ module.exports = {
 						},
 					],function(err)
 					{
-						callback(err);
+						//Unranked players will throw a 404 Error.
+						callback();
 					});
 				},
 				function(err)
