@@ -11,7 +11,6 @@ var query_all = function()
 {
   //Run all web queries in parallel.
   async.parallel(
-  
     module.exports.queries,
   function(err, result)
   {

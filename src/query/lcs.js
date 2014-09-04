@@ -9,6 +9,11 @@ var secrets = require('../secrets.js');
 module.exports = {
   
   query : function query_lcs(db, callback){
+		
+		//Stop recording LCS data after October 1st.
+		if(Date.now() > new Date('2014-10-01'))
+			return callback();
+	
     async.waterfall([
 			function(callback) {
 				
@@ -179,7 +184,7 @@ module.exports = {
 						//Update the database with our new win/loss data.
 						function(data, callback)
 						{
-							var doc = db.model('lcs_player').findOne({ summonerId : summonerId }, function(err, doc){
+								db.model('lcs_player').findOne({ summonerId : summonerId }, function(err, doc){
 								if(err ||  !doc)
 								{
 									if(!doc)
@@ -211,10 +216,46 @@ module.exports = {
 				},
 				function(err)
 				{
+					
 					return callback(err);
 				});
 			
-			}
+			},
+			//Lastly, clone some of the data to storage for historical record.
+			function(callback)
+			{
+				util.log("Finished updating LCS Player data.");
+				var now = Date.now();
+				return callback(null);
+				
+				/*db.model('lcs_player_history').findOne().sort({ 'time' : -1 }).exec(function(err, doc) {
+					
+					//Get all the player data.
+					db.model('lcs_player').find().exec(function(err, docs)
+					{
+						if(err)
+							return callback(err);
+						
+						for(var idx in docs)
+						{
+							var entry = docs[idx];
+							
+							//Clone the data we want to keep into a new document.
+							var historyEntry = new (db.model('lcs_player_history'))();
+							historyEntry.name = entry.name;
+							historyEntry.time = now;
+							historyEntry.lp = entry.lp;
+							historyEntry.league= entry.league;
+							historyEntry.division = entry.division;
+							historyEntry.wins = entry.wins;
+							historyEntry.losses = entry.losses;
+							historyEntry.winRatio = entry.winRatio;
+							historyEntry.save();
+						}
+					});
+				
+				});*/
+			},
     ], function(err, results)
     {
       if(err)

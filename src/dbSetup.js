@@ -173,8 +173,8 @@ database.model('hunt_zone').findOne({ name : 'Eastern La Noscea'}, function(err,
 
 
 util.log("Testing LCS data..");
-database.model('lcs_player').findOne({ name : 'Froggen' }, function(err, doc) {
-	if(!err && doc && doc.rank)
+database.model('lcs_player').findOne({ name : 'Bjergsen' }, function(err, doc) {
+	if(!err && doc && doc.summonerName == 'Nesgrejb')
 		return;
 	util.warn("No LCS data found in DB.  Updating.");
 	
@@ -310,16 +310,16 @@ database.model('lcs_player').findOne({ name : 'Froggen' }, function(err, doc) {
 		{
 			name : 'Bjergsen',
 			team : 'TSM',
-			summonerName : 'Maaamba',
-			summonerId : '29890127',
+			summonerName : 'Nesgrejb',
+			summonerId : '29880137',
 			link : 'http://www.op.gg/summoner/userName=Maaamba',
 			rank : 10000
 		},
 		{
 			name : 'Amazing',
 			team : 'TSM',
-			summonerName : 'Nesgrejb',
-			summonerId : '29880137',
+			summonerName : 'Maaamba',
+			summonerId : '29890127',
 			link : 'http://www.op.gg/summoner/userName=Nesgrejb',
 			rank : 10000
 		},

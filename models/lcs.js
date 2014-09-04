@@ -17,4 +17,16 @@ module.exports.lcs_player = new mongoose.Schema({
 	rank : { type : Number },
 });
 
+module.exports.lcs_player_history = new mongoose.Schema({
+	name : { type : String, trim : true, required : true },
+	time : { type : Date, default: Date.now },
+	league : { type : String, trim : true },
+	division : { type : String, trim : true },
+	lp : { type : Number, trim : true },
+	wins : { type : Number, trim : true, default : 0 },
+	losses : { type : Number, default : 0 },
+	played : { type : Number, default : 0 },
+	winRatio: { type : Number, default : 0 }
+});
+
 module.exports.lcs_player.index({ rank : -1 });
