@@ -173,8 +173,8 @@ database.model('hunt_zone').findOne({ name : 'Eastern La Noscea'}, function(err,
 
 
 util.log("Testing LCS data..");
-database.model('lcs_player').findOne({ name : 'Bjergsen' }, function(err, doc) {
-	if((!err) && doc && doc.summonerName == 'Nesgrejb')
+database.model('lcs_player').findOne({ name : 'Amazing' }, function(err, doc) {
+	if((!err) && doc && doc.summonerId)
 		return;
 	util.log(doc);
 	util.warn("No LCS data found in DB.  Updating.");
@@ -268,7 +268,7 @@ database.model('lcs_player').findOne({ name : 'Bjergsen' }, function(err, doc) {
 		{
 			name : 'Amazing',
 			team : 'TSM',
-			summonerName : 'Maaamba',
+			summonerId : '29890127',
 		},
 		{
 			name : 'Lustboy',
