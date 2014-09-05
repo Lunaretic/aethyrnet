@@ -176,7 +176,6 @@ util.log("Testing LCS data..");
 database.model('lcs_player').findOne({ name : 'Amazing' }, function(err, doc) {
 	if((!err) && doc && doc.summonerId)
 		return;
-	util.log(doc);
 	util.warn("No LCS data found in DB.  Updating.");
 	
 	var players = [
@@ -209,26 +208,31 @@ database.model('lcs_player').findOne({ name : 'Amazing' }, function(err, doc) {
 			name : 'Froggen',
 			team : 'Alliance',
 			summonerId : '29900124',
+			rank : 10000
 		},
 		{
 			name : 'Tabbz',
 			team : 'Alliance',
 			summonerId : '29890124',
+			rank : 10000
 		},
 		{
 			name : 'Nyph',
 			team : 'Alliance',
 			summonerId : '29880125',
+			rank : 10000
 		},
 		{
 			name : 'Shook',
 			team : 'Alliance',
 			summonerId : '29900125',
+			rank : 10000
 		},
 		{
 			name : 'Wickd',
 			team : 'Alliance',
 			summonerId : '29900126',
+			rank : 10000
 		},
 		{
 			name : 'Hai',
