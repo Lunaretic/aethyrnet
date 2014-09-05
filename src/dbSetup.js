@@ -173,8 +173,8 @@ database.model('hunt_zone').findOne({ name : 'Eastern La Noscea'}, function(err,
 
 
 util.log("Testing LCS data..");
-database.model('lcs_player').findOne({ name : 'Amazing' }, function(err, doc) {
-	if((!err) && doc && doc.summonerId)
+database.model('lcs_player').findOne({ name : 'Nyph' }, function(err, doc) {
+	if((!err) && doc && doc.rank)
 		return;
 	util.warn("No LCS data found in DB.  Updating.");
 	
