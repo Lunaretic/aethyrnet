@@ -74,37 +74,37 @@ module.exports = function(server)
   
   //Basic LCS feed.
   server.get('/api/lcs', function(req, res){
-	database.model('lcs_player').find().sort({ rank : 'asc' }).exec(function(err, docs)
-	{
-		res.setHeader('Content-Type', 'application/json');
-		res.setHeader('Access-Control-Allow-Origin', '*');
-		
-		var data = [];
-		if(err)
-			util.log(err);
-		else if((!docs) || docs.length == 0)
-			util.log("No LCS player entries found.");
-		else
-			data = docs;
-		
-		res.end(JSON.stringify(data));
-	});
+		database.model('lcs_player').find().sort({ rank : 'asc' }).exec(function(err, docs)
+		{
+			res.setHeader('Content-Type', 'application/json');
+			res.setHeader('Access-Control-Allow-Origin', '*');
+			
+			var data = [];
+			if(err)
+				util.log(err);
+			else if((!docs) || docs.length == 0)
+				util.log("No LCS player entries found.");
+			else
+				data = docs;
+			
+			res.end(JSON.stringify(data));
+		});
   });
 
 
   //Basic news feed.
   server.get('/api/feed', function(req, res){
-	database.model('feedEntry').find().sort('-date').limit(10).exec(function(err, docs)
-	{
-		var data = [];
-		if(err)
-			util.log(err);
-		else if((!docs) || docs.length == 0)
-			util.log("No feed entries found.");
-		else
-			data = docs;
-		res.end(JSON.stringify(data));
-	});
+		database.model('feedEntry').find().sort('-date').limit(10).exec(function(err, docs)
+		{
+			var data = [];
+			if(err)
+				util.log(err);
+			else if((!docs) || docs.length == 0)
+				util.log("No feed entries found.");
+			else
+				data = docs;
+			res.end(JSON.stringify(data));
+		});
   });
   
   //Basic hunts info.

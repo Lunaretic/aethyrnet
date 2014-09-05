@@ -65,7 +65,11 @@ module.exports = {
 								division : item[idx].entries[0].division,
 								lp : item[idx].entries[0].leaguePoints,
 								wins : item[idx].entries[0].wins,
+								summonerName : item[idx].entries[0].playerOrTeamName
 							};
+							
+							player.link = 'http://www.op.gg/summoner/userName=' + encodeURIComponent(player.summonerName);
+							
 							var rank = 10000;
 							
 							if(player.league == 'CHALLENGER')
@@ -121,11 +125,13 @@ module.exports = {
 							return callback(err);
 						}
 						
+						doc.summonerName = player.summonerName;
 						doc.wins = player.wins;
 						doc.lp = player.lp;
 						doc.league = player.league;
 						doc.rank = player.rank;
 						doc.division = player.division;
+						doc.link = player.link;
 						
 						doc.save();
 						return callback();
