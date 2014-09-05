@@ -173,8 +173,8 @@ database.model('hunt_zone').findOne({ name : 'Eastern La Noscea'}, function(err,
 
 
 util.log("Testing LCS data..");
-database.model('lcs_player').findOne({ name : 'Nyph' }, function(err, doc) {
-	if((!err) && doc && doc.rank)
+database.model('lcs_player').findOne({ name : 'Tabbz' }, function(err, doc) {
+	if((!err) && doc && doc.summonerName)
 		return;
 	util.warn("No LCS data found in DB.  Updating.");
 	
@@ -208,30 +208,37 @@ database.model('lcs_player').findOne({ name : 'Nyph' }, function(err, doc) {
 			name : 'Froggen',
 			team : 'Alliance',
 			summonerId : '29900124',
-			rank : 10000
 		},
 		{
 			name : 'Tabbz',
 			team : 'Alliance',
 			summonerId : '29890124',
+			summonerName : 'Alliance Tabbz',
+			link : 'http://www.op.gg/summoner/userName=Alliance%20Tabzz',
 			rank : 10000
 		},
 		{
 			name : 'Nyph',
 			team : 'Alliance',
 			summonerId : '29880125',
+			summonerName : 'A Nyph',
+			link : 'http://www.op.gg/summoner/userName=A%20Nyph'
 			rank : 10000
 		},
 		{
 			name : 'Shook',
 			team : 'Alliance',
 			summonerId : '29900125',
+			summonerName : 'Alliance Shook',
+			link : 'http://www.op.gg/summoner/userName=Alliance%20Shook',
 			rank : 10000
 		},
 		{
 			name : 'Wickd',
 			team : 'Alliance',
 			summonerId : '29900126',
+			summonerName : 'Alliance Wickd',
+			link : 'http://www.op.gg/summoner/userName=Alliance%20Wickd'
 			rank : 10000
 		},
 		{
