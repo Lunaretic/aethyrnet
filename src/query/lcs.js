@@ -94,7 +94,7 @@ module.exports = {
 							else if(player.division == 'V')
 								rank += 500
 							
-							rank -= player.lp ? player.lp : 10000;
+							rank -= player.lp;
 							
 							player.rank = rank;
 							return player;
