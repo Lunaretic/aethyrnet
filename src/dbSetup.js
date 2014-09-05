@@ -222,7 +222,7 @@ database.model('lcs_player').findOne({ name : 'Tabbz' }, function(err, doc) {
 			team : 'Alliance',
 			summonerId : '29880125',
 			summonerName : 'A Nyph',
-			link : 'http://www.op.gg/summoner/userName=A%20Nyph'
+			link : 'http://www.op.gg/summoner/userName=A%20Nyph',
 			rank : 10000
 		},
 		{
@@ -238,7 +238,7 @@ database.model('lcs_player').findOne({ name : 'Tabbz' }, function(err, doc) {
 			team : 'Alliance',
 			summonerId : '29900126',
 			summonerName : 'Alliance Wickd',
-			link : 'http://www.op.gg/summoner/userName=Alliance%20Wickd'
+			link : 'http://www.op.gg/summoner/userName=Alliance%20Wickd',
 			rank : 10000
 		},
 		{
