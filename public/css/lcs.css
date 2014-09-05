@@ -50,7 +50,12 @@ background-color: #8dbdd8;
 
 #lcsTable .teamcolor.alliance a,
 #lcsTable .teamcolor.alliance { 
+	text-shadow: 0px 0px 5px #fff;
 	color : #666;
+}
+#lcsTable .teamcolor.sk a,
+#lcsTable .teamcolor.sk { 
+	color : #aaa;
 }
 
 #lcsTable .teamcolor.cloud_9 a,

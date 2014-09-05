@@ -173,7 +173,7 @@ database.model('hunt_zone').findOne({ name : 'Eastern La Noscea'}, function(err,
 
 
 util.log("Testing LCS data..");
-database.model('lcs_player').findOne({ name : 'Tabbz' }, function(err, doc) {
+database.model('lcs_player').findOne({ name : 'Candy Panda' }, function(err, doc) {
 	if((!err) && doc && doc.summonerName)
 		return;
 	util.warn("No LCS data found in DB.  Updating.");
@@ -290,6 +290,46 @@ database.model('lcs_player').findOne({ name : 'Tabbz' }, function(err, doc) {
 			name : 'WildTurtle',
 			team : 'TSM',
 			summonerId : '29890128',
+		},
+		{
+			name : 'Candy Panda',
+			team : 'SK',
+			summonerId : '29880130',
+			summonerName : 'Faded Sound',
+			link : 'http://www.op.gg/summoner/userName=Faded%20Sound',
+			rank : 10000
+		},
+		{
+			name : 'nRated',
+			team : 'SK',
+			summonerId : '29880129',
+			summonerName : 'HumbleBee69',
+			link : 'http://www.op.gg/summoner/userName=HumbleBee69',
+			rank : 10000
+		},
+		{
+			name : 'Svenskeren',
+			team : 'SK',
+			summonerId : '29900133',
+			summonerName : 'SK Jungler',
+			link : 'http://www.op.gg/summoner/userName=SK%20Jungler',
+			rank : 10000
+		},
+		{
+			name : 'Jesiz',
+			team : 'SK',
+			summonerId : '29900132',
+			summonerName : 'hipsterhippo',
+			link : 'http://www.op.gg/summoner/userName=hipsterhippo',
+			rank : 10000
+		},
+		{
+			name : 'fredy122',
+			team : 'SK',
+			summonerId : '29880131',
+			summonerName : 'mobywan',
+			link : 'http://www.op.gg/summoner/userName=mobywan',
+			rank : 10000
 		},
 	];
 	async.each(players, function(player, callback) {
