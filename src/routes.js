@@ -76,7 +76,7 @@ module.exports = function(server)
   server.get('/api/lcs', function(req, res){
 		database.model('lcs_player').find().sort({ rank : 'asc' }).exec(function(err, docs)
 		{
-			res.setHeader('Content-Type', 'application/json');
+			res.setHeader('Content-Type', 'application/json; charset=utf-8');
 			res.setHeader('Access-Control-Allow-Origin', '*');
 			
 			var data = [];
