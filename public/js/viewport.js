@@ -334,12 +334,14 @@ aethyrnet.backbone['viewport'] = new (function(){
     items : {
       'News' : 'news',
 
+			'Korean LCS' : 'lcs',
+
 			'Hunts' : {
 				'page' : 'hunts',
 				'loggedIn' : true,
 				'adminLevel' : 2
 			},
-
+			
       'Profile' : {
         'page' : 'profile',
         'loggedIn' : true

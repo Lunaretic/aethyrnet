@@ -19,7 +19,7 @@
 			<td class="teamcolor <%= player.team.toLowerCase().replace(" ","_") %>"><%= player.team %></td>
 			<td><%= player.league ? player.league : "UNRANKED" %> 
 			<% if(player.league) { %>
-			<%= player.division %> : <%= player.lp ? player.lp : 0 %> LP
+			<%= ( player.league == "CHALLENGER" || player.league == "MASTER" ? "" : player.division ) %> : <%= player.lp ? player.lp : 0 %> LP
 			<% } %>
 			</td>
 			<td><%= player.wins ? player.wins : 0 %> Wins </td>
