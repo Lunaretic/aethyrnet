@@ -376,6 +376,8 @@ aethyrnet.backbone['viewport'] = new (function(){
     render : function()
     {
       var activePage = location.pathname.trim();
+			if(activePage.slice(-1) === '/')
+				activePage = activePage.slice(0,-1);
       
       //Fix for default page.
       if(activePage === '/')
